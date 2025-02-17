@@ -1,0 +1,16 @@
+{
+	"tasks": {
+		"dev": "deno -A --watch main.ts"
+	},
+	"imports": {
+		"@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
+		"@hono/zod-validator": "npm:@hono/zod-validator@^0.4.2",
+		"hono": "jsr:@hono/hono@^4.7.0",
+		"mongodb": "npm:mongodb@^6.13.0",
+		"zod": "npm:zod@^3.24.2"
+	},
+	"fmt": {
+		"useTabs": true,
+		"indentWidth": 8
+	}
+}

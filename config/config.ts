@@ -1,0 +1,19 @@
+import "jsr:@std/dotenv/load";
+
+// Gets an environment variable by key
+export function getEnv(key: string): string {
+	const value = Deno.env.get(key) ?? "";
+
+	if (value == "") {
+		console.error(
+			`⚠️  Warning: Environment variable ${key} is not set`,
+		);
+	}
+
+	return value;
+}
+
+// Returns true if the app is running in production mode
+export function isProduction(): boolean {
+	return getEnv("ENV") == "production";
+}
