@@ -13,22 +13,26 @@ const logger = new Logger();
 export function setupRoutes(app: Hono) {
 	logger.info("🔄 Registering routes... 🛣️");
 
-	// Health checks
+	//  -----------------
+	// |  Health checks  |
+	//  -----------------
 	app.get("/livez", (c: Context) => c.json({ status: "ok" }));
 	app.get("/readyz", (c: Context) => c.json({ status: "ok" }));
 	app.get("/startupz", (c: Context) => c.json({ status: "ok" }));
-	// app.get("/metrics", (c) => c.json({ metrics: "TODO" }));
 
-	// Auth routes
+	//  ---------------
+	// |  Auth routes  |
+	//  ---------------
 	const auth = app.basePath("/auth");
-	// .use(rateLimit());
 
 	auth.post("/register", zValidator("json", RegisterSchema), register);
 	auth.post("/login", zValidator("json", LoginSchema), login);
 	auth.post("/logout", logout);
 	auth.get("/me", me);
 
-	// Test JWT route
+	//  ------------------
+	// |  Test JWT route  |
+	//  ------------------
 	app.get("/test-jwt", (c: Context, next: Next) => {
 		const jwtMiddleware = jwt({
 			secret: getEnv("JWT_SECRET"),
@@ -39,7 +43,9 @@ export function setupRoutes(app: Hono) {
 		return c.json({ message: "You are authorized!" });
 	});
 
-	// Protected API routes
+	//  ------------------------
+	// |  Protected API routes  |
+	//  ------------------------
 	const api = app.basePath("/api")
 		.use(apiKeyAuth());
 
