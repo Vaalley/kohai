@@ -8,7 +8,9 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
 // Register a new user
 export async function register(c: Context) {
-	const { email, password, username } = await c.req.valid("json");
+	const { email, password, username } = await c.req.valid(
+		"json" as never,
+	);
 
 	// Check if email or username already exists
 	const existingUser = await getCollection("users").findOne({
@@ -51,7 +53,7 @@ export async function register(c: Context) {
 
 // Login a user
 export async function login(c: Context) {
-	const { email, password } = await c.req.valid("json");
+	const { email, password } = await c.req.valid("json" as never);
 
 	// Find user by email
 	const collection = getCollection("users");

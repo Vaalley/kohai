@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { ObjectId } from "mongodb";
 
 export const UserSchema = z.object({
-	_id: z.string().optional(),
+	_id: z.instanceof(ObjectId).optional(),
 	username: z.string().min(3).max(32),
 	email: z.string().email(),
 	password: z.string().min(8),
