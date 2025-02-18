@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Context, Hono, Next } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
 import { login, logout, me, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
@@ -11,9 +11,9 @@ export function setupRoutes(app: Hono) {
 	console.log("🔄 Registering routes... 🛣️");
 
 	// Health checks
-	app.get("/livez", (c) => c.json({ status: "ok" }));
-	app.get("/readyz", (c) => c.json({ status: "ok" }));
-	app.get("/startupz", (c) => c.json({ status: "ok" }));
+	app.get("/livez", (c: Context) => c.json({ status: "ok" }));
+	app.get("/readyz", (c: Context) => c.json({ status: "ok" }));
+	app.get("/startupz", (c: Context) => c.json({ status: "ok" }));
 	// app.get("/metrics", (c) => c.json({ metrics: "TODO" }));
 
 	// Auth routes
@@ -26,13 +26,13 @@ export function setupRoutes(app: Hono) {
 	auth.get("/me", me);
 
 	// Test JWT route
-	app.get("/test-jwt", (c, next) => {
+	app.get("/test-jwt", (c: Context, next: Next) => {
 		const jwtMiddleware = jwt({
 			secret: getEnv("JWT_SECRET"),
 			cookie: "session_token",
 		});
 		return jwtMiddleware(c, next);
-	}, (c) => {
+	}, (c: Context) => {
 		return c.json({ message: "You are authorized!" });
 	});
 
@@ -40,7 +40,7 @@ export function setupRoutes(app: Hono) {
 	const api = app.basePath("/api")
 		.use(apiKeyAuth());
 
-	api.get("/", (c) => c.json({ message: "Hello, World!" }));
+	api.get("/", (c: Context) => c.json({ message: "Hello, World!" }));
 
 	console.log("✅ Routes registered successfully");
 }
