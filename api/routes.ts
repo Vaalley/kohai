@@ -5,10 +5,13 @@ import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
 import { zValidator } from "@hono/zod-validator";
 import { jwt } from "hono/jwt";
 import { getEnv } from "../config/config.ts";
+import { Logger } from "@zilla/logger";
+
+const logger = new Logger();
 
 // Register routes
 export function setupRoutes(app: Hono) {
-	console.log("🔄 Registering routes... 🛣️");
+	logger.info("🔄 Registering routes... 🛣️");
 
 	// Health checks
 	app.get("/livez", (c: Context) => c.json({ status: "ok" }));
@@ -42,5 +45,5 @@ export function setupRoutes(app: Hono) {
 
 	api.get("/", (c: Context) => c.json({ message: "Hello, World!" }));
 
-	console.log("✅ Routes registered successfully");
+	logger.info("✅ Routes registered successfully");
 }

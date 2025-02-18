@@ -1,12 +1,18 @@
 import { Hono } from "hono";
-import { getEnv } from "./config/config.ts";
+import { getEnv, isProduction } from "./config/config.ts";
 import { connectMongo } from "./db/mongo.ts";
 import { setupRoutes } from "./api/routes.ts";
 import { cors } from "hono/cors";
+import { Logger, LogLevel } from "@zilla/logger";
+
+const logger = new Logger();
 
 // Main entry point
 async function main() {
 	const startTime = Date.now();
+
+	// Set up logger
+	Logger.level = isProduction() ? LogLevel.INFO : LogLevel.DEBUG;
 
 	// Connect to MongoDB
 	await connectMongo();
@@ -25,7 +31,7 @@ async function main() {
 
 	// Calculate startup time and log it along with the port
 	const startupTime = Date.now() - startTime;
-	console.log(
+	logger.info(
 		`🆙 Server starting on port ${PORT} (startup took ${startupTime} ms)`,
 	);
 
@@ -33,7 +39,7 @@ async function main() {
 	try {
 		Deno.serve({ port: Number(PORT) }, app.fetch);
 	} catch (error) {
-		console.error(error);
+		logger.error("❌ Error starting server:", error);
 	}
 }
 
