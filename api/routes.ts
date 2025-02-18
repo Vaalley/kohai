@@ -51,5 +51,5 @@ export function setupRoutes(app: Hono) {
 
 	api.get("/", (c: Context) => c.json({ message: "Hello, World!" }));
 
-	logger.info("✅ Routes registered successfully");
+	logger.info("✅ Routes registered successfully 🪄");
 }

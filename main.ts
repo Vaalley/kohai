@@ -32,12 +32,15 @@ async function main() {
 	// Calculate startup time and log it along with the port
 	const startupTime = Date.now() - startTime;
 	logger.info(
-		`🆙 Server starting on port ${PORT} (startup took ${startupTime} ms)`,
+		`🔄 Server starting on port ${PORT} (startup took ${startupTime} ms) 🎚️`,
 	);
 
 	// Start the server
 	try {
 		Deno.serve({ port: Number(PORT) }, app.fetch);
+		logger.info(
+			`✅ Server started on http://localhost:${PORT} 🚀`,
+		);
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
 	}

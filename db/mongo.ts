@@ -18,7 +18,7 @@ export async function connectMongo(): Promise<void> {
 
 		// Verify connection
 		await client.db().admin().ping();
-		logger.info("✅ Successfully connected to MongoDB!");
+		logger.info("✅ Successfully connected to MongoDB! 🔗");
 	} catch (err) {
 		logger.error("❌ MongoDB connection failed:", err);
 	}
