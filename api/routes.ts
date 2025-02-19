@@ -2,10 +2,10 @@ import { Context, Hono, Next } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
 import { login, logout, me, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
-import { zValidator } from "@hono/zod-validator";
 import { jwt } from "hono/jwt";
 import { getEnv } from "../config/config.ts";
 import { Logger } from "@zilla/logger";
+import { zValidator } from "../utils/validator-wrapper.ts";
 
 const logger = new Logger();
 
