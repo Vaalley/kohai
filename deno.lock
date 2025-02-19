@@ -3,8 +3,7 @@
   "specifiers": {
     "jsr:@denosaurs/plug@^1.0.6": "1.0.6",
     "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
-    "jsr:@hono/hono@*": "4.7.0",
-    "jsr:@hono/hono@^4.7.0": "4.7.0",
+    "jsr:@hono/hono@^4.7.2": "4.7.2",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/dotenv@*": "0.225.3",
     "jsr:@std/encoding@0.221": "0.221.0",
@@ -13,7 +12,7 @@
     "jsr:@std/fs@0.221": "0.221.0",
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@zilla/logger@1": "1.0.0",
-    "npm:@hono/zod-validator@~0.4.2": "0.4.2_hono@4.7.1_zod@3.24.2",
+    "npm:@hono/zod-validator@~0.4.3": "0.4.3_hono@4.7.1_zod@3.24.2",
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
     "npm:is-what@5": "5.2.0",
@@ -36,8 +35,8 @@
         "jsr:@denosaurs/plug"
       ]
     },
-    "@hono/hono@4.7.0": {
-      "integrity": "1eb10e1976d3dda22ab43115ecfa348a43cd17c8aea5c0039c9757ebded624f8"
+    "@hono/hono@4.7.2": {
+      "integrity": "73466a24bd6eb3b527cde18e59ca5543890ddacb4312fc0bc7504d28a7e57a38"
     },
     "@std/assert@0.221.0": {
       "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a"
@@ -77,8 +76,8 @@
     }
   },
   "npm": {
-    "@hono/zod-validator@0.4.2_hono@4.7.1_zod@3.24.2": {
-      "integrity": "sha512-1rrlBg+EpDPhzOV4hT9pxr5+xDVmKuz6YJl+la7VCwK6ass5ldyKm5fD+umJdV2zhHD6jROoCCv8NbTwyfhT0g==",
+    "@hono/zod-validator@0.4.3_hono@4.7.1_zod@3.24.2": {
+      "integrity": "sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==",
       "dependencies": [
         "hono",
         "zod"
@@ -170,9 +169,9 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.5",
-      "jsr:@hono/hono@^4.7.0",
+      "jsr:@hono/hono@^4.7.2",
       "jsr:@zilla/logger@1",
-      "npm:@hono/zod-validator@~0.4.2",
+      "npm:@hono/zod-validator@~0.4.3",
       "npm:mongodb@^6.13.0",
       "npm:zod@^3.24.2"
     ]
