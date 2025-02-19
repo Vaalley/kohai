@@ -129,10 +129,19 @@ export async function me(c: Context) {
 		return c.json({ success: false, error: "No token" });
 	}
 
-	const payload = await verifyJwt(token, getEnv("JWT_SECRET"));
-	if (!payload) {
+	try {
+		const payload = await verifyJwt(token, getEnv("JWT_SECRET"));
+		if (!payload) {
+			return c.json({ success: false, error: "Invalid token" });
+		}
+
+		return c.json({ success: true, user: payload });
+	} catch (err) {
+		const error = err as Error;
+		if (error.name == "JwtTokenExpired") {
+			return c.json({ success: false, error: "Token expired" });
+		}
+
 		return c.json({ success: false, error: "Invalid token" });
 	}
-
-	return c.json({ success: true, user: payload });
 }
