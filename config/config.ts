@@ -1,12 +1,15 @@
 import "jsr:@std/dotenv/load";
+import { Logger } from "@zilla/logger";
+
+const logger = new Logger();
 
 // Gets an environment variable by key
 export function getEnv(key: string): string {
 	const value = Deno.env.get(key) ?? "";
 
 	if (value == "") {
-		console.error(
-			`⚠️  Warning: Environment variable ${key} is not set`,
+		logger.warn(
+			`⚠️ Warning: Environment variable \`${key}\` is not set`,
 		);
 	}
 
