@@ -24,7 +24,7 @@ async function main() {
 	app.use("*", cors());
 
 	// Get port from environment and if not set, default to 3000
-	const PORT = getEnv("PORT") ?? 3000;
+	const PORT = getEnv("PORT", "3333");
 
 	// Register routes
 	setupRoutes(app);
