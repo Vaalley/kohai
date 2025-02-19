@@ -4,8 +4,8 @@ import { Logger } from "@zilla/logger";
 const logger = new Logger();
 
 // Gets an environment variable by key
-export function getEnv(key: string): string {
-	const value = Deno.env.get(key) ?? "";
+export function getEnv(key: string, defaultValue: string = ""): string {
+	const value = Deno.env.get(key) ?? defaultValue;
 
 	if (value == "") {
 		logger.warn(
