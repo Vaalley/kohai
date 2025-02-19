@@ -6,7 +6,13 @@ let client: MongoClient;
 
 const logger = new Logger();
 
-// Connect to MongoDB
+/**
+ * Connects to the MongoDB instance specified by the MONGODB_URI environment
+ * variable. This function should be called once at application startup to
+ * initialize the connection.
+ *
+ * @returns A promise that resolves when the connection is established.
+ */
 export async function connectMongo(): Promise<void> {
 	const uri = getEnv("MONGODB_URI");
 	logger.info(`🔄 Attempting MongoDB connection... 🗃️`);
@@ -24,7 +30,14 @@ export async function connectMongo(): Promise<void> {
 	}
 }
 
-// Gets a collection by name
+/**
+ * Retrieves a MongoDB collection by its name.
+ *
+ * @template T - The type of documents contained in the collection.
+ * @param collectionName - The name of the collection to retrieve.
+ * @returns The MongoDB collection of type T.
+ * Logs an error if the collection cannot be retrieved.
+ */
 export function getCollection<T extends Document>(
 	collectionName: string,
 ): Collection<T> {
