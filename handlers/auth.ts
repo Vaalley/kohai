@@ -6,7 +6,16 @@ import { sign, verify as verifyJwt } from "hono/jwt";
 import { getEnv, isProduction } from "../config/config.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
-// Register a new user
+/**
+ * Registers a new user and returns a JSON response with the user's
+ * data if successful, or an error message if the email or username
+ * already exists.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns A JSON response with the user's data if successful, or
+ * an error message if the email or username already exists.
+ */
 export async function register(c: Context) {
 	const { email, password, username } = await c.req.valid(
 		"json" as never,
@@ -51,7 +60,14 @@ export async function register(c: Context) {
 	});
 }
 
-// Login a user
+/**
+ * Logs in a user.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns A JSON response with the user's data if successful, or an error
+ * message if the user is not found or the password is invalid.
+ */
 export async function login(c: Context) {
 	const { email, password } = await c.req.valid("json" as never);
 
@@ -108,7 +124,14 @@ export async function login(c: Context) {
 	});
 }
 
-// Logout a user
+/**
+ * Logs out the current user by clearing the session cookie.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns A JSON response with a success message if the logout was successful,
+ * or an error message if the user is not logged in.
+ */
 export function logout(c: Context) {
 	// Clear session cookie
 	const token = getCookie(c, "session_token");
@@ -122,7 +145,15 @@ export function logout(c: Context) {
 	return c.json({ success: true, message: "Logged out" });
 }
 
-// Get current user
+/**
+ * Returns the current user, or an error if the user is not logged in.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns A JSON response with a success message and the current user's
+ * data if the user is logged in, or an error message if the user is not
+ * logged in or the token is invalid.
+ */
 export async function me(c: Context) {
 	const token = getCookie(c, "session_token");
 	if (!token) {
