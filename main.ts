@@ -1,8 +1,9 @@
 import { Hono } from "hono";
 import { getEnv, isProduction } from "./config/config.ts";
-import { closeMongo, connectMongo } from "./db/mongo.ts";
+import { connectMongo } from "./db/mongo.ts";
 import { setupRoutes } from "./api/routes.ts";
 import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
 import { Logger, LogLevel } from "@zilla/logger";
 
 const logger = new Logger();
@@ -21,7 +22,13 @@ async function main() {
 	const app = new Hono();
 
 	// Enable CORS
-	app.use("*", cors());
+	app.use(cors({
+		credentials: true,
+		origin: getEnv("CORS_ORIGIN"),
+	}));
+
+	// Enable secure headers
+	app.use(secureHeaders());
 
 	// Get port from environment and if not set, default to 3000
 	const PORT = getEnv("PORT", "3333");
