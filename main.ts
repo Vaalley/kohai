@@ -43,8 +43,6 @@ async function main() {
 		);
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
-	} finally {
-		await closeMongo();
 	}
 }
 
