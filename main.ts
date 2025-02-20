@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { getEnv, isProduction } from "./config/config.ts";
-import { connectMongo } from "./db/mongo.ts";
+import { closeMongo, connectMongo } from "./db/mongo.ts";
 import { setupRoutes } from "./api/routes.ts";
 import { cors } from "hono/cors";
 import { Logger, LogLevel } from "@zilla/logger";
@@ -43,6 +43,8 @@ async function main() {
 		);
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
+	} finally {
+		await closeMongo();
 	}
 }
 
