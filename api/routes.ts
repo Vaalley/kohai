@@ -1,11 +1,10 @@
-import { Context, Hono, Next } from "hono";
+import { Context, Hono } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
 import { login, logout, me, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
-import { jwt } from "hono/jwt";
-import { getEnv } from "../config/config.ts";
 import { Logger } from "@zilla/logger";
 import { zValidator } from "../utils/validator-wrapper.ts";
+import { jwtAuth } from "./middleware/jwtAuth.ts";
 
 const logger = new Logger();
 
@@ -33,13 +32,7 @@ export function setupRoutes(app: Hono) {
 	//  ------------------
 	// |  Test JWT route  |
 	//  ------------------
-	app.get("/test-jwt", (c: Context, next: Next) => {
-		const jwtMiddleware = jwt({
-			secret: getEnv("JWT_SECRET"),
-			cookie: "session_token",
-		});
-		return jwtMiddleware(c, next);
-	}, (c: Context) => {
+	app.get("/test-jwt", jwtAuth(), (c: Context) => {
 		return c.json({ message: "You are authorized!" });
 	});
 

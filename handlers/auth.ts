@@ -100,7 +100,6 @@ export async function login(c: Context) {
 	setCookie(c, "session_token", token, {
 		httpOnly: true,
 		secure: isProduction(),
-		sameSite: "lax",
 	});
 
 	// Update the user's last login date

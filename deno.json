@@ -1,6 +1,7 @@
 {
 	"tasks": {
-		"dev": "deno -A --watch main.ts"
+		"dev": "deno -A --watch main.ts",
+		"test": "deno test test/ --parallel -A"
 	},
 	"imports": {
 		"@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
