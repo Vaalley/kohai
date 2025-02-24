@@ -35,9 +35,9 @@ community-driven description system.
 - Initial deployment on MongoDB Atlas
 - Designed for potential migration to self-hosted solution
 - Collections structure:
-- Users: {_id, username, email, passwordHash, dateJoined}
-- MediaTags: {_id, mediaId, mediaType, tags: [{word, count, users}]}
-- UserContributions: {_id, userId, mediaId, mediaType, tags, timestamp}
+- Users (see user.ts for schema)
+- MediaTags (see mediaTag.ts for schema)
+- UserContributions (see userContribution.ts for schema)
 
 ### B. Backend (Deno + Hono)
 
@@ -100,8 +100,9 @@ community-driven description system.
 ## 7. Development Workflow
 
 - Version control using Git
+- 2 repositories: one for the backend, one for the frontend
 - Feature branch workflow
-- CI/CD pipeline
+- CI/CD pipeline (CodeQL from github)
 - Code review process
 
 ## 8. Future Considerations
