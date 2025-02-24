@@ -8,6 +8,7 @@ export const UserContributionSchema = z.object({
 	mediaType: z.enum(["video-game", "movie"]),
 	tags: z.array(z.string()),
 	timestamp: z.date(),
+	updated_at: z.date(),
 });
 
 export type UserContribution = z.infer<typeof UserContributionSchema>;

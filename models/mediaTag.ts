@@ -10,6 +10,7 @@ export const MediaTagSchema = z.object({
 		count: z.number(),
 		users: z.array(z.instanceof(ObjectId)),
 	})),
+	updated_at: z.date(),
 });
 
 export type MediaTag = z.infer<typeof MediaTagSchema>;
