@@ -5,8 +5,11 @@ import { User } from "../models/user.ts";
 import { sign, verify as verifyJwt } from "hono/jwt";
 import { getEnv, isProduction } from "../config/config.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { Logger } from "@zilla/logger";
 
-const ACCESS_TOKEN_MAX_AGE = 20; // 15 minutes
+const logger = new Logger();
+
+const ACCESS_TOKEN_MAX_AGE = 10; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 /**
@@ -183,134 +186,88 @@ export function logout(c: Context) {
  * logged in or the token is invalid.
  */
 export async function me(c: Context) {
-	const accessToken = getCookie(c, "access_token");
-	if (!accessToken) {
-		return c.json({ success: false, error: "No access token" });
-	}
-
-	try {
-		const payload = await verifyJwt(
-			accessToken,
-			getEnv("JWT_SECRET"),
-		);
-		if (!payload) {
-			return c.json({
-				success: false,
-				error: "Invalid token",
-			});
-		}
-		return c.json({ success: true, user: payload });
-	} catch (err) {
-		const error = err as Error;
-		if (error.name === "JwtTokenExpired") {
-			// Access token expired, check refresh token
-			const refreshToken = getCookie(c, "refresh_token");
-			if (!refreshToken) {
-				// No refresh token, user must login again
-				deleteCookie(c, "access_token");
-				return c.json({
-					success: false,
-					error: "Session expired, please login again",
-				});
-			}
-
-			try {
-				// Verify refresh token
-				await verifyJwt(
-					refreshToken,
-					getEnv("JWT_SECRET"),
-				);
-				// Refresh token valid, get new tokens
-				const result = await handleTokenRefresh(c);
-				if (result.status === 200) {
-					// Return the user info from the new access token
-					const newPayload = await verifyJwt(
-						getCookie(c, "access_token")!,
-						getEnv("JWT_SECRET"),
-					);
-					return c.json({
-						success: true,
-						user: newPayload,
-					});
-				}
-				return result;
-			} catch (_refreshErr) {
-				// Refresh token expired/invalid, clear cookies and make user login again
-				deleteCookie(c, "access_token");
-				deleteCookie(c, "refresh_token");
-				return c.json({
-					success: false,
-					message: "Session expired, please login again",
-				});
-			}
-		}
-		return c.json({ success: false, error: "Invalid token" });
-	}
-}
-
-export async function handleTokenRefresh(c: Context) {
+	logger.debug("me() called");
+	// Check if refresh token is present
 	const refreshToken = getCookie(c, "refresh_token");
 	if (!refreshToken) {
+		deleteCookie(c, "access_token"); // Cleanup any stale access token
+		logger.debug("No refresh token, returning 401");
 		return c.json(
-			{ success: false, error: "No refresh token" },
+			{
+				success: false,
+				error: "Session expired, please login again",
+			},
 			401,
 		);
 	}
 
+	// Try to get user info from access token first
+	const accessToken = getCookie(c, "access_token");
+	if (accessToken) {
+		try {
+			logger.debug("Verifying access token");
+			const payload = await verifyJwt(
+				accessToken,
+				getEnv("JWT_SECRET"),
+			);
+			logger.debug(
+				"Access token verified, returning user info",
+			);
+			return c.json({ success: true, user: payload });
+		} catch (_err) {
+			logger.debug("Access token invalid/expired:", _err);
+		}
+	}
+
+	// Access token missing or invalid, try to refresh using refresh token
+	logger.debug("Access token invalid/expired, trying to refresh");
 	try {
-		// Verify the refresh token
-		const payload = await verifyJwt(
-			refreshToken,
-			getEnv("JWT_SECRET"),
+		logger.debug("Verifying refresh token");
+		// First verify refresh token is still valid
+		await verifyJwt(refreshToken, getEnv("JWT_SECRET"));
+		logger.debug("Refresh token verified");
+
+		// Get new tokens
+		await refreshTokens(c);
+		logger.debug("New access token:", getCookie(c, "access_token"));
+		logger.debug(
+			"New refresh token:",
+			getCookie(c, "refresh_token"),
 		);
-		if (!payload) {
-			return c.json({
-				success: false,
-				error: "Invalid refresh token",
-			}, 401);
+
+		// Return user info from new access token
+		const newAccessToken = getCookie(c, "access_token");
+		if (!newAccessToken) {
+			logger.error("Failed to set new access token");
+			// throw new Error("Failed to set new access token");
 		}
 
-		// Generate new tokens
-		const accessTokenPayload = {
-			email: payload.email,
-			username: payload.username,
-			exp: Math.floor(Date.now() / 1000) +
-				ACCESS_TOKEN_MAX_AGE, // 15 minutes
-		};
-
-		const refreshTokenPayload = {
-			email: payload.email,
-			username: payload.username,
-			exp: Math.floor(Date.now() / 1000) +
-				REFRESH_TOKEN_MAX_AGE, // 30 days
-		};
-
-		const newAccessToken = await sign(
-			accessTokenPayload,
+		logger.debug("Verifying new access token");
+		const payload = await verifyJwt(
+			newAccessToken,
 			getEnv("JWT_SECRET"),
 		);
-		const newRefreshToken = await sign(
-			refreshTokenPayload,
-			getEnv("JWT_SECRET"),
+		logger.debug("User info:", payload);
+		return c.json({ success: true, user: payload });
+	} catch (_err) {
+		logger.error("Failed to refresh tokens:", _err);
+		// Refresh token invalid or refresh failed
+		deleteCookie(c, "access_token");
+		deleteCookie(c, "refresh_token");
+		logger.debug("Failed to refresh tokens, returning 401");
+		return c.json(
+			{
+				success: false,
+				error: "Session expired, please login again",
+			},
+			401,
 		);
+	}
+}
 
-		// Set new cookies
-		setCookie(c, "access_token", newAccessToken, {
-			httpOnly: true,
-			secure: isProduction(),
-			path: "/",
-			sameSite: "Lax",
-			maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
-		});
-
-		setCookie(c, "refresh_token", newRefreshToken, {
-			httpOnly: true,
-			secure: isProduction(),
-			path: "/",
-			sameSite: "Lax",
-			maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
-		});
-
+export async function handleTokenRefresh(c: Context) {
+	try {
+		await refreshTokens(c);
 		return c.json({ success: true, message: "Tokens refreshed" });
 	} catch (_err) {
 		// If refresh token is expired/invalid, clear both cookies
@@ -321,4 +278,65 @@ export async function handleTokenRefresh(c: Context) {
 			error: "Invalid or expired refresh token",
 		}, 401);
 	}
+}
+
+export async function refreshTokens(c: Context) {
+	// Verify the refresh token
+	const refreshToken = getCookie(c, "refresh_token");
+	if (!refreshToken) {
+		return c.json(
+			{ success: false, error: "No refresh token" },
+			401,
+		);
+	}
+
+	const payload = await verifyJwt(
+		refreshToken,
+		getEnv("JWT_SECRET"),
+	);
+	if (!payload) {
+		return c.json({
+			success: false,
+			error: "Invalid refresh token",
+		}, 401);
+	}
+
+	// Generate new tokens
+	const accessTokenPayload = {
+		email: payload.email,
+		username: payload.username,
+		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
+	};
+
+	const refreshTokenPayload = {
+		email: payload.email,
+		username: payload.username,
+		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
+	};
+
+	const newAccessToken = await sign(
+		accessTokenPayload,
+		getEnv("JWT_SECRET"),
+	);
+	const newRefreshToken = await sign(
+		refreshTokenPayload,
+		getEnv("JWT_SECRET"),
+	);
+
+	// Set new cookies
+	setCookie(c, "access_token", newAccessToken, {
+		httpOnly: true,
+		secure: isProduction(),
+		path: "/",
+		sameSite: "Lax",
+		maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
+	});
+
+	setCookie(c, "refresh_token", newRefreshToken, {
+		httpOnly: true,
+		secure: isProduction(),
+		path: "/",
+		sameSite: "Lax",
+		maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
+	});
 }
