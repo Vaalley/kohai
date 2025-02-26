@@ -238,6 +238,17 @@ export async function me(c: Context) {
 	}
 }
 
+/**
+ * Handles token refresh by calling `refreshTokens` and returning a JSON
+ * response indicating success or failure. If the refresh token is invalid or
+ * expired, both cookies are cleared and a 401 Unauthorized response is returned.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns A JSON response with a success message and no data if the token is
+ * refreshed successfully, or a JSON response with an error message and a 401
+ * status code if the refresh token is invalid or expired.
+ */
 export async function handleTokenRefresh(c: Context) {
 	try {
 		await refreshTokens(c);
@@ -255,6 +266,20 @@ export async function handleTokenRefresh(c: Context) {
 	}
 }
 
+/**
+ * Refreshes the access and refresh tokens for the current user.
+ *
+ * This function verifies the refresh token present in the request, and if it
+ * is valid, generates new access and refresh tokens with the same payload as
+ * the old tokens. It then sets the new tokens as cookies in the response.
+ *
+ * If the refresh token is invalid or expired, an error is thrown.
+ *
+ * @param c - The Hono context object.
+ *
+ * @returns An object containing the new access and refresh tokens, or throws
+ * an error if the refresh token is invalid or expired.
+ */
 export async function refreshTokens(c: Context) {
 	// Verify the refresh token
 	const refreshToken = getCookie(c, "refresh_token");
