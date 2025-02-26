@@ -85,19 +85,33 @@ export async function login(c: Context) {
 		return c.json({ success: false, error: "Invalid password" });
 	}
 
-	const payload = {
+	const accessTokenPayload = {
 		email: user.email,
 		username: user.username,
-		exp: Math.floor(Date.now() / 1000) + 60 * 5, // Token expires in 5 minutes
+		exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
+	};
+
+	const refreshTokenPayload = {
+		email: user.email,
+		username: user.username,
+		exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
 	};
 
 	const secret = getEnv("JWT_SECRET");
 
 	// Generate a session token
-	const token = await sign(payload, secret);
+	const accessToken = await sign(accessTokenPayload, secret);
 
-	// Store the token in the user's cookies
-	setCookie(c, "session_token", token, {
+	// Generate a refresh token
+	const refreshToken = await sign(refreshTokenPayload, secret);
+
+	// Store the tokens in the user's cookies
+	setCookie(c, "access_token", accessToken, {
+		httpOnly: true,
+		secure: isProduction(),
+	});
+
+	setCookie(c, "refresh_token", refreshToken, {
 		httpOnly: true,
 		secure: isProduction(),
 	});
@@ -118,7 +132,8 @@ export async function login(c: Context) {
 			email: user.email,
 			username: user.username,
 			id: user._id,
-			token,
+			access_token: accessToken,
+			refresh_token: refreshToken,
 		},
 	});
 }
@@ -133,13 +148,19 @@ export async function login(c: Context) {
  */
 export function logout(c: Context) {
 	// Clear session cookie
-	const token = getCookie(c, "session_token");
-	if (!token) {
-		return c.json({ success: false, error: "No token" });
+	const accessToken = getCookie(c, "access_token");
+	if (!accessToken) {
+		return c.json({ success: false, error: "No access token" });
+	}
+
+	const refreshToken = getCookie(c, "refresh_token");
+	if (!refreshToken) {
+		return c.json({ success: false, error: "No refresh token" });
 	}
 
 	// Delete the token from the user's cookies
-	deleteCookie(c, "session_token");
+	deleteCookie(c, "access_token");
+	deleteCookie(c, "refresh_token");
 
 	return c.json({ success: true, message: "Logged out" });
 }
@@ -154,30 +175,134 @@ export function logout(c: Context) {
  * logged in or the token is invalid.
  */
 export async function me(c: Context) {
-	const token = getCookie(c, "session_token");
-	if (!token) {
-		return c.json({ success: false, error: "No token" });
+	const accessToken = getCookie(c, "access_token");
+	if (!accessToken) {
+		return c.json({ success: false, error: "No access token" });
 	}
 
 	try {
-		const payload = await verifyJwt(token, getEnv("JWT_SECRET"));
+		const payload = await verifyJwt(
+			accessToken,
+			getEnv("JWT_SECRET"),
+		);
 		if (!payload) {
 			return c.json({
 				success: false,
 				error: "Invalid token",
 			});
 		}
-
 		return c.json({ success: true, user: payload });
 	} catch (err) {
 		const error = err as Error;
-		if (error.name == "JwtTokenExpired") {
+		if (error.name === "JwtTokenExpired") {
+			// Access token expired, check refresh token
+			const refreshToken = getCookie(c, "refresh_token");
+			if (!refreshToken) {
+				// No refresh token, user must login again
+				deleteCookie(c, "access_token");
+				return c.json({
+					success: false,
+					error: "Session expired, please login again",
+				});
+			}
+
+			try {
+				// Verify refresh token
+				await verifyJwt(
+					refreshToken,
+					getEnv("JWT_SECRET"),
+				);
+				// Refresh token valid, get new tokens
+				const result = await refreshToken(c);
+				if (result.status === 200) {
+					// Return the user info from the new access token
+					const newPayload = await verifyJwt(
+						getCookie(c, "access_token")!,
+						getEnv("JWT_SECRET"),
+					);
+					return c.json({
+						success: true,
+						user: newPayload,
+					});
+				}
+				return result;
+			} catch (_refreshErr) {
+				// Refresh token expired/invalid, clear cookies and make user login again
+				deleteCookie(c, "access_token");
+				deleteCookie(c, "refresh_token");
+				return c.json({
+					success: false,
+					message: "Session expired, please login again",
+				});
+			}
+		}
+		return c.json({ success: false, error: "Invalid token" });
+	}
+}
+
+export async function refreshToken(c: Context) {
+	const refreshToken = getCookie(c, "refresh_token");
+	if (!refreshToken) {
+		return c.json(
+			{ success: false, error: "No refresh token" },
+			401,
+		);
+	}
+
+	try {
+		// Verify the refresh token
+		const payload = await verifyJwt(
+			refreshToken,
+			getEnv("JWT_SECRET"),
+		);
+		if (!payload) {
 			return c.json({
 				success: false,
-				error: "Token expired",
-			});
+				error: "Invalid refresh token",
+			}, 401);
 		}
 
-		return c.json({ success: false, error: "Invalid token" });
+		// Generate new tokens
+		const accessTokenPayload = {
+			email: payload.email,
+			username: payload.username,
+			exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
+		};
+
+		const refreshTokenPayload = {
+			email: payload.email,
+			username: payload.username,
+			exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
+		};
+
+		const newAccessToken = await sign(
+			accessTokenPayload,
+			getEnv("JWT_SECRET"),
+		);
+		const newRefreshToken = await sign(
+			refreshTokenPayload,
+			getEnv("JWT_SECRET"),
+		);
+
+		// Set new cookies
+		setCookie(c, "access_token", newAccessToken, {
+			httpOnly: true,
+			secure: isProduction(),
+		});
+
+		setCookie(c, "refresh_token", newRefreshToken, {
+			httpOnly: true,
+			secure: isProduction(),
+		});
+
+		return c.json({ success: true, message: "Tokens refreshed" });
+	} catch (_err) {
+		// If refresh token is expired/invalid, clear both cookies
+		deleteCookie(c, "access_token");
+		deleteCookie(c, "refresh_token");
+		return c.json({
+			success: false,
+			error: "Invalid or expired refresh token",
+		}, 401);
 	}
 }

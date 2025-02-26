@@ -1,6 +1,6 @@
 import { Context, Hono } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
-import { login, logout, me, register } from "../handlers/auth.ts";
+import { login, logout, me, refreshToken, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
 import { Logger } from "@zilla/logger";
 import { zValidator } from "../utils/validator-wrapper.ts";
@@ -26,13 +26,15 @@ export function setupRoutes(app: Hono) {
 
 	auth.post("/register", zValidator("json", RegisterSchema), register);
 	auth.post("/login", zValidator("json", LoginSchema), login);
+	auth.post("/refresh", refreshToken);
 	auth.post("/logout", logout);
 	auth.get("/me", me);
 
 	//  ------------------
 	// |  Test JWT route  |
 	//  ------------------
-	app.get("/test-jwt", jwtAuth(), (c: Context) => {
+	const jwt = app.basePath("/jwt").use(jwtAuth());
+	jwt.get("/", (c: Context) => {
 		return c.json({ message: "You are authorized!" });
 	});
 

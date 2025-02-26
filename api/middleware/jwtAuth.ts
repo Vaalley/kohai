@@ -16,7 +16,7 @@ export function jwtAuth() {
 	return (c: Context, next: Next) => {
 		const jwtMiddleware = jwt({
 			secret: getEnv("JWT_SECRET"),
-			cookie: "session_token",
+			cookie: "access_token",
 		});
 		return jwtMiddleware(c, next);
 	};
