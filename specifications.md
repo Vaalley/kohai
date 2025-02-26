@@ -28,6 +28,17 @@ community-driven description system.
 - Real-time aggregation of popular tags
 - Visual representation of tag popularity
 
+Example flow:
+
+1. When a user tags the movie "The Matrix" with ["cyberpunk", "action",
+   "philosophical"]
+   - A UserContribution record is created to track this specific user's tags
+   - This enables viewing user's tagging history and enforcing the 3-tag limit
+2. The system then updates the MediaTag record for "The Matrix"
+   - If "cyberpunk" was already used by 5 other users, its count increases to 6
+   - The user's ID is added to the list of users who used each tag
+   - This aggregated view powers the tag popularity visualization
+
 ## 3. Technical Architecture
 
 ### A. Database (MongoDB)
@@ -35,9 +46,59 @@ community-driven description system.
 - Initial deployment on MongoDB Atlas
 - Designed for potential migration to self-hosted solution
 - Collections structure:
-- Users (see user.ts for schema)
-- MediaTags (see mediaTag.ts for schema)
-- UserContributions (see userContribution.ts for schema)
+  - Users (see user.ts for schema)
+  - MediaTags (see mediaTag.ts for schema)
+  - UserContributions (see userContribution.ts for schema)
+
+Example collections state for "The Matrix" scenario:
+
+```json
+// users collection
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "username": "moviefan123",
+  "email": "fan@example.com",
+  "password": "<hashed_password>",
+  "created_at": ISODate("2025-02-26T09:16:20Z"),
+  "updated_at": ISODate("2025-02-26T09:16:20Z")
+}
+
+// userContributions collection
+{
+  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "userId": ObjectId("507f1f77bcf86cd799439011"),
+  "mediaId": ObjectId("507f1f77bcf86cd799439013"),
+  "mediaType": "movie",
+  "tags": ["cyberpunk", "action", "philosophical"],
+  "timestamp": ISODate("2025-02-26T09:16:20Z"),
+  "updated_at": ISODate("2025-02-26T09:16:20Z")
+}
+
+// mediaTags collection
+{
+  "_id": ObjectId("507f1f77bcf86cd799439013"),
+  "mediaId": ObjectId("507f1f77bcf86cd799439013"),
+  "mediaType": "movie",
+  "tags": [
+    {
+      "tag": "cyberpunk",
+      "count": 6,
+      "users": [ObjectId("507f1f77bcf86cd799439011"), /* ... other user IDs */]
+    },
+    {
+      "tag": "action",
+      "count": 1,
+      "users": [ObjectId("507f1f77bcf86cd799439011")]
+    },
+    {
+      "tag": "philosophical",
+      "count": 1,
+      "users": [ObjectId("507f1f77bcf86cd799439011")]
+    }
+  ],
+  "updated_at": ISODate("2025-02-26T09:16:20Z")
+}
+```
 
 ### B. Backend (Deno + Hono)
 
