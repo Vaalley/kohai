@@ -5,11 +5,8 @@ import { User } from "../models/user.ts";
 import { sign, verify as verifyJwt } from "hono/jwt";
 import { getEnv, isProduction } from "../config/config.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { Logger } from "@zilla/logger";
 
-const logger = new Logger();
-
-const ACCESS_TOKEN_MAX_AGE = 10; // 15 minutes
+const ACCESS_TOKEN_MAX_AGE = 60 * 15; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 /**
@@ -186,12 +183,10 @@ export function logout(c: Context) {
  * logged in or the token is invalid.
  */
 export async function me(c: Context) {
-	logger.debug("me() called");
 	// Check if refresh token is present
 	const refreshToken = getCookie(c, "refresh_token");
 	if (!refreshToken) {
 		deleteCookie(c, "access_token"); // Cleanup any stale access token
-		logger.debug("No refresh token, returning 401");
 		return c.json(
 			{
 				success: false,
@@ -205,60 +200,38 @@ export async function me(c: Context) {
 	const accessToken = getCookie(c, "access_token");
 	if (accessToken) {
 		try {
-			logger.debug("Verifying access token");
 			const payload = await verifyJwt(
 				accessToken,
 				getEnv("JWT_SECRET"),
 			);
-			logger.debug(
-				"Access token verified, returning user info",
-			);
+
 			return c.json({ success: true, user: payload });
 		} catch (_err) {
-			logger.debug("Access token invalid/expired:", _err);
+			// asdf
 		}
 	}
 
 	// Access token missing or invalid, try to refresh using refresh token
-	logger.debug("Access token invalid/expired, trying to refresh");
 	try {
-		logger.debug("Verifying refresh token");
-		// First verify refresh token is still valid
-		await verifyJwt(refreshToken, getEnv("JWT_SECRET"));
-		logger.debug("Refresh token verified");
-
 		// Get new tokens
-		await refreshTokens(c);
-		logger.debug("New access token:", getCookie(c, "access_token"));
-		logger.debug(
-			"New refresh token:",
-			getCookie(c, "refresh_token"),
-		);
+		const { accessToken: newAccessToken } = await refreshTokens(c);
 
-		// Return user info from new access token
-		const newAccessToken = getCookie(c, "access_token");
-		if (!newAccessToken) {
-			logger.error("Failed to set new access token");
-			// throw new Error("Failed to set new access token");
-		}
-
-		logger.debug("Verifying new access token");
+		// Verify and return user info
 		const payload = await verifyJwt(
 			newAccessToken,
 			getEnv("JWT_SECRET"),
 		);
-		logger.debug("User info:", payload);
 		return c.json({ success: true, user: payload });
-	} catch (_err) {
-		logger.error("Failed to refresh tokens:", _err);
+	} catch (err) {
 		// Refresh token invalid or refresh failed
 		deleteCookie(c, "access_token");
 		deleteCookie(c, "refresh_token");
-		logger.debug("Failed to refresh tokens, returning 401");
+		const error = err as Error;
 		return c.json(
 			{
 				success: false,
 				error: "Session expired, please login again",
+				message: error.message,
 			},
 			401,
 		);
@@ -269,13 +242,15 @@ export async function handleTokenRefresh(c: Context) {
 	try {
 		await refreshTokens(c);
 		return c.json({ success: true, message: "Tokens refreshed" });
-	} catch (_err) {
+	} catch (err) {
 		// If refresh token is expired/invalid, clear both cookies
 		deleteCookie(c, "access_token");
 		deleteCookie(c, "refresh_token");
+		const error = err as Error;
 		return c.json({
 			success: false,
 			error: "Invalid or expired refresh token",
+			message: error.message,
 		}, 401);
 	}
 }
@@ -284,10 +259,7 @@ export async function refreshTokens(c: Context) {
 	// Verify the refresh token
 	const refreshToken = getCookie(c, "refresh_token");
 	if (!refreshToken) {
-		return c.json(
-			{ success: false, error: "No refresh token" },
-			401,
-		);
+		throw new Error("No refresh token");
 	}
 
 	const payload = await verifyJwt(
@@ -295,10 +267,7 @@ export async function refreshTokens(c: Context) {
 		getEnv("JWT_SECRET"),
 	);
 	if (!payload) {
-		return c.json({
-			success: false,
-			error: "Invalid refresh token",
-		}, 401);
+		throw new Error("Invalid refresh token");
 	}
 
 	// Generate new tokens
@@ -339,4 +308,7 @@ export async function refreshTokens(c: Context) {
 		sameSite: "Lax",
 		maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
 	});
+
+	// Return the tokens for verification
+	return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 }
