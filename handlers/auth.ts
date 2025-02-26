@@ -199,16 +199,12 @@ export async function me(c: Context) {
 	// Try to get user info from access token first
 	const accessToken = getCookie(c, "access_token");
 	if (accessToken) {
-		try {
-			const payload = await verifyJwt(
-				accessToken,
-				getEnv("JWT_SECRET"),
-			);
+		const payload = await verifyJwt(
+			accessToken,
+			getEnv("JWT_SECRET"),
+		);
 
-			return c.json({ success: true, user: payload });
-		} catch (_err) {
-			// asdf
-		}
+		return c.json({ success: true, user: payload });
 	}
 
 	// Access token missing or invalid, try to refresh using refresh token
