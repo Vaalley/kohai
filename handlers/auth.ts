@@ -6,6 +6,9 @@ import { sign, verify as verifyJwt } from "hono/jwt";
 import { getEnv, isProduction } from "../config/config.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
+const ACCESS_TOKEN_MAX_AGE = 20; // 15 minutes
+const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+
 /**
  * Registers a new user and returns a JSON response with the user's
  * data if successful, or an error message if the email or username
@@ -88,13 +91,13 @@ export async function login(c: Context) {
 	const accessTokenPayload = {
 		email: user.email,
 		username: user.username,
-		exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
+		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE, // 15 minutes
 	};
 
 	const refreshTokenPayload = {
 		email: user.email,
 		username: user.username,
-		exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
+		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE, // 30 days
 	};
 
 	const secret = getEnv("JWT_SECRET");
@@ -109,11 +112,17 @@ export async function login(c: Context) {
 	setCookie(c, "access_token", accessToken, {
 		httpOnly: true,
 		secure: isProduction(),
+		path: "/",
+		sameSite: "Lax",
+		maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
 	});
 
 	setCookie(c, "refresh_token", refreshToken, {
 		httpOnly: true,
 		secure: isProduction(),
+		path: "/",
+		sameSite: "Lax",
+		maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
 	});
 
 	// Update the user's last login date
@@ -149,13 +158,12 @@ export async function login(c: Context) {
 export function logout(c: Context) {
 	// Clear session cookie
 	const accessToken = getCookie(c, "access_token");
-	if (!accessToken) {
-		return c.json({ success: false, error: "No access token" });
-	}
-
 	const refreshToken = getCookie(c, "refresh_token");
-	if (!refreshToken) {
-		return c.json({ success: false, error: "No refresh token" });
+	if (!accessToken || !refreshToken) {
+		return c.json({
+			success: false,
+			error: "No access/refresh token",
+		});
 	}
 
 	// Delete the token from the user's cookies
@@ -213,7 +221,7 @@ export async function me(c: Context) {
 					getEnv("JWT_SECRET"),
 				);
 				// Refresh token valid, get new tokens
-				const result = await refreshToken(c);
+				const result = await handleTokenRefresh(c);
 				if (result.status === 200) {
 					// Return the user info from the new access token
 					const newPayload = await verifyJwt(
@@ -240,7 +248,7 @@ export async function me(c: Context) {
 	}
 }
 
-export async function refreshToken(c: Context) {
+export async function handleTokenRefresh(c: Context) {
 	const refreshToken = getCookie(c, "refresh_token");
 	if (!refreshToken) {
 		return c.json(
@@ -266,13 +274,15 @@ export async function refreshToken(c: Context) {
 		const accessTokenPayload = {
 			email: payload.email,
 			username: payload.username,
-			exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15 minutes
+			exp: Math.floor(Date.now() / 1000) +
+				ACCESS_TOKEN_MAX_AGE, // 15 minutes
 		};
 
 		const refreshTokenPayload = {
 			email: payload.email,
 			username: payload.username,
-			exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
+			exp: Math.floor(Date.now() / 1000) +
+				REFRESH_TOKEN_MAX_AGE, // 30 days
 		};
 
 		const newAccessToken = await sign(
@@ -288,11 +298,17 @@ export async function refreshToken(c: Context) {
 		setCookie(c, "access_token", newAccessToken, {
 			httpOnly: true,
 			secure: isProduction(),
+			path: "/",
+			sameSite: "Lax",
+			maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
 		});
 
 		setCookie(c, "refresh_token", newRefreshToken, {
 			httpOnly: true,
 			secure: isProduction(),
+			path: "/",
+			sameSite: "Lax",
+			maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
 		});
 
 		return c.json({ success: true, message: "Tokens refreshed" });
