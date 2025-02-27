@@ -212,6 +212,16 @@ export async function me(c: Context) {
 		// Get new tokens
 		const { accessToken: newAccessToken } = await refreshTokens(c);
 
+		if (!newAccessToken) {
+			return c.json(
+				{
+					success: false,
+					error: "Token refresh failed, please login again. Sorry :(",
+				},
+				401,
+			);
+		}
+
 		// Verify and return user info
 		const payload = await verifyJwt(
 			newAccessToken,
