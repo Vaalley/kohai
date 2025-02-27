@@ -159,7 +159,7 @@ export function logout(c: Context) {
 	// Clear session cookie
 	const accessToken = getCookie(c, "access_token");
 	const refreshToken = getCookie(c, "refresh_token");
-	if (!accessToken || !refreshToken) {
+	if (!accessToken && !refreshToken) {
 		return c.json({
 			success: false,
 			error: "No access/refresh token",
