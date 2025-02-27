@@ -67,13 +67,3 @@ export async function isConnected(): Promise<boolean> {
 		return false;
 	}
 }
-
-/**
- * Closes the connection to the MongoDB client.
- *
- * @returns A promise that resolves when the client connection is closed.
- */
-export async function closeMongo(): Promise<void> {
-	await client.close();
-	logger.info("✅ Closed MongoDB connection. 🗑️");
-}
