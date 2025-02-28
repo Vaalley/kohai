@@ -10,7 +10,7 @@ import { logger } from "../main.ts";
  */
 export async function connectIgdb() {
 	try {
-		logger.info("🔄 Attempting IGDB connection... 🔗");
+		logger.info("🔄 Attempting IGDB connection... 🎮");
 		await fetch(
 			`https://id.twitch.tv/oauth2/token?client_id=${
 				getEnv("IGDB_CLIENT_ID")
@@ -31,7 +31,9 @@ export async function connectIgdb() {
 			.then((data) => {
 				setEnv("IGDB_ACCESS_TOKEN", data.access_token);
 
-				logger.info("✅ Connected to IGDB");
+				setEnv("IGDB_EXPIRES_IN", data.expires_in);
+
+				logger.info("✅ Connected to IGDB 🔗");
 			});
 	} catch (error) {
 		logger.error("❌ Error connecting to IGDB:", error);

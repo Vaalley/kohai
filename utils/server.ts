@@ -27,7 +27,7 @@ export function startServer(
 	hostname: string,
 	startTime: number,
 ) {
-	logger.info("🔄 Starting server...");
+	logger.info("🔄 Starting server... 🎛️");
 	try {
 		const server = Deno.serve({
 			port: Number(port),
@@ -36,7 +36,7 @@ export function startServer(
 			onListen({ port, hostname }) {
 				const startupTime = Date.now() - startTime;
 				logger.info(
-					`✅ Server started at http://${hostname}:${port}`,
+					`✅ Server started at http://${hostname}:${port} 🚀`,
 				);
 				logger.info(
 					`startup took ${startupTime} ms ⏰`,
@@ -44,7 +44,7 @@ export function startServer(
 			},
 		}, app.fetch);
 
-		server.finished.then(() => logger.info("Server closed"));
+		server.finished.then(() => logger.info("Server closed ⚡️"));
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
 	}
