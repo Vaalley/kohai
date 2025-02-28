@@ -1,7 +1,5 @@
-import { Logger } from "@zilla/logger";
 import { getEnv, setEnv } from "../config/config.ts";
-
-const logger = new Logger();
+import { logger } from "../main.ts";
 
 /**
  * Establishes a connection to the IGDB API.

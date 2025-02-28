@@ -1,7 +1,5 @@
 import "jsr:@std/dotenv/load";
-import { Logger } from "@zilla/logger";
-
-const logger = new Logger();
+import { logger } from "../main.ts";
 
 /**
  * Retrieves the value of an environment variable.

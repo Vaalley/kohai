@@ -1,10 +1,8 @@
 import { getEnv } from "../config/config.ts";
 import { Collection, Db, Document, MongoClient } from "mongodb";
-import { Logger } from "@zilla/logger";
+import { logger } from "../main.ts";
 
 let client: MongoClient;
-
-const logger = new Logger();
 
 /**
  * Connects to the MongoDB instance specified by the MONGODB_URI environment

@@ -6,8 +6,9 @@ import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { Logger, LogLevel } from "@zilla/logger";
 import { connectIgdb } from "./utils/igdb.ts";
+import { closeServer, startServer } from "./utils/server.ts";
 
-const logger = new Logger();
+export const logger = new Logger();
 
 // Main entry point
 async function main() {
@@ -16,8 +17,24 @@ async function main() {
 	// Set up logger
 	Logger.level = isProduction() ? LogLevel.INFO : LogLevel.DEBUG;
 
+	// Create a new AbortController for the server
+	const ac = new AbortController();
+
 	// Connect to MongoDB
-	await connectMongo();
+	try {
+		await connectMongo();
+	} catch (error) {
+		logger.error("❌ Error connecting to MongoDB:", error);
+		closeServer(ac);
+	}
+
+	// Connect to IGDB
+	try {
+		await connectIgdb();
+	} catch (error) {
+		logger.error("❌ Error connecting to IGDB:", error);
+		closeServer(ac);
+	}
 
 	// Create a new Hono app
 	const app = new Hono();
@@ -31,34 +48,15 @@ async function main() {
 	// Enable secure headers
 	app.use(secureHeaders());
 
+	// Register routes
+	setupRoutes(app);
+
 	// Get port and hostname from environment and if not set, default to 3333 and 127.0.0.1 respectively
 	const PORT = getEnv("PORT", "3333");
 	const HOSTNAME = getEnv("HOSTNAME", "127.0.0.1");
 
-	// Connect to IGDB
-	await connectIgdb();
-
-	// Register routes
-	setupRoutes(app);
-
 	// Start the server
-	try {
-		Deno.serve({
-			port: Number(PORT),
-			hostname: HOSTNAME,
-			onListen({ port, hostname }) {
-				const startupTime = Date.now() - startTime;
-				logger.info(
-					`✅ Server started at http://${hostname}:${port}`,
-				);
-				logger.info(
-					`startup took ${startupTime} ms ⏰`,
-				);
-			},
-		}, app.fetch);
-	} catch (error) {
-		logger.error("❌ Error starting server:", error);
-	}
+	startServer(ac, app, PORT, HOSTNAME, startTime);
 }
 
 main();
