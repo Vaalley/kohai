@@ -24,6 +24,16 @@ export function getEnv(key: string, defaultValue: string = ""): string {
 }
 
 /**
+ * Sets the value of an environment variable.
+ *
+ * @param key - The name of the environment variable to set.
+ * @param value - The value to assign to the environment variable.
+ */
+export function setEnv(key: string, value: string) {
+	Deno.env.set(key, value);
+}
+
+/**
  * Returns true if the app is running in production mode.
  *
  * This function checks the value of the "ENV" environment variable. If it is
