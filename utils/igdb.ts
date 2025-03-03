@@ -11,11 +11,7 @@ import { logger } from "../main.ts";
 export async function connectIgdb() {
 	logger.info("🔄 Attempting IGDB connection... 🎮");
 	const response = await fetch(
-		`https://id.twitch.tv/oauth2/token?client_id=${
-			getEnv("IGDB_CLIENT_ID")
-		}&client_secret=${
-			getEnv("IGDB_CLIENT_SECRET")
-		}&grant_type=client_credentials`,
+		`https://id.twitch.tv/oauth2/token`,
 		{
 			method: "POST",
 			headers: {
@@ -24,6 +20,11 @@ export async function connectIgdb() {
 				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
+			body: JSON.stringify({
+				client_id: getEnv("IGDB_CLIENT_ID"),
+				client_secret: getEnv("IGDB_CLIENT_SECRET"),
+				grant_type: "client_credentials",
+			}),
 		},
 	);
 
