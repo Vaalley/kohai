@@ -61,7 +61,7 @@ async function main() {
 
 	// Get port and hostname from environment and if not set, default to 3333 and 127.0.0.1 respectively
 	const PORT = getEnv("PORT", "3333");
-	const HOSTNAME = getEnv("HOSTNAME", "127.0.0.1");
+	const HOSTNAME = getEnv("HOSTNAME", "0.0.0.0");
 
 	// Start the server
 	try {

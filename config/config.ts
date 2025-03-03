@@ -28,6 +28,20 @@ export function getEnv(key: string, defaultValue: string = ""): string {
  * @param value - The value to assign to the environment variable.
  */
 export function setEnv(key: string, value: string) {
+	if (!key.trim()) {
+		logger.warn(
+			`⚠️ Warning: Attempting to set env variable with empty key`,
+		);
+		return;
+	}
+
+	if (value.trim() == "") {
+		logger.warn(
+			`⚠️ Warning: Attempting to set env variable \`${key}\` with empty value`,
+		);
+		return;
+	}
+
 	Deno.env.set(key, value);
 }
 

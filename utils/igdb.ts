@@ -75,8 +75,9 @@ export function isIgdbTokenValid(): boolean {
 	if (!expiration) return false;
 
 	// Check if token is expired (with 5-minute buffer)
-	const now = new Date();
-	return expiration.getTime() > now.getTime() + (5 * 60 * 1000);
+	const FIVE_MINUTES_MS = 5 * 60 * 1000;
+	const now = Date.now();
+	return expiration.getTime() > now + FIVE_MINUTES_MS;
 }
 
 /**
