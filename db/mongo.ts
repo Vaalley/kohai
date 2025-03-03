@@ -15,18 +15,14 @@ export async function connectMongo(): Promise<void> {
 	const uri = getEnv("MONGODB_URI");
 	logger.info(`🔄 Attempting MongoDB connection... 🗃️`);
 
-	try {
-		client = await MongoClient.connect(uri, {
-			serverSelectionTimeoutMS: 10000,
-			timeoutMS: 10000,
-		});
+	client = await MongoClient.connect(uri, {
+		serverSelectionTimeoutMS: 10000,
+		timeoutMS: 10000,
+	});
 
-		// Verify connection
-		await isConnected();
-		logger.info("✅ Successfully connected to MongoDB! 🔗");
-	} catch (err) {
-		logger.error("❌ MongoDB connection failed:", err);
-	}
+	// Verify connection
+	await isConnected();
+	logger.info("✅ Successfully connected to MongoDB! 🔗");
 }
 
 /**
@@ -61,7 +57,7 @@ export async function isConnected(): Promise<boolean> {
 		await client.db().admin().ping();
 		return true;
 	} catch (err) {
-		logger.error("❌ MongoDB connection failed:", err);
-		return false;
+		logger.error("❌ MongoDB connection verification failed:", err);
+		throw err;
 	}
 }

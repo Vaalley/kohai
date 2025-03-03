@@ -24,16 +24,24 @@ async function main() {
 	try {
 		await connectMongo();
 	} catch (error) {
-		logger.error("❌ Error connecting to MongoDB:", error);
-		closeServer(ac);
+		logger.error(
+			"❌ Error connecting to MongoDB, shutting down server:",
+			error,
+		);
+		closeServer(ac, 1); // Pass exit code 1 to indicate error
+		return; // Stop further execution
 	}
 
 	// Connect to IGDB
 	try {
 		await connectIgdb();
 	} catch (error) {
-		logger.error("❌ Error connecting to IGDB:", error);
-		closeServer(ac);
+		logger.error(
+			"❌ Error connecting to IGDB, shutting down server:",
+			error,
+		);
+		closeServer(ac, 1); // Pass exit code 1 to indicate error
+		return; // Stop further execution
 	}
 
 	// Create a new Hono app

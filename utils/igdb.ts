@@ -9,33 +9,52 @@ import { logger } from "../main.ts";
  * the environment variable `IGDB_ACCESS_TOKEN`.
  */
 export async function connectIgdb() {
-	try {
-		logger.info("🔄 Attempting IGDB connection... 🎮");
-		await fetch(
-			`https://id.twitch.tv/oauth2/token?client_id=${
-				getEnv("IGDB_CLIENT_ID")
-			}&client_secret=${
-				getEnv("IGDB_CLIENT_SECRET")
-			}&grant_type=client_credentials`,
-			{
-				method: "POST",
-				headers: {
-					"User-Agent":
-						"Kohai (https://github.com/Vaalley/kohai)",
-					"Accept": "application/json",
-					"Content-Type": "application/json",
-				},
+	logger.info("🔄 Attempting IGDB connection... 🎮");
+	const response = await fetch(
+		`https://id.twitch.tv/oauth2/token?client_id=${
+			getEnv("IGDB_CLIENT_ID")
+		}&client_secret=${
+			getEnv("IGDB_CLIENT_SECRET")
+		}&grant_type=client_credentials`,
+		{
+			method: "POST",
+			headers: {
+				"User-Agent":
+					"Kohai (https://github.com/Vaalley/kohai)",
+				"Accept": "application/json",
+				"Content-Type": "application/json",
 			},
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				setEnv("IGDB_ACCESS_TOKEN", data.access_token);
+		},
+	);
 
-				setEnv("IGDB_EXPIRES_IN", data.expires_in);
-
-				logger.info("✅ Connected to IGDB 🔗");
-			});
-	} catch (error) {
-		logger.error("❌ Error connecting to IGDB:", error);
+	if (!response.ok) {
+		throw new Error(`HTTP error! Status: ${response.status}`);
 	}
+
+	const data = await response.json();
+
+	if (!data.access_token) {
+		throw new Error("Failed to get access token from IGDB");
+	}
+
+	setEnv("IGDB_ACCESS_TOKEN", data.access_token);
+
+	const expiresAt = Date.now() + (data.expires_in * 1000);
+	setEnv("IGDB_EXPIRES_AT", expiresAt.toString());
+
+	logger.info("✅ Connected to IGDB 🔗");
+}
+
+/**
+ * Returns the expiration date of the IGDB token as a Date object.
+ * If no expiration date is set, returns null.
+ */
+export function getIgdbExpiration(): Date | null {
+	const expiresAtStr = getEnv("IGDB_EXPIRES_AT");
+	if (!expiresAtStr) return null;
+
+	const expiresAtMs = parseInt(expiresAtStr, 10);
+	if (isNaN(expiresAtMs)) return null;
+
+	return new Date(expiresAtMs);
 }
