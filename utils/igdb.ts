@@ -1,6 +1,9 @@
 import { getEnv, setEnv } from "../config/config.ts";
 import { logger } from "../main.ts";
 
+// Token refresh mutex to prevent concurrent token refreshes
+let tokenRefreshPromise: Promise<void> | null = null;
+
 /**
  * Establishes a connection to the IGDB API.
  *
@@ -79,10 +82,39 @@ export function isIgdbTokenValid(): boolean {
 /**
  * Ensures a valid IGDB token is available for API calls.
  * If the token is missing or expired, it will reconnect to IGDB.
+ *
+ * Uses a mutex pattern to prevent concurrent token refreshes when
+ * multiple requests detect an expired token simultaneously.
  */
 export async function ensureValidIgdbToken(): Promise<void> {
-	if (!isIgdbTokenValid()) {
-		logger.info("IGDB token expired or missing, reconnecting...");
-		await connectIgdb();
+	if (isIgdbTokenValid()) {
+		return;
 	}
+
+	if (tokenRefreshPromise) {
+		try {
+			await tokenRefreshPromise;
+			if (isIgdbTokenValid()) {
+				return;
+			}
+		} catch (error) {
+			logger.warn(
+				"Previous IGDB token refresh failed, attempting again.",
+				error,
+			);
+		}
+	}
+
+	tokenRefreshPromise = (async () => {
+		try {
+			logger.info(
+				"IGDB token expired or missing, reconnecting...",
+			);
+			await connectIgdb();
+		} finally {
+			tokenRefreshPromise = null;
+		}
+	})();
+
+	await tokenRefreshPromise;
 }
