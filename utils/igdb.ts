@@ -58,3 +58,30 @@ export function getIgdbExpiration(): Date | null {
 
 	return new Date(expiresAtMs);
 }
+
+/**
+ * Checks if the current IGDB token is valid (exists and not expired).
+ * Returns true if the token is valid, false otherwise.
+ */
+export function isIgdbTokenValid(): boolean {
+	const token = getEnv("IGDB_ACCESS_TOKEN");
+	if (!token) return false;
+
+	const expiration = getIgdbExpiration();
+	if (!expiration) return false;
+
+	// Check if token is expired (with 5-minute buffer)
+	const now = new Date();
+	return expiration.getTime() > now.getTime() + (5 * 60 * 1000);
+}
+
+/**
+ * Ensures a valid IGDB token is available for API calls.
+ * If the token is missing or expired, it will reconnect to IGDB.
+ */
+export async function ensureValidIgdbToken(): Promise<void> {
+	if (!isIgdbTokenValid()) {
+		logger.info("IGDB token expired or missing, reconnecting...");
+		await connectIgdb();
+	}
+}
