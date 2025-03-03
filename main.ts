@@ -28,8 +28,8 @@ async function main() {
 			"❌ Error connecting to MongoDB, shutting down server:",
 			error,
 		);
-		closeServer(ac, 1); // Pass exit code 1 to indicate error
-		return; // Stop further execution
+		closeServer(ac, 1);
+		return;
 	}
 
 	// Connect to IGDB
@@ -40,8 +40,8 @@ async function main() {
 			"❌ Error connecting to IGDB, shutting down server:",
 			error,
 		);
-		closeServer(ac, 1); // Pass exit code 1 to indicate error
-		return; // Stop further execution
+		closeServer(ac, 1);
+		return;
 	}
 
 	// Create a new Hono app
