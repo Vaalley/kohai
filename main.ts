@@ -64,7 +64,12 @@ async function main() {
 	const HOSTNAME = getEnv("HOSTNAME", "127.0.0.1");
 
 	// Start the server
-	startServer(ac, app, PORT, HOSTNAME, startTime);
+	try {
+		startServer(ac, app, PORT, HOSTNAME, startTime);
+	} catch (error) {
+		logger.error("❌ Error starting server:", error);
+		closeServer(ac, 1);
+	}
 }
 
 main();

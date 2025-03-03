@@ -37,26 +37,21 @@ export function startServer(
 	startTime: number,
 ) {
 	logger.info("🔄 Starting server... 🎛️");
-	try {
-		const server = Deno.serve({
-			port: Number(port),
-			hostname: hostname,
-			signal: ac.signal,
-			onListen({ port, hostname }) {
-				const startupTime = Date.now() - startTime;
-				logger.info(
-					`✅ Server started at http://${hostname}:${port} 🚀`,
-				);
-				logger.info(
-					`startup took ${startupTime} ms ⏰`,
-				);
-			},
-		}, app.fetch);
 
-		server.finished.then(() => logger.info("Server closed ⚡️"));
-	} catch (error) {
-		logger.error("❌ Error starting server:", error);
-		closeServer(ac, 1);
-		throw error;
-	}
+	const server = Deno.serve({
+		port: Number(port),
+		hostname: hostname,
+		signal: ac.signal,
+		onListen({ port, hostname }) {
+			const startupTime = Date.now() - startTime;
+			logger.info(
+				`✅ Server started at http://${hostname}:${port} 🚀`,
+			);
+			logger.info(
+				`startup took ${startupTime} ms ⏰`,
+			);
+		},
+	}, app.fetch);
+
+	server.finished.then(() => logger.info("Server closed ⚡️"));
 }
