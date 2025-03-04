@@ -7,6 +7,7 @@ import { secureHeaders } from "hono/secure-headers";
 import { Logger, LogLevel } from "@zilla/logger";
 import { connectIgdb } from "./utils/igdb.ts";
 import { closeServer, startServer } from "./utils/server.ts";
+import { igdbAuth } from "./api/middleware/igdbAuth.ts";
 
 export const logger = new Logger();
 
@@ -55,6 +56,9 @@ async function main() {
 
 	// Enable secure headers
 	app.use(secureHeaders());
+
+	// Ensure IGDB authentication
+	app.use(igdbAuth());
 
 	// Register routes
 	setupRoutes(app);
