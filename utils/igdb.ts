@@ -119,5 +119,5 @@ export async function ensureValidIgdbToken(): Promise<boolean> {
 
 	await tokenRefreshPromise;
 
-	return true;
+	return isIgdbTokenValid();
 }
