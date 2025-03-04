@@ -1,5 +1,5 @@
 import { getEnv, setEnv } from "../config/config.ts";
-import { logger } from "../main.ts";
+import { logger } from "./logger.ts";
 
 // Token refresh mutex to prevent concurrent token refreshes
 let tokenRefreshPromise: Promise<void> | null = null;
@@ -87,16 +87,16 @@ export function isIgdbTokenValid(): boolean {
  * Uses a mutex pattern to prevent concurrent token refreshes when
  * multiple requests detect an expired token simultaneously.
  */
-export async function ensureValidIgdbToken(): Promise<void> {
+export async function ensureValidIgdbToken(): Promise<boolean> {
 	if (isIgdbTokenValid()) {
-		return;
+		return true;
 	}
 
 	if (tokenRefreshPromise) {
 		try {
 			await tokenRefreshPromise;
 			if (isIgdbTokenValid()) {
-				return;
+				return true;
 			}
 		} catch (error) {
 			logger.warn(
@@ -118,4 +118,6 @@ export async function ensureValidIgdbToken(): Promise<void> {
 	})();
 
 	await tokenRefreshPromise;
+
+	return true;
 }

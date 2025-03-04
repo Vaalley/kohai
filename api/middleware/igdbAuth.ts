@@ -1,6 +1,6 @@
 import { Context, Next } from "hono";
-import { ensureValidIgdbToken, isIgdbTokenValid } from "../../utils/igdb.ts";
-import { logger } from "../../main.ts";
+import { ensureValidIgdbToken } from "../../utils/igdb.ts";
+import { logger } from "../../utils/logger.ts";
 
 /**
  * IGDB authentication middleware.
@@ -15,10 +15,7 @@ export function igdbAuth() {
 	return async (c: Context, next: Next) => {
 		try {
 			// Check and refresh token if needed
-			await ensureValidIgdbToken();
-
-			// If we get here, we should have a valid token
-			if (!isIgdbTokenValid()) {
+			if (!await ensureValidIgdbToken()) {
 				logger.error(
 					"Failed to obtain valid IGDB token after refresh attempt",
 				);

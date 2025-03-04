@@ -1,22 +1,16 @@
 import { Hono } from "hono";
-import { getEnv, isProduction } from "./config/config.ts";
+import { getEnv } from "./config/config.ts";
 import { connectMongo } from "./db/mongo.ts";
 import { setupRoutes } from "./api/routes.ts";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
-import { Logger, LogLevel } from "@zilla/logger";
 import { connectIgdb } from "./utils/igdb.ts";
 import { closeServer, startServer } from "./utils/server.ts";
-import { igdbAuth } from "./api/middleware/igdbAuth.ts";
-
-export const logger = new Logger();
+import { logger } from "./utils/logger.ts";
 
 // Main entry point
 async function main() {
 	const startTime = Date.now();
-
-	// Set up logger
-	Logger.level = isProduction() ? LogLevel.INFO : LogLevel.DEBUG;
 
 	// Create a new AbortController for the server
 	const ac = new AbortController();
@@ -56,9 +50,6 @@ async function main() {
 
 	// Enable secure headers
 	app.use(secureHeaders());
-
-	// Ensure IGDB authentication
-	app.use(igdbAuth());
 
 	// Register routes
 	setupRoutes(app);

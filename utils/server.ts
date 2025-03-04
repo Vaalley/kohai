@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { logger } from "../main.ts";
+import { logger } from "./logger.ts";
 
 /**
  * Starts a Hono server with the given app, port, hostname, and AbortController.

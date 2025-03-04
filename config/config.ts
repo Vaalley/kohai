@@ -1,5 +1,5 @@
 import "jsr:@std/dotenv/load";
-import { logger } from "../main.ts";
+import { logger } from "../utils/logger.ts";
 
 /**
  * Retrieves the value of an environment variable.
