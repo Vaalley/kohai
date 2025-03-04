@@ -1,7 +1,5 @@
 import "jsr:@std/dotenv/load";
-import { Logger } from "@zilla/logger";
-
-const logger = new Logger();
+import { logger } from "../utils/logger.ts";
 
 /**
  * Retrieves the value of an environment variable.
@@ -21,6 +19,30 @@ export function getEnv(key: string, defaultValue: string = ""): string {
 	}
 
 	return value;
+}
+
+/**
+ * Sets the value of an environment variable.
+ *
+ * @param key - The name of the environment variable to set.
+ * @param value - The value to assign to the environment variable.
+ */
+export function setEnv(key: string, value: string) {
+	if (!key.trim()) {
+		logger.warn(
+			`⚠️ Warning: Attempting to set env variable with empty key`,
+		);
+		return;
+	}
+
+	if (value.trim() == "") {
+		logger.warn(
+			`⚠️ Warning: Attempting to set env variable \`${key}\` with empty value`,
+		);
+		return;
+	}
+
+	Deno.env.set(key, value);
 }
 
 /**

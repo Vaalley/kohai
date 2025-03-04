@@ -8,11 +8,10 @@ import {
 	register,
 } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
-import { Logger } from "@zilla/logger";
 import { zValidator } from "../utils/validator-wrapper.ts";
 import { jwtAuth } from "./middleware/jwtAuth.ts";
-
-const logger = new Logger();
+import { logger } from "../utils/logger.ts";
+import { igdbAuth } from "./middleware/igdbAuth.ts";
 
 // Register routes
 export function setupRoutes(app: Hono) {
@@ -42,6 +41,10 @@ export function setupRoutes(app: Hono) {
 	const jwt = app.basePath("/jwt").use(jwtAuth());
 	jwt.get("/", (c: Context) => {
 		return c.json({ message: "You are authorized!" });
+	});
+
+	app.get("/igdb", igdbAuth(), (c: Context) => {
+		return c.json({ message: "Hello, World!" });
 	});
 
 	//  ------------------------
