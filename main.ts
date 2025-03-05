@@ -12,25 +12,20 @@ import { logger } from "./utils/logger.ts";
 async function main() {
 	const startTime = Date.now();
 
-	// Connect to MongoDB
+	// Connect to MongoDB and IGDB simultaneously
 	try {
-		await connectMongo();
+		await Promise.all([
+			connectMongo().catch(error => {
+				logger.error("❌ Error connecting to MongoDB:", error);
+				throw new Error("MongoDB connection failed");
+			}),
+			connectIgdb().catch(error => {
+				logger.error("❌ Error connecting to IGDB:", error);
+				throw new Error("IGDB connection failed");
+			})
+		]);
 	} catch (error) {
-		logger.error(
-			"❌ Error connecting to MongoDB, shutting down server:",
-			error,
-		);
-		closeApp(1);
-	}
-
-	// Connect to IGDB
-	try {
-		await connectIgdb();
-	} catch (error) {
-		logger.error(
-			"❌ Error connecting to IGDB, shutting down server:",
-			error,
-		);
+		logger.error("❌ Error connecting to services, shutting down server:", error);
 		closeApp(1);
 	}
 
