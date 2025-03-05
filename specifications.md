@@ -3,8 +3,8 @@
 ## 1. Project Overview
 
 Kohai is a web application that enables users to associate descriptive words
-with movies and video games, creating a crowd-sourced tagging system. Users can
-view aggregated popular tags for each piece of media, providing an organic,
+with video games, creating a crowdsourced tagging system. Users can view
+aggregated popular tags for each piece of media, providing an organic,
 community-driven description system.
 
 ## 2. Core Features
@@ -17,25 +17,26 @@ community-driven description system.
 
 ### B. Media Integration
 
-- Movie database integration using external API (recommended: TMDB API)
 - Video game database integration using external API (recommended: IGDB API)
-- Unified search interface for both movies and games
+- Optional: Movie database integration using external API (recommended: OMDB API
+  / TMDB API)
+- Unified search interface for all media types
 
 ### C. Tagging System
 
 - Users can add up to 3 descriptive words per media item
 - Word validation system to ensure quality (no duplicates, profanity filter)
 - Real-time aggregation of popular tags
-- Visual representation of tag popularity
+- Visual representation of tag popularity when visiting a media item's page
 
 Example flow:
 
-1. When a user tags the movie "The Matrix" with ["cyberpunk", "action",
-   "philosophical"]
+1. When a user tags the game "Red Dead Redemption 2" with ["story", "action",
+   "crime"]
    - A UserContribution record is created to track this specific user's tags
    - This enables viewing user's tagging history and enforcing the 3-tag limit
-2. The system then updates the MediaTag record for "The Matrix"
-   - If "cyberpunk" was already used by 5 other users, its count increases to 6
+2. The system then updates the MediaTag record for "Red Dead Redemption 2"
+   - If "story" was already used by 5 other users, its count increases to 6
    - The user's ID is added to the list of users who used each tag
    - This aggregated view powers the tag popularity visualization
 
@@ -44,19 +45,19 @@ Example flow:
 ### A. Database (MongoDB)
 
 - Initial deployment on MongoDB Atlas
-- Designed for potential migration to self-hosted solution
+- Potential migration to self-hosted solution
 - Collections structure:
   - Users (see user.ts for schema)
   - MediaTags (see mediaTag.ts for schema)
   - UserContributions (see userContribution.ts for schema)
 
-Example collections state for "The Matrix" scenario:
+Example collections state for "Red Dead Redemption 2" scenario:
 
 ```json
 // users collection
 {
   "_id": ObjectId("507f1f77bcf86cd799439011"),
-  "username": "moviefan123",
+  "username": "gamefan123",
   "email": "fan@example.com",
   "password": "<hashed_password>",
   "created_at": ISODate("2025-02-26T09:16:20Z"),
@@ -68,8 +69,8 @@ Example collections state for "The Matrix" scenario:
   "_id": ObjectId("507f1f77bcf86cd799439012"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
   "mediaId": ObjectId("507f1f77bcf86cd799439013"),
-  "mediaType": "movie",
-  "tags": ["cyberpunk", "action", "philosophical"],
+  "mediaType": "game",
+  "tags": ["story", "action", "crime"],
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
@@ -78,10 +79,10 @@ Example collections state for "The Matrix" scenario:
 {
   "_id": ObjectId("507f1f77bcf86cd799439013"),
   "mediaId": ObjectId("507f1f77bcf86cd799439013"),
-  "mediaType": "movie",
+  "mediaType": "game",
   "tags": [
     {
-      "tag": "cyberpunk",
+      "tag": "story",
       "count": 6,
       "users": [ObjectId("507f1f77bcf86cd799439011"), /* ... other user IDs */]
     },
@@ -91,7 +92,7 @@ Example collections state for "The Matrix" scenario:
       "users": [ObjectId("507f1f77bcf86cd799439011")]
     },
     {
-      "tag": "philosophical",
+      "tag": "crime",
       "count": 1,
       "users": [ObjectId("507f1f77bcf86cd799439011")]
     }
@@ -124,14 +125,6 @@ Example collections state for "The Matrix" scenario:
 
 ## 4. External API Integration
 
-### A. Movie API Integration
-
-- TMDB API implementation
-- Required endpoints:
-- Movie search
-- Movie details
-- Movie images
-
 ### B. Video Game API Integration
 
 - IGDB API implementation
@@ -154,6 +147,8 @@ Example collections state for "The Matrix" scenario:
 
 - Page load time < 2 seconds
 - API response time < 500ms
+- Server startup time < 5 seconds (includes connecting to database and external
+  APIs, setting up the app, the routes, global middlewares)
 - Support for concurrent users
 - Efficient caching strategy
 - Optimized database queries

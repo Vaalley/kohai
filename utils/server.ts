@@ -9,49 +9,42 @@ import { logger } from "./logger.ts";
  * @param port - The port number to listen on.
  * @param hostname - The hostname to listen on.
  * @param startTime - The time the server started, for logging purposes.
+ *
+ * @returns The server object.
  */
 export function startServer(
-	ac: AbortController,
 	app: Hono,
 	port: string,
 	hostname: string,
 	startTime: number,
-) {
+): Deno.HttpServer {
 	logger.info("🔄 Starting server... 🎛️");
 
 	const server = Deno.serve({
 		port: Number(port),
 		hostname: hostname,
-		signal: ac.signal,
 		onListen({ port, hostname }) {
-			const startupTime = Date.now() - startTime;
 			logger.info(
 				`✅ Server started at http://${hostname}:${port} 🚀`,
 			);
 			logger.info(
-				`startup took ${startupTime} ms ⏰`,
+				`⏲️ Server startup took ${
+					Date.now() - startTime
+				} ms ⏰`,
 			);
 		},
 	}, app.fetch);
 
-	server.finished.then(() => logger.info("Server closed ⚡️"));
+	return server;
 }
 
 /**
- * Closes the server by aborting the given AbortController.
+ * Closes the server/app by exiting the process with the given exit code.
  *
- * @param ac - The AbortController to abort, which will shut down the server.
- * @param exitCode - Optional exit code to terminate the process after closing the server.
+ * @param exitCode - Optional exit code to terminate the process. Defaults to 0.
+ * @returns void
  */
-export function closeServer(ac: AbortController, exitCode?: number) {
-	logger.info("🚨 Closing server...");
-	ac.abort();
-
-	// If exitCode is provided, exit the process after a short delay
-	if (exitCode !== undefined) {
-		// Exit process with error code after a short delay to allow logs to be written
-		setTimeout(() => {
-			Deno.exit(exitCode);
-		}, 1000);
-	}
+export function closeApp(exitCode: number = 0) {
+	logger.info(`🚨 Closing server with exit code ${exitCode}`);
+	Deno.exit(exitCode);
 }
