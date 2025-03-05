@@ -3,7 +3,7 @@
 ## 1. Project Overview
 
 Kohai is a web application that enables users to associate descriptive words
-with video games, creating a crowd-sourced tagging system. Users can view
+with video games, creating a crowdsourced tagging system. Users can view
 aggregated popular tags for each piece of media, providing an organic,
 community-driven description system.
 
@@ -18,7 +18,7 @@ community-driven description system.
 ### B. Media Integration
 
 - Video game database integration using external API (recommended: IGDB API)
-- optional: Movie database integration using external API (recommended: OMDB API
+- Optional: Movie database integration using external API (recommended: OMDB API
   / TMDB API)
 - Unified search interface for all media types
 
@@ -148,7 +148,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 - Page load time < 2 seconds
 - API response time < 500ms
 - Server startup time < 5 seconds (includes connecting to database and external
-  APIs + setting up routes etc.)
+  APIs, setting up the app, the routes, global middlewares)
 - Support for concurrent users
 - Efficient caching strategy
 - Optimized database queries
