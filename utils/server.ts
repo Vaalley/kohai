@@ -24,12 +24,13 @@ export function startServer(
 		hostname: hostname,
 		signal: ac.signal,
 		onListen({ port, hostname }) {
-			const startupTime = Date.now() - startTime;
 			logger.info(
 				`✅ Server started at http://${hostname}:${port} 🚀`,
 			);
 			logger.info(
-				`startup took ${startupTime} ms ⏰`,
+				`⏲️ Server startup took ${
+					Date.now() - startTime
+				} ms ⏰`,
 			);
 		},
 	}, app.fetch);

@@ -12,6 +12,7 @@ let tokenRefreshPromise: Promise<void> | null = null;
  * the environment variable `IGDB_ACCESS_TOKEN`.
  */
 export async function connectIgdb() {
+	const startTime = Date.now();
 	logger.info("🔄 Attempting IGDB connection... 🎮");
 	const response = await fetch(
 		`https://id.twitch.tv/oauth2/token`,
@@ -47,6 +48,7 @@ export async function connectIgdb() {
 	setEnv("IGDB_EXPIRES_AT", expiresAt.toString());
 
 	logger.info("✅ Connected to IGDB 🔗");
+	logger.info(`⏲️ IGDB connection time: ${Date.now() - startTime}ms`);
 }
 
 /**

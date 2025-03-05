@@ -12,8 +12,9 @@ let client: MongoClient;
  * @returns A promise that resolves when the connection is established.
  */
 export async function connectMongo(): Promise<void> {
-	const uri = getEnv("MONGODB_URI");
+	const startTime = Date.now();
 	logger.info(`🔄 Attempting MongoDB connection... 🗃️`);
+	const uri = getEnv("MONGODB_URI");
 
 	client = await MongoClient.connect(uri, {
 		serverSelectionTimeoutMS: 10000,
@@ -23,6 +24,7 @@ export async function connectMongo(): Promise<void> {
 	// Verify connection
 	await isConnected();
 	logger.info("✅ Successfully connected to MongoDB! 🔗");
+	logger.info(`⏲️ MongoDB connection time: ${Date.now() - startTime}ms`);
 }
 
 /**
