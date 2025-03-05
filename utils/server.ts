@@ -9,6 +9,8 @@ import { logger } from "./logger.ts";
  * @param port - The port number to listen on.
  * @param hostname - The hostname to listen on.
  * @param startTime - The time the server started, for logging purposes.
+ *
+ * @returns The server object.
  */
 export function startServer(
 	ac: AbortController,
@@ -35,7 +37,7 @@ export function startServer(
 		},
 	}, app.fetch);
 
-	server.finished.then(() => logger.info("Server closed ⚡️"));
+	return server;
 }
 
 /**
