@@ -13,7 +13,6 @@ import { logger } from "./logger.ts";
  * @returns The server object.
  */
 export function startServer(
-	ac: AbortController,
 	app: Hono,
 	port: string,
 	hostname: string,
@@ -24,7 +23,6 @@ export function startServer(
 	const server = Deno.serve({
 		port: Number(port),
 		hostname: hostname,
-		signal: ac.signal,
 		onListen({ port, hostname }) {
 			logger.info(
 				`✅ Server started at http://${hostname}:${port} 🚀`,
@@ -41,13 +39,12 @@ export function startServer(
 }
 
 /**
- * Closes the server by aborting the given AbortController.
+ * Closes the server/app by exiting the process with the given exit code.
  *
- * @param ac - The AbortController to abort, which will shut down the server.
- * @param exitCode - Optional exit code to terminate the process after closing the server.
+ * @param exitCode - Optional exit code to terminate the process. Defaults to 0.
+ * @returns void
  */
-export function closeServer(ac: AbortController, exitCode: number = 0) {
-	logger.info(`🚨 Closing server with exit code ${exitCode}...`);
-	ac.abort();
+export function closeApp(exitCode: number = 0) {
+	logger.info(`🚨 Closing server with exit code ${exitCode}`);
 	Deno.exit(exitCode);
 }

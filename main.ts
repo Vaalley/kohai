@@ -5,15 +5,12 @@ import { setupRoutes } from "./api/routes.ts";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { connectIgdb } from "./utils/igdb.ts";
-import { closeServer, startServer } from "./utils/server.ts";
+import { closeApp, startServer } from "./utils/server.ts";
 import { logger } from "./utils/logger.ts";
 
 // Main entry point
 async function main() {
 	const startTime = Date.now();
-
-	// Create a new AbortController for the server
-	const abortController = new AbortController();
 
 	// Connect to MongoDB
 	try {
@@ -23,8 +20,7 @@ async function main() {
 			"❌ Error connecting to MongoDB, shutting down server:",
 			error,
 		);
-		closeServer(abortController, 1);
-		return;
+		closeApp(1);
 	}
 
 	// Connect to IGDB
@@ -35,8 +31,7 @@ async function main() {
 			"❌ Error connecting to IGDB, shutting down server:",
 			error,
 		);
-		closeServer(abortController, 1);
-		return;
+		closeApp(1);
 	}
 
 	// Create a new Hono app
@@ -60,10 +55,10 @@ async function main() {
 
 	// Start the server
 	try {
-		startServer(abortController, app, PORT, HOSTNAME, startTime);
+		startServer(app, PORT, HOSTNAME, startTime);
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
-		closeServer(abortController, 1);
+		closeApp(1);
 	}
 }
 
