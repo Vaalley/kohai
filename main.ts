@@ -13,7 +13,7 @@ async function main() {
 	const startTime = Date.now();
 
 	// Create a new AbortController for the server
-	const ac = new AbortController();
+	const abortController = new AbortController();
 
 	// Connect to MongoDB
 	try {
@@ -23,7 +23,7 @@ async function main() {
 			"❌ Error connecting to MongoDB, shutting down server:",
 			error,
 		);
-		closeServer(ac, 1);
+		closeServer(abortController, 1);
 		return;
 	}
 
@@ -35,12 +35,16 @@ async function main() {
 			"❌ Error connecting to IGDB, shutting down server:",
 			error,
 		);
-		closeServer(ac, 1);
+		closeServer(abortController, 1);
 		return;
 	}
 
 	// Create a new Hono app
 	const app = new Hono();
+
+	// Get port and hostname from environment
+	const PORT = getEnv("PORT", "3333");
+	const HOSTNAME = getEnv("HOSTNAME", "0.0.0.0");
 
 	// Enable CORS
 	app.use(cors({
@@ -54,16 +58,12 @@ async function main() {
 	// Register routes
 	setupRoutes(app);
 
-	// Get port and hostname from environment and if not set, default to 3333 and 127.0.0.1 respectively
-	const PORT = getEnv("PORT", "3333");
-	const HOSTNAME = getEnv("HOSTNAME", "0.0.0.0");
-
 	// Start the server
 	try {
-		startServer(ac, app, PORT, HOSTNAME, startTime);
+		startServer(abortController, app, PORT, HOSTNAME, startTime);
 	} catch (error) {
 		logger.error("❌ Error starting server:", error);
-		closeServer(ac, 1);
+		closeServer(abortController, 1);
 	}
 }
 

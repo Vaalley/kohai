@@ -43,15 +43,8 @@ export function startServer(
  * @param ac - The AbortController to abort, which will shut down the server.
  * @param exitCode - Optional exit code to terminate the process after closing the server.
  */
-export function closeServer(ac: AbortController, exitCode?: number) {
-	logger.info("🚨 Closing server...");
+export function closeServer(ac: AbortController, exitCode: number = 0) {
+	logger.info(`🚨 Closing server with exit code ${exitCode}...`);
 	ac.abort();
-
-	// If exitCode is provided, exit the process after a short delay
-	if (exitCode !== undefined) {
-		// Exit process with error code after a short delay to allow logs to be written
-		setTimeout(() => {
-			Deno.exit(exitCode);
-		}, 1000);
-	}
+	Deno.exit(exitCode);
 }
