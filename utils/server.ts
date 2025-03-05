@@ -17,7 +17,7 @@ export function startServer(
 	port: string,
 	hostname: string,
 	startTime: number,
-) {
+): Deno.HttpServer {
 	logger.info("🔄 Starting server... 🎛️");
 
 	const server = Deno.serve({
