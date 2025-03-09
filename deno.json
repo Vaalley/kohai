@@ -1,18 +1,19 @@
 {
-	"tasks": {
-		"dev": "deno -A --watch main.ts",
-		"test": "deno test test/ --parallel -A"
-	},
-	"imports": {
-		"@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
-		"@hono/zod-validator": "npm:@hono/zod-validator@^0.4.3",
-		"@zilla/logger": "jsr:@zilla/logger@^1.0.0",
-		"hono": "jsr:@hono/hono@^4.7.2",
-		"mongodb": "npm:mongodb@^6.13.0",
-		"zod": "npm:zod@^3.24.2"
-	},
-	"fmt": {
-		"useTabs": true,
-		"indentWidth": 8
-	}
+        "tasks": {
+                "dev": "deno -A --watch main.ts",
+                "test": "deno test test/ --parallel -A",
+                "update": "deno outdated --update --latest"
+        },
+        "imports": {
+                "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
+                "@hono/zod-validator": "npm:@hono/zod-validator@^0.4.3",
+                "@zilla/logger": "jsr:@zilla/logger@^1.0.1",
+                "hono": "jsr:@hono/hono@^4.7.4",
+                "mongodb": "npm:mongodb@^6.14.2",
+                "zod": "npm:zod@^3.24.2"
+        },
+        "fmt": {
+                "useTabs": true,
+                "indentWidth": 8
+        }
 }
