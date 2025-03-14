@@ -11,7 +11,7 @@
 - [ ] Cahier des charges (à remettre 6 semaines à 30 jours avant la soutenance)
 - [ ] Projet web complet (à remettre 3 jours ouvrés avant la soutenance)
 - [ ] Support de présentation pour la soutenance orale
-- [ ] Déposer le code source sur l'IDE 3WA
+- [ ] Déposer le code source sur l'IDE 3WA OU sur un dépôt Git public
 - [ ] Vérifier que le projet est fonctionnel sur l'IDE
 
 ## BLOC 1 : Préparer la Réalisation d'un Site ou d'une Application Web
