@@ -28,9 +28,7 @@ export function startServer(
 				`✅ Server started at http://${hostname}:${port} 🚀`,
 			);
 			logger.info(
-				`⏲️ Server startup took ${
-					Date.now() - startTime
-				} ms ⏰`,
+				`⏲️ Server startup took ${Date.now() - startTime} ms ⏰`,
 			);
 		},
 	}, app.fetch);
