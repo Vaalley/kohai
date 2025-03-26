@@ -7,7 +7,49 @@ with video games, creating a crowdsourced tagging system. Users can view
 aggregated popular tags for each piece of media, providing an organic,
 community-driven description system.
 
+### A. Target Audience
+
+- Gaming enthusiasts aged 16-45
+- Content creators looking for descriptive metadata
+- Casual gamers seeking game recommendations based on descriptive attributes
+
+### B. Accessibility Requirements
+
+- Color contrast ratios meeting accessibility standards
+- Alternative text for all images
+- A11Y checklist compliance(https://www.a11yproject.com/checklist/)
+
+### C. SEO Strategy
+
+- Semantic HTML structure
+- URL structure optimization
+
+### D. Project Timeline and Budget
+
+- Development timeline: 9 months (January 2025 - September 2025)
+- Launch date: September 22, 2025
+- Budget allocation:
+  - Development: 75%
+  - Design: 20%
+  - Testing: 5%
+
 ## 2. Core Features
+
+### Project Organization
+
+- Team structure:
+  - Frontend developer (Mark): UI/UX implementation, responsive design
+  - Backend developer (Léo): API development, database management
+  - Project manager (Sophie): Requirements gathering, client communication
+  - QA specialist (Pierre): Testing, quality assurance
+- Project tracking:
+  - Weekly sprint planning and retrospectives
+  - Kanban board for task management
+  - Github Issues for technical task management
+  - Key performance indicators:
+    - Bug resolution time
+    - Sprint velocity
+    - New feature development time
 
 ### A. User Management
 
@@ -18,9 +60,7 @@ community-driven description system.
 ### B. Media Integration
 
 - Video game database integration using external API (recommended: IGDB API)
-- Optional: Movie database integration using external API (recommended: OMDB API
-  / TMDB API)
-- Unified search interface for all media types
+- Unified search interface for all media types (If multiple)
 
 ### C. Tagging System
 
@@ -105,43 +145,80 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 - RESTful API architecture
 - Endpoints:
-- Authentication (/auth/*)
-- Media management (/media/*)
-- Tag management (/tags/*)
-- User management (/users/*)
+  - Authentication (/auth/*)
+  - Media management (/media/*)
+  - Tag management (/tags/*)
+  - User management (/users/*)
 - Rate limiting and caching system
 - External API integration layer
+- Code organization:
+  - Consistent camelCase naming convention
+  - JSDoc documentation for all functions and classes
+  - Modular structure with clear separation of concerns
+- Security implementations:
+  - Password hashing using bcrypt (10+ salt rounds)
+  - JWT for authentication with appropriate expiration
+  - Input validation and sanitization
+  - CSRF protection
 
 ### C. Frontend (SvelteKit + Native CSS)
 
+- HTML structure:
+  - Semantic HTML5 elements (header, nav, main, section, article, footer)
+  - ARIA attributes for enhanced accessibility
+  - W3C validation compliance
 - Atomic Design Structure:
-- Atoms: buttons, inputs, tags, icons
-- Molecules: search bars, tag groups, media cards
-- Organisms: navigation, media details, tag submission forms
-- Templates: layout structures
-- Pages: complete views
-- Responsive design system
+  - Atoms: buttons, inputs, tags, icons
+  - Molecules: search bars, tag groups, media cards
+  - Organisms: navigation, media details, tag submission forms
+  - Templates: layout structures
+  - Pages: complete views
+- CSS implementation:
+  - SCSS as preprocessor
+  - Desktop-first responsive design approach
+  - CSS Grid and Flexbox for layouts
+  - Custom design system
+- Asset optimization:
+  - WebP image format with fallbacks
+  - SVG for icons and simple graphics
+- JavaScript interactivity:
+  - Debounced search functionality
+  - Fetch API for asynchronous server communication
+- Responsive design system:
+  - Breakpoints at 480px, 768px, 1024px, and 1440px
+  - Device testing across mobile, tablet, and desktop
 - Client-side caching strategy
+- Accessibility features:
+  - Focus management
+  - Typography with minimum 16px base font size
+  - Color contrast ratio of at least 4.5:1
 
 ## 4. External API Integration
 
-### B. Video Game API Integration
+### A. Video Game API Integration
 
 - IGDB API implementation
 - Required endpoints:
-- Game search
-- Game details
-- Game cover images
+  - Game search
+  - Game details
+  - Game cover images
+- Error handling and fallback mechanisms
+- Caching strategy for API responses
 
 ## 5. Security Considerations
 
 - HTTPS enforcement
-- API key security
-- Input sanitization
-- Rate limiting
-- CORS policy
-- Password hashing
-- Session management
+- API key security with environment variables
+- Input sanitization and validation
+- CORS policy configuration
+- Password hashing using bcrypt
+- Session management with secure cookies
+- XSS prevention
+- SQL injection protection
+- CSRF token implementation
+- Security headers configuration
+- Regular security audits
+- Dependency vulnerability scanning
 
 ## 6. Performance Requirements
 
@@ -158,13 +235,27 @@ Example collections state for "Red Dead Redemption 2" scenario:
 - Version control using Git
 - 2 repositories: one for the backend, one for the frontend
 - Feature branch workflow
-- CI/CD pipeline (CodeQL from github)
+- CI/CD pipeline (CodeQL, custom deno fmt hook from github)
 - Code review process
 
-## 8. Future Considerations
+## 8. Innovation and Research
+
+### A. Eco-Design Considerations
+
+- Server-side rendering to reduce client-side processing
+- Optimized asset loading and caching
+- Efficient database queries to minimize server load
+- Reduced JavaScript bundle size
+
+### B. Security Enhancements
+
+- Automated security scanning in CI/CD pipeline
+- Privacy-focused data handling
+
+## 9. Future Considerations
 
 - Migration plan for self-hosted MongoDB
 - Scalability strategy
-- Caching system
+- Caching system enhancement
 - Backup and recovery procedures
 - Analytics implementation (Posthog?)
