@@ -3,15 +3,15 @@
 ## Préparation Générale
 
 - [ ] Lire le guide du candidat au jury d'évaluation
-- [ ] Noter la date de convocation (6 semaines avant le passage)
-- [ ] Préparer une pièce d'identité valide pour le jour de l'évaluation
+- [x] Noter la date de convocation (6 semaines avant le passage)
+- [x] Préparer une pièce d'identité valide pour le jour de l'évaluation
 
 ## Documentation à Préparer
 
 - [ ] Cahier des charges (à remettre 6 semaines à 30 jours avant la soutenance)
 - [ ] Projet web complet (à remettre 3 jours ouvrés avant la soutenance)
 - [ ] Support de présentation pour la soutenance orale
-- [ ] Déposer le code source sur l'IDE 3WA OU sur un dépôt Git public
+- [x] Déposer le code source sur l'IDE 3WA OU sur un dépôt Git public
 - [ ] Vérifier que le projet est fonctionnel sur l'IDE
 
 ## BLOC 1 : Préparer la Réalisation d'un Site ou d'une Application Web
@@ -19,18 +19,18 @@
 ### Documentation et Contexte
 
 - [ ] Identifier et documenter toutes les informations nécessaires:
-  - [ ] Public cible
-  - [ ] Exigences d'accessibilité
+  - [x] Public cible
+  - [x] Exigences d'accessibilité
   - [ ] Stratégie de référencement
-  - [ ] Mesures de sécurité
+  - [x] Mesures de sécurité
   - [ ] Expérience de navigation attendue
-  - [ ] Délais cibles
-  - [ ] Budget
+  - [x] Délais cibles
+  - [x] Budget
 
 ### Spécifications Techniques
 
-- [ ] Traduire les besoins du client en spécifications techniques
-- [ ] Identifier et justifier les technologies et langages appropriés
+- [x] Traduire les besoins du client en spécifications techniques
+- [x] Identifier et justifier les technologies et langages appropriés
 - [ ] Documenter les choix techniques de manière argumentée
 
 ### Veille et Innovation
@@ -43,9 +43,9 @@
 
 ### Organisation du Projet
 
-- [ ] Définir le périmètre d'intervention de chaque membre d'équipe
+- [x] Définir le périmètre d'intervention de chaque membre d'équipe
 - [ ] Créer un rétroplanning avec points d'étape
-- [ ] Sélectionner et mettre en place des outils collaboratifs (Git, Trello,
+- [x] Sélectionner et mettre en place des outils collaboratifs (Git, Trello,
       Slack, etc.)
 - [ ] Définir des indicateurs de suivi de projet pertinents
 
@@ -63,15 +63,11 @@
 - [ ] Intégrer au moins une police personnalisée
 - [ ] Mettre en œuvre une structure responsive moderne (flexbox, grid layout)
 - [ ] Utiliser au moins un préprocesseur CSS
-- [ ] Implémenter l'approche mobile-first avec media queries
+- [ ] Implémenter l'approche Desktop-first avec media queries
 - [ ] Vérifier l'accessibilité de la typographie
 
 ### Interactivité JavaScript
 
-- [ ] Développer des outils de manipulation de la page web
-  - [ ] Sélecteurs DOM
-  - [ ] Timers
-  - [ ] Gestion d'événements
 - [ ] Implémenter au moins une fonctionnalité de communication asynchrone avec
       un serveur
 
@@ -87,21 +83,21 @@
 ### Architecture et Structure
 
 - [ ] Implémenter un motif d'architecture logicielle (ex: MVC)
-- [ ] Organiser les fichiers selon une structure cohérente
-- [ ] Utiliser une méthode d'écriture constante (camelCase, snake_case, etc.)
-- [ ] Commenter et documenter le code
+- [x] Organiser les fichiers selon une structure cohérente
+- [x] Utiliser une méthode d'écriture constante (camelCase, snake_case, etc.)
+- [x] Commenter et documenter le code
 
 ### Fonctionnalités
 
-- [ ] Développer des interactions utilisateur-serveur via formulaires et liens
+- [x] Développer des interactions utilisateur-serveur via formulaires et liens
       (requêtes GET/POST)
 - [ ] Créer une interface d'administration complète (CRUD)
-- [ ] Implémenter les fonctionnalités d'inscription, connexion et déconnexion
-- [ ] Mettre en place un hachage sécurisé des mots de passe (bcrypt)
+- [x] Implémenter les fonctionnalités d'inscription, connexion et déconnexion
+- [x] Mettre en place un hachage sécurisé des mots de passe (bcrypt)
 
 ### Sécurité et Maintenance
 
-- [ ] Vérifier l'absence de failles de sécurité (XSS, SQL injection)
+- [x] Vérifier l'absence de failles de sécurité (XSS, SQL injection)
 - [ ] S'assurer qu'il n'y a pas d'erreurs 500
 - [ ] Documenter les procédures de maintenance
 - [ ] Identifier les axes d'amélioration et d'évolutivité
@@ -117,8 +113,6 @@
 
 - [ ] Site responsive sur tous les appareils
 - [ ] Nommage cohérent des variables/URLs/champs
-- [ ] Ne pas utiliser exclusivement Bootstrap ou équivalent
-- [ ] Éviter d'utiliser Symfony ou Laravel sans maîtrise
 - [ ] Code organisé, commenté et indenté
 - [ ] Mots de passe sécurisés (bcrypt, pas de MD5/SHA1)
 - [ ] Espace d'administration avec au moins un CRUD complet
@@ -127,7 +121,7 @@
 
 ## Dates Importantes
 
-- Date de convocation: _**/**_/______
-- Date limite de remise du cahier des charges: _**/**_/______
-- Date limite de remise du projet: _**/**_/______
-- Date et heure de la soutenance: _**/**_/______ à _**h**_
+- Date de convocation/examen: 15/10/2025
+- Date limite de remise du cahier des charges: 15/08/2025
+- Date limite de remise du projet: 10/10/2025
+- Date et heure de la soutenance: 15/10/2025 à ??h??
