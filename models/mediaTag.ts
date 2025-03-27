@@ -9,7 +9,7 @@ export const MediaTagSchema = z.object({
 		tag: z.string(),
 		count: z.number(),
 		users: z.array(z.instanceof(ObjectId)),
-	})),
+	})).max(3),
 	updated_at: z.date(),
 });
 
