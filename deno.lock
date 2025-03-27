@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@denosaurs/plug@^1.0.6": "1.0.6",
     "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
-    "jsr:@hono/hono@^4.7.4": "4.7.4",
+    "jsr:@hono/hono@^4.7.5": "4.7.5",
     "jsr:@std/assert@*": "0.221.0",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/async@*": "1.0.10",
@@ -18,7 +18,7 @@
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
     "npm:is-what@5": "5.2.0",
-    "npm:mongodb@^6.14.2": "6.14.2",
+    "npm:mongodb@^6.15.0": "6.15.0",
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
@@ -37,8 +37,8 @@
         "jsr:@denosaurs/plug"
       ]
     },
-    "@hono/hono@4.7.4": {
-      "integrity": "c03c9cbe0fbfc4e51f3fee6502a7903aa4f9ef7c2c98635607b15eee14258825"
+    "@hono/hono@4.7.5": {
+      "integrity": "36a7e1b3db8a58e5dc2bd36a76be53346f0966e04c24c635c4d6f58875575b0a"
     },
     "@std/assert@0.221.0": {
       "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a",
@@ -134,8 +134,8 @@
         "whatwg-url"
       ]
     },
-    "mongodb@6.14.2": {
-      "integrity": "sha512-kMEHNo0F3P6QKDq17zcDuPeaywK/YaJVCEQRzPF3TOM/Bl9MFg64YE5Tu7ifj37qZJMhwU1tl2Ioivws5gRG5Q==",
+    "mongodb@6.15.0": {
+      "integrity": "sha512-ifBhQ0rRzHDzqp9jAQP6OwHSH7dbYIQjD3SbJs9YYk9AikKEettW/9s/tbSFDTpXcRbF+u1aLrhHxDFaYtZpFQ==",
       "dependencies": [
         "@mongodb-js/saslprep",
         "bson",
@@ -151,8 +151,8 @@
         "memory-pager"
       ]
     },
-    "tr46@5.0.0": {
-      "integrity": "sha512-tk2G5R2KRwBd+ZN0zaEXpmzdKyOYksXwywulIX95MBODjSzMIuQnQ3m8JxgbhnL1LeVo7lqQKsYa1O3Htl7K5g==",
+    "tr46@5.1.0": {
+      "integrity": "sha512-IUWnUK7ADYR5Sl1fZlO1INDUhVhatWl7BtJWsIhwJ0UAK7ilzzIa8uIqOO/aYVWHZPJkKbEL+362wrzoeRF7bw==",
       "dependencies": [
         "punycode"
       ]
@@ -163,8 +163,8 @@
     "webidl-conversions@7.0.0": {
       "integrity": "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g=="
     },
-    "whatwg-url@14.1.1": {
-      "integrity": "sha512-mDGf9diDad/giZ/Sm9Xi2YcyzaFpbdLpJPr+E9fSkyQ7KpQD4SdFcugkRQYzhmfI4KeV4Qpnn2sKPdo+kmsgRQ==",
+    "whatwg-url@14.2.0": {
+      "integrity": "sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw==",
       "dependencies": [
         "tr46",
         "webidl-conversions"
@@ -177,10 +177,10 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.5",
-      "jsr:@hono/hono@^4.7.4",
+      "jsr:@hono/hono@^4.7.5",
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/zod-validator@~0.4.3",
-      "npm:mongodb@^6.14.2",
+      "npm:mongodb@^6.15.0",
       "npm:zod@^3.24.2"
     ]
   }
