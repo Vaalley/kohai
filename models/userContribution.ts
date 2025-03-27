@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 export const UserContributionSchema = z.object({
 	_id: z.instanceof(ObjectId).optional(),
 	userId: z.instanceof(ObjectId),
-	mediaId: z.instanceof(ObjectId),
+	mediaId: z.string(), // IGDB ID
 	mediaType: z.enum(["video-game", "movie"]),
 	tags: z.array(z.string()).max(3),
 	timestamp: z.date(),
