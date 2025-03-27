@@ -19,8 +19,7 @@ export async function connectIgdb() {
 		{
 			method: "POST",
 			headers: {
-				"User-Agent":
-					"Kohai (https://github.com/Vaalley/kohai)",
+				"User-Agent": "Kohai (https://github.com/Vaalley/kohai)",
 				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},

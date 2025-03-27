@@ -72,7 +72,7 @@ community-driven description system.
 Example flow:
 
 1. When a user tags the game "Red Dead Redemption 2" with ["story", "action",
-   "crime"]
+   "western"]
    - A UserContribution record is created to track this specific user's tags
    - This enables viewing user's tagging history and enforcing the 3-tag limit
 2. The system then updates the MediaTag record for "Red Dead Redemption 2"
@@ -101,16 +101,17 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "email": "fan@example.com",
   "password": "<hashed_password>",
   "created_at": ISODate("2025-02-26T09:16:20Z"),
-  "updated_at": ISODate("2025-02-26T09:16:20Z")
+  "updated_at": ISODate("2025-02-26T09:16:20Z"),
+  "last_login": ISODate("2025-02-26T09:16:20Z")
 }
 
 // userContributions collection
 {
   "_id": ObjectId("507f1f77bcf86cd799439012"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
-  "mediaId": ObjectId("507f1f77bcf86cd799439013"),
+  "mediaId": "34568",
   "mediaType": "game",
-  "tags": ["story", "action", "crime"],
+  "tags": ["story", "action", "western"],
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
@@ -118,7 +119,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 // mediaTags collection
 {
   "_id": ObjectId("507f1f77bcf86cd799439013"),
-  "mediaId": ObjectId("507f1f77bcf86cd799439013"),
+  "mediaId": "34568",
   "mediaType": "game",
   "tags": [
     {
@@ -132,7 +133,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
       "users": [ObjectId("507f1f77bcf86cd799439011")]
     },
     {
-      "tag": "crime",
+      "tag": "western",
       "count": 1,
       "users": [ObjectId("507f1f77bcf86cd799439011")]
     }
