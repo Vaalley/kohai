@@ -73,11 +73,10 @@ Example flow:
 
 1. When a user tags the game "Red Dead Redemption 2" with ["story", "action",
    "western"]
-   - A UserContribution record is created to track this specific user's tags
-   - This enables viewing user's tagging history and enforcing the 3-tag limit
+   - 3 UserContribution records are created to track this specific user's tags
+   - This enables viewing user's tagging history
 2. The system then updates the MediaTag record for "Red Dead Redemption 2"
    - If "story" was already used by 5 other users, its count increases to 6
-   - The user's ID is added to the list of users who used each tag
    - This aggregated view powers the tag popularity visualization
 
 ## 3. Technical Architecture
@@ -100,6 +99,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "username": "gamefan123",
   "email": "fan@example.com",
   "password": "<hashed_password>",
+  "isadmin": false,
   "created_at": ISODate("2025-02-26T09:16:20Z"),
   "updated_at": ISODate("2025-02-26T09:16:20Z"),
   "last_login": ISODate("2025-02-26T09:16:20Z")
@@ -111,7 +111,25 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "userId": ObjectId("507f1f77bcf86cd799439011"),
   "mediaId": "34568",
   "mediaType": "game",
-  "tags": ["story", "action", "western"],
+  "tag": "story",
+  "timestamp": ISODate("2025-02-26T09:16:20Z"),
+  "updated_at": ISODate("2025-02-26T09:16:20Z")
+}
+{
+  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "userId": ObjectId("507f1f77bcf86cd799439011"),
+  "mediaId": "34568",
+  "mediaType": "game",
+  "tag": "action",
+  "timestamp": ISODate("2025-02-26T09:16:20Z"),
+  "updated_at": ISODate("2025-02-26T09:16:20Z")
+}
+{
+  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "userId": ObjectId("507f1f77bcf86cd799439011"),
+  "mediaId": "34568",
+  "mediaType": "game",
+  "tag": "western",
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
@@ -124,18 +142,12 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "tags": [
     {
       "tag": "story",
-      "count": 6,
-      "users": [ObjectId("507f1f77bcf86cd799439011"), /* ... other user IDs */]
     },
     {
       "tag": "action",
-      "count": 1,
-      "users": [ObjectId("507f1f77bcf86cd799439011")]
     },
     {
       "tag": "western",
-      "count": 1,
-      "users": [ObjectId("507f1f77bcf86cd799439011")]
     }
   ],
   "updated_at": ISODate("2025-02-26T09:16:20Z")

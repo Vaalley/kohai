@@ -7,9 +7,7 @@ export const MediaTagSchema = z.object({
 	mediaType: z.enum(["video-game", "movie"]),
 	tags: z.array(z.object({
 		tag: z.string(),
-		count: z.number(),
-		users: z.array(z.instanceof(ObjectId)),
-	})).max(3),
+	})),
 	updated_at: z.date(),
 });
 
