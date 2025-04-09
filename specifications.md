@@ -2,10 +2,8 @@
 
 ## 1. Project Overview
 
-Kohai is a web application that enables users to associate descriptive words
-with video games, creating a crowdsourced tagging system. Users can view
-aggregated popular tags for each piece of media, providing an organic,
-community-driven description system.
+Kohai is a web application that enables users to associate descriptive words with video games, creating a crowdsourced tagging system. Users can view aggregated
+popular tags for each piece of media, providing an organic, community-driven description system.
 
 ### A. Target Audience
 
@@ -37,23 +35,19 @@ community-driven description system.
 
 - Team structure:
   - **Mark (Frontend Developer & Designer)**
-    - _Role:_ UI/UX implementation, responsive design, client-side logic, asset
-      preparation.
+    - _Role:_ UI/UX implementation, responsive design, client-side logic, asset preparation.
     - _Allocated Budget (Dev + Design):_ ~€46,000
     - _Estimated Hours:_ ~610 hours
   - **Léo (Backend Developer)**
-    - _Role:_ API development, database management, server-side logic, external
-      API integration.
+    - _Role:_ API development, database management, server-side logic, external API integration.
     - _Allocated Budget (Development):_ ~€30,000
     - _Estimated Hours:_ ~400 hours
   - **Sophie (Project Manager)**
-    - _Role:_ Requirements gathering, client communication, sprint planning,
-      task management oversight, timeline adherence.
+    - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline adherence.
     - _Allocated Budget:_ (Covered under general project overhead)
     - _Estimated Hours:_ Part-time project oversight.
   - **Pierre (QA Specialist)**
-    - _Role:_ Test plan creation, manual testing execution, bug reporting &
-      tracking, quality assurance checks.
+    - _Role:_ Test plan creation, manual testing execution, bug reporting & tracking, quality assurance checks.
     - _Allocated Budget (Testing):_ ~€4,000
     - _Estimated Hours:_ ~55 hours
 - Project tracking:
@@ -88,8 +82,7 @@ community-driven description system.
 
 Example flow:
 
-1. When a user tags the game "Red Dead Redemption 2" with ["story", "action",
-   "western"]
+1. When a user tags the game "Red Dead Redemption 2" with ["story", "action", "western"]
    - 3 UserContribution records are created to track this specific user's tags
    - This enables viewing user's tagging history
 2. The system then updates the MediaTag record for "Red Dead Redemption 2"
@@ -244,8 +237,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 - Page load time < 2 seconds
 - API response time < 500ms
-- Server startup time < 5 seconds (includes connecting to database and external
-  APIs, setting up the app, the routes, global middlewares)
+- Server startup time < 5 seconds (includes connecting to database and external APIs, setting up the app, the routes, global middlewares)
 - Support for concurrent users
 - Efficient caching strategy
 - Optimized database queries

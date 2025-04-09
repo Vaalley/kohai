@@ -1,12 +1,6 @@
 import { Context, Hono } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
-import {
-	handleTokenRefresh as refreshToken,
-	login,
-	logout,
-	me,
-	register,
-} from "../handlers/auth.ts";
+import { handleTokenRefresh as refreshToken, login, logout, me, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
 import { zValidator } from "../utils/validator-wrapper.ts";
 import { jwtAuth } from "./middleware/jwtAuth.ts";
