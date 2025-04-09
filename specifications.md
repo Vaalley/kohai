@@ -2,10 +2,8 @@
 
 ## 1. Project Overview
 
-Kohai is a web application that enables users to associate descriptive words
-with video games, creating a crowdsourced tagging system. Users can view
-aggregated popular tags for each piece of media, providing an organic,
-community-driven description system.
+Kohai is a web application that enables users to associate descriptive words with video games, creating a crowdsourced tagging system. Users can view aggregated
+popular tags for each piece of media, providing an organic, community-driven description system.
 
 ### A. Target Audience
 
@@ -17,7 +15,7 @@ community-driven description system.
 
 - Color contrast ratios meeting accessibility standards
 - Alternative text for all images
-- A11Y checklist compliance(https://www.a11yproject.com/checklist/)
+- [A11Y checklist compliance](https://www.a11yproject.com/checklist/)
 
 ### C. SEO Strategy
 
@@ -28,20 +26,30 @@ community-driven description system.
 
 - Development timeline: 9 months (January 2025 - September 2025)
 - Launch date: September 22, 2025
-- Budget allocation:
-  - Development: 75%
-  - Design: 20%
-  - Testing: 5%
+- Budget allocation (Total: €80,000):
+  - Development: 75% (€60,000)
+  - Design: 20% (€16,000)
+  - Testing: 5% (€4,000)
 
-## 2. Core Features
-
-### Project Organization
+### E. Project Organization
 
 - Team structure:
-  - Frontend developer (Mark): UI/UX implementation, responsive design
-  - Backend developer (Léo): API development, database management
-  - Project manager (Sophie): Requirements gathering, client communication
-  - QA specialist (Pierre): Testing, quality assurance
+  - **Mark (Frontend Developer & Designer)**
+    - _Role:_ UI/UX implementation, responsive design, client-side logic, asset preparation.
+    - _Allocated Budget (Dev + Design):_ ~€46,000
+    - _Estimated Hours:_ ~610 hours
+  - **Léo (Backend Developer)**
+    - _Role:_ API development, database management, server-side logic, external API integration.
+    - _Allocated Budget (Development):_ ~€30,000
+    - _Estimated Hours:_ ~400 hours
+  - **Sophie (Project Manager)**
+    - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline adherence.
+    - _Allocated Budget:_ (Covered under general project overhead)
+    - _Estimated Hours:_ Part-time project oversight.
+  - **Pierre (QA Specialist)**
+    - _Role:_ Test plan creation, manual testing execution, bug reporting & tracking, quality assurance checks.
+    - _Allocated Budget (Testing):_ ~€4,000
+    - _Estimated Hours:_ ~55 hours
 - Project tracking:
   - Weekly sprint planning
   - Sprint retrospectives at the end of each sprint
@@ -51,6 +59,8 @@ community-driven description system.
     - Bug resolution time
     - Sprint velocity
     - New feature development time
+
+## 2. Core Features
 
 ### A. User Management
 
@@ -72,8 +82,7 @@ community-driven description system.
 
 Example flow:
 
-1. When a user tags the game "Red Dead Redemption 2" with ["story", "action",
-   "western"]
+1. When a user tags the game "Red Dead Redemption 2" with ["story", "action", "western"]
    - 3 UserContribution records are created to track this specific user's tags
    - This enables viewing user's tagging history
 2. The system then updates the MediaTag record for "Red Dead Redemption 2"
@@ -117,7 +126,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
 {
-  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "_id": ObjectId("507f1f77bcf86cd799439014"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
   "mediaId": "34568",
   "mediaType": "game",
@@ -126,7 +135,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
 {
-  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "_id": ObjectId("507f1f77bcf86cd799439015"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
   "mediaId": "34568",
   "mediaType": "game",
@@ -178,7 +187,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
   - Templates: layout structures
   - Pages: complete views
 - CSS implementation:
-  - SCSS as preprocessor
+  - SCSS as preprocessor, compiling to native CSS
   - Desktop-first responsive design approach
   - CSS Grid and Flexbox for layouts
   - Custom design system
@@ -218,7 +227,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 - Password hashing using bcrypt
 - Session management with secure cookies
 - XSS prevention
-- SQL injection protection
+- NoSQL injection prevention
 - CSRF token implementation
 - Security headers configuration
 - Regular security audits
@@ -228,8 +237,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 - Page load time < 2 seconds
 - API response time < 500ms
-- Server startup time < 5 seconds (includes connecting to database and external
-  APIs, setting up the app, the routes, global middlewares)
+- Server startup time < 5 seconds (includes connecting to database and external APIs, setting up the app, the routes, global middlewares)
 - Support for concurrent users
 - Efficient caching strategy
 - Optimized database queries

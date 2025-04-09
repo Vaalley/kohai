@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@denosaurs/plug@^1.0.6": "1.0.6",
     "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
-    "jsr:@hono/hono@^4.7.5": "4.7.5",
+    "jsr:@hono/hono@^4.7.6": "4.7.6",
     "jsr:@std/assert@*": "0.221.0",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/async@*": "1.0.10",
@@ -37,8 +37,8 @@
         "jsr:@denosaurs/plug"
       ]
     },
-    "@hono/hono@4.7.5": {
-      "integrity": "36a7e1b3db8a58e5dc2bd36a76be53346f0966e04c24c635c4d6f58875575b0a"
+    "@hono/hono@4.7.6": {
+      "integrity": "407da752c13d4644bb9d363f8349db7542e21abc3db8c13ca90cf69d8ab675ad"
     },
     "@std/assert@0.221.0": {
       "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a",
@@ -177,7 +177,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.5",
-      "jsr:@hono/hono@^4.7.5",
+      "jsr:@hono/hono@^4.7.6",
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/zod-validator@~0.4.3",
       "npm:mongodb@^6.15.0",

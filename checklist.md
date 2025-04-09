@@ -45,8 +45,7 @@
 
 - [x] Définir le périmètre d'intervention de chaque membre d'équipe
 - [ ] Créer un rétroplanning avec points d'étape
-- [x] Sélectionner et mettre en place des outils collaboratifs (Git, Trello,
-      Slack, etc.)
+- [x] Sélectionner et mettre en place des outils collaboratifs (Git, Trello, Slack, etc.)
 - [ ] Définir des indicateurs de suivi de projet pertinents
 
 ## BLOC 2 : Développer des Interfaces Frontend
@@ -68,8 +67,7 @@
 
 ### Interactivité JavaScript
 
-- [ ] Implémenter au moins une fonctionnalité de communication asynchrone avec
-      un serveur
+- [ ] Implémenter au moins une fonctionnalité de communication asynchrone avec un serveur
 
 ## BLOC 3 : Développer le Backend
 
@@ -89,8 +87,7 @@
 
 ### Fonctionnalités
 
-- [x] Développer des interactions utilisateur-serveur via formulaires et liens
-      (requêtes GET/POST)
+- [x] Développer des interactions utilisateur-serveur via formulaires et liens (requêtes GET/POST)
 - [ ] Créer une interface d'administration complète (CRUD)
 - [x] Implémenter les fonctionnalités d'inscription, connexion et déconnexion
 - [x] Mettre en place un hachage sécurisé des mots de passe (bcrypt)
@@ -116,8 +113,7 @@
 - [ ] Code organisé, commenté et indenté
 - [ ] Mots de passe sécurisés (bcrypt, pas de MD5/SHA1)
 - [ ] Espace d'administration avec au moins un CRUD complet
-- [ ] Projet original (pas de copier-coller d'exercices ou de code généré
-      automatiquement)
+- [ ] Projet original (pas de copier-coller d'exercices ou de code généré automatiquement)
 
 ## Dates Importantes
 

@@ -14,8 +14,7 @@ Deno.test("getEnv should return the default value if the environment variable is
 
 // tests for isProduction
 Deno.test({
-	name:
-		"isProduction should return true if the environment variable is set to 'production'",
+	name: "isProduction should return true if the environment variable is set to 'production'",
 	ignore: Deno.env.get("ENV") != "production",
 	fn() {
 		assertEquals(isProduction(), true);
@@ -23,8 +22,7 @@ Deno.test({
 });
 
 Deno.test({
-	name:
-		"isProduction should return false if the environment variable is set to something else than 'production'",
+	name: "isProduction should return false if the environment variable is set to something else than 'production'",
 	ignore: Deno.env.get("ENV") == "production",
 	fn() {
 		assertEquals(isProduction(), false);
