@@ -43,7 +43,8 @@ community-driven description system.
   - Project manager (Sophie): Requirements gathering, client communication
   - QA specialist (Pierre): Testing, quality assurance
 - Project tracking:
-  - Weekly sprint planning and retrospectives
+  - Weekly sprint planning
+  - Sprint retrospectives at the end of each sprint
   - Kanban board for task management
   - Github Issues for technical task management
   - Key performance indicators:
@@ -139,17 +140,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
   "_id": ObjectId("507f1f77bcf86cd799439013"),
   "mediaId": "34568",
   "mediaType": "game",
-  "tags": [
-    {
-      "tag": "story",
-    },
-    {
-      "tag": "action",
-    },
-    {
-      "tag": "western",
-    }
-  ],
+  "tags": ["story", "action", "western", "bandits", "arthur"],
   "updated_at": ISODate("2025-02-26T09:16:20Z")
 }
 ```
