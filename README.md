@@ -3,8 +3,8 @@
 A simple REST API backend server built with Deno and Hono.
 
 Kohai is a web application that enables users to associate descriptive words
-with movies and video games, creating a crowd-sourced tagging system. Users can
-view aggregated popular tags for each piece of media, providing an organic,
+with video games, creating a crowdsourced tagging system. Users can view
+aggregated popular tags for each piece of media, providing an organic,
 community-driven description system.
 
 ## Technologies Used
