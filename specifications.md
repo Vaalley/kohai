@@ -119,7 +119,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 {
   "_id": ObjectId("507f1f77bcf86cd799439012"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
-  "mediaId": "34568",
+  "mediaSlug": "red-dead-redemption-2",
   "mediaType": "game",
   "tag": "story",
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
@@ -128,7 +128,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 {
   "_id": ObjectId("507f1f77bcf86cd799439014"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
-  "mediaId": "34568",
+  "mediaSlug": "red-dead-redemption-2",
   "mediaType": "game",
   "tag": "action",
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
@@ -137,7 +137,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 {
   "_id": ObjectId("507f1f77bcf86cd799439015"),
   "userId": ObjectId("507f1f77bcf86cd799439011"),
-  "mediaId": "34568",
+  "mediaSlug": "red-dead-redemption-2",
   "mediaType": "game",
   "tag": "western",
   "timestamp": ISODate("2025-02-26T09:16:20Z"),
@@ -147,7 +147,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 // mediaTags collection
 {
   "_id": ObjectId("507f1f77bcf86cd799439013"),
-  "mediaId": "34568",
+  "mediaSlug": "red-dead-redemption-2",
   "mediaType": "game",
   "tags": ["story", "action", "western", "bandits", "arthur"],
   "updated_at": ISODate("2025-02-26T09:16:20Z")

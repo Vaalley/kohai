@@ -47,6 +47,7 @@ export async function register(c: Context) {
 		username,
 		email,
 		password: hashedPassword,
+		isadmin: false,
 		created_at: new Date(),
 		updated_at: new Date(),
 	};

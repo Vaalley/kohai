@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 
 export const MediaTagSchema = z.object({
 	_id: z.instanceof(ObjectId).optional(),
-	mediaId: z.string(), // IGDB ID
+	mediaSlug: z.string(),
 	mediaType: z.enum(["video-game", "movie"]),
 	tags: z.array(z.string()),
 	updated_at: z.date(),
