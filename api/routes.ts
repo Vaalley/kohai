@@ -6,6 +6,7 @@ import { zValidator } from "../utils/validator-wrapper.ts";
 import { jwtAuth } from "./middleware/jwtAuth.ts";
 import { logger } from "../utils/logger.ts";
 import { igdbAuth } from "./middleware/igdbAuth.ts";
+import { search } from "../handlers/igdb.ts";
 
 // Register routes
 export function setupRoutes(app: Hono) {
@@ -33,19 +34,22 @@ export function setupRoutes(app: Hono) {
 	// |  Test JWT route  |
 	//  ------------------
 	const jwt = app.basePath("/jwt").use(jwtAuth());
+
 	jwt.get("/", (c: Context) => {
 		return c.json({ message: "You are authorized!" });
 	});
 
-	app.get("/igdb", igdbAuth(), (c: Context) => {
-		return c.json({ message: "Hello, World!" });
-	});
+	//  --------------------
+	// |  Test IGDB routes  |
+	//  --------------------
+	const igdb = app.basePath("/igdb").use(igdbAuth());
+
+	igdb.post("/games/search", search);
 
 	//  ------------------------
 	// |  Protected API routes  |
 	//  ------------------------
-	const api = app.basePath("/api")
-		.use(apiKeyAuth());
+	const api = app.basePath("/api").use(apiKeyAuth());
 
 	api.get("/", (c: Context) => c.json({ message: "Hello, World!" }));
 
