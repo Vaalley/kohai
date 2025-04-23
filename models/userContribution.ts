@@ -1,14 +1,15 @@
-import { z } from "zod";
+import * as v from "@valibot/valibot";
 import { ObjectId } from "mongodb";
+import { MediaType } from "./mediaTag.ts";
 
-export const UserContributionSchema = z.object({
-	_id: z.instanceof(ObjectId).optional(),
-	userId: z.instanceof(ObjectId),
-	mediaSlug: z.string(),
-	mediaType: z.enum(["video-game", "movie"]),
-	tag: z.string(),
-	timestamp: z.date(),
-	updated_at: z.date(),
+export const UserContributionSchema = v.object({
+	_id: v.optional(v.instance(ObjectId)),
+	userId: v.instance(ObjectId),
+	mediaSlug: v.string(),
+	mediaType: v.enum(MediaType),
+	tag: v.string(),
+	timestamp: v.date(),
+	updated_at: v.date(),
 });
 
-export type UserContribution = z.infer<typeof UserContributionSchema>;
+export type UserContribution = v.InferOutput<typeof UserContributionSchema>;

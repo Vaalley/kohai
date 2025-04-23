@@ -9,7 +9,7 @@ popular tags for each piece of media, providing an organic, community-driven des
 
 - [Deno](https://deno.com/) - Modern runtime for JavaScript and TypeScript.
 - [Hono](https://hono.dev/) - Small, fast framework for the web.
-- [Zod](https://zod.dev/) - TypeScript-first schema description language and data validator.
+- [Valibot](https://valibot.dev/) - TypeScript-first schema description language and data validator.
 - [MongoDB](https://www.mongodb.com/) - NoSQL database.
 
 ## How to Run

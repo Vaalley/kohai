@@ -2,7 +2,7 @@ import { Context, Hono } from "hono";
 import { LoginSchema, RegisterSchema } from "../models/auth.ts";
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from "../handlers/auth.ts";
 import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
-import { zValidator } from "../utils/validator-wrapper.ts";
+import { vValidator } from "@hono/valibot-validator";
 import { jwtAuth } from "./middleware/jwtAuth.ts";
 import { logger } from "../utils/logger.ts";
 import { igdbAuth } from "./middleware/igdbAuth.ts";
@@ -24,8 +24,8 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	const auth = app.basePath("/auth");
 
-	auth.post("/register", zValidator("json", RegisterSchema), register);
-	auth.post("/login", zValidator("json", LoginSchema), login);
+	auth.post("/register", vValidator("json", RegisterSchema), register);
+	auth.post("/login", vValidator("json", LoginSchema), login);
 	auth.post("/refresh", refreshToken);
 	auth.post("/logout", logout);
 	auth.get("/me", me);
