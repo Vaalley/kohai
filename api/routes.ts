@@ -1,12 +1,12 @@
 import { Context, Hono } from "hono";
-import { LoginSchema, RegisterSchema } from "../models/auth.ts";
-import { handleTokenRefresh as refreshToken, login, logout, me, register } from "../handlers/auth.ts";
-import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
 import { vValidator } from "@hono/valibot-validator";
-import { jwtAuth } from "./middleware/jwtAuth.ts";
-import { logger } from "../utils/logger.ts";
+import { LoginSchema, RegisterSchema } from "../models/auth.ts";
+import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
 import { igdbAuth } from "./middleware/igdbAuth.ts";
+import { jwtAuth } from "./middleware/jwtAuth.ts";
+import { handleTokenRefresh as refreshToken, login, logout, me, register } from "../handlers/auth.ts";
 import { search } from "../handlers/igdb.ts";
+import { logger } from "../utils/logger.ts";
 
 // Register routes
 export function setupRoutes(app: Hono) {
