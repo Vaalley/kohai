@@ -1,0 +1,17 @@
+services:
+    mongodb:
+        image: mongo:latest
+        container_name: kohai-mongodb
+        ports:
+            - "27017:27017"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=admin
+            - MONGO_INITDB_DATABASE=kohai-db
+        volumes:
+            - mongodb_data:/data/db
+        restart: unless-stopped
+
+volumes:
+    mongodb_data:
+        driver: local
