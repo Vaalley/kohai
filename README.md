@@ -14,8 +14,9 @@ popular tags for each piece of media, providing an organic, community-driven des
 
 ## How to Run
 
-1. **Ensure Deno is installed:** If you haven't already, install Deno from [https://deno.com/](https://deno.com/).
-2. **Clone the repository:** `git clone https://github.com/Vaalley/kohai.git` and `cd kohai`.
-3. **Ensure your .env file is set up:** Copy the `.env.example` file to `.env` and update the values as needed.
-4. **Run MongoDB:** Start the MongoDB container using `docker compose up -d`.
-5. **Run the server:** Execute the following command in your terminal: `deno task dev`
+1. **Ensure Deno is installed:** If you haven't already, install [Deno](https://deno.com/).
+2. **Ensure Docker & Docker Compose are installed:** If you haven't already, install [Docker](https://www.docker.com/).
+3. **Clone the repository:** `git clone https://github.com/Vaalley/kohai.git` and `cd kohai`.
+4. **Ensure your .env file is set up:** Copy the `.env.example` file to `.env` and update the values as needed.
+5. **Run MongoDB:** Start the MongoDB container using `docker compose up -d`.
+6. **Run the server:** Execute the following command in your terminal: `deno task dev`
