@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@denosaurs/plug@^1.0.6": "1.0.6",
     "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
-    "jsr:@hono/hono@^4.7.6": "4.7.6",
+    "jsr:@hono/hono@^4.7.7": "4.7.7",
     "jsr:@std/assert@*": "0.221.0",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/async@*": "1.0.10",
@@ -14,12 +14,12 @@
     "jsr:@std/fs@0.221": "0.221.0",
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@zilla/logger@^1.0.1": "1.0.1",
-    "npm:@hono/zod-validator@~0.4.3": "0.4.3_hono@4.7.1_zod@3.24.2",
+    "npm:@hono/zod-validator@~0.4.3": "0.4.3_hono@4.7.7_zod@3.24.3",
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
     "npm:is-what@5": "5.2.0",
-    "npm:mongodb@^6.15.0": "6.15.0",
-    "npm:zod@^3.24.2": "3.24.2"
+    "npm:mongodb@^6.16.0": "6.16.0",
+    "npm:zod@^3.24.3": "3.24.3"
   },
   "jsr": {
     "@denosaurs/plug@1.0.6": {
@@ -37,8 +37,8 @@
         "jsr:@denosaurs/plug"
       ]
     },
-    "@hono/hono@4.7.6": {
-      "integrity": "407da752c13d4644bb9d363f8349db7542e21abc3db8c13ca90cf69d8ab675ad"
+    "@hono/hono@4.7.7": {
+      "integrity": "74ea9985cb405fada079a922538f6baa06fa1ee150ce409c5bdae2c89ac05cba"
     },
     "@std/assert@0.221.0": {
       "integrity": "a5f1aa6e7909dbea271754fd4ab3f4e687aeff4873b4cef9a320af813adb489a",
@@ -84,15 +84,15 @@
     }
   },
   "npm": {
-    "@hono/zod-validator@0.4.3_hono@4.7.1_zod@3.24.2": {
+    "@hono/zod-validator@0.4.3_hono@4.7.7_zod@3.24.3": {
       "integrity": "sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==",
       "dependencies": [
         "hono",
         "zod"
       ]
     },
-    "@mongodb-js/saslprep@1.2.0": {
-      "integrity": "sha512-+ywrb0AqkfaYuhHs6LxKWgqbh3I72EpEgESCw37o+9qPx9WTCkgDm2B+eMrwehGtHBWHFU4GXvnSCNiFhhausg==",
+    "@mongodb-js/saslprep@1.2.2": {
+      "integrity": "sha512-EB0O3SCSNRUFk66iRCpI+cXzIjdswfCs7F6nOC3RAGJ7xr5YhaicvsRwJ9eyzYvYRlCSDUO/c7g4yNulxKC1WA==",
       "dependencies": [
         "sparse-bitfield"
       ]
@@ -118,8 +118,8 @@
     "date-fns@4.1.0": {
       "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
-    "hono@4.7.1": {
-      "integrity": "sha512-V3eWoPkBxoNgFCkSc5Y5rpLF6YoQQx1pkYO4qrF6YfOw8RZbujUNlJLZCxh0z9gZct70+je2Ih7Zrdpv21hP9w=="
+    "hono@4.7.7": {
+      "integrity": "sha512-2PCpQRbN87Crty8/L/7akZN3UyZIAopSoRxCwRbJgUuV1+MHNFHzYFxZTg4v/03cXUm+jce/qa2VSBZpKBm3Qw=="
     },
     "is-what@5.2.0": {
       "integrity": "sha512-IPOooAvDsC9AaL36TR6/pWlCTgQcCgZZR2IY6p8DCjJ84WVdH/f6SCZr8ngAY9wohbF5bvjOoqrVnBQGZiln/A=="
@@ -134,8 +134,8 @@
         "whatwg-url"
       ]
     },
-    "mongodb@6.15.0": {
-      "integrity": "sha512-ifBhQ0rRzHDzqp9jAQP6OwHSH7dbYIQjD3SbJs9YYk9AikKEettW/9s/tbSFDTpXcRbF+u1aLrhHxDFaYtZpFQ==",
+    "mongodb@6.16.0": {
+      "integrity": "sha512-D1PNcdT0y4Grhou5Zi/qgipZOYeWrhLEpk33n3nm6LGtz61jvO88WlrWCK/bigMjpnOdAUKKQwsGIl0NtWMyYw==",
       "dependencies": [
         "@mongodb-js/saslprep",
         "bson",
@@ -151,8 +151,8 @@
         "memory-pager"
       ]
     },
-    "tr46@5.1.0": {
-      "integrity": "sha512-IUWnUK7ADYR5Sl1fZlO1INDUhVhatWl7BtJWsIhwJ0UAK7ilzzIa8uIqOO/aYVWHZPJkKbEL+362wrzoeRF7bw==",
+    "tr46@5.1.1": {
+      "integrity": "sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==",
       "dependencies": [
         "punycode"
       ]
@@ -170,18 +170,18 @@
         "webidl-conversions"
       ]
     },
-    "zod@3.24.2": {
-      "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ=="
+    "zod@3.24.3": {
+      "integrity": "sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg=="
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.5",
-      "jsr:@hono/hono@^4.7.6",
+      "jsr:@hono/hono@^4.7.7",
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/zod-validator@~0.4.3",
-      "npm:mongodb@^6.15.0",
-      "npm:zod@^3.24.2"
+      "npm:mongodb@^6.16.0",
+      "npm:zod@^3.24.3"
     ]
   }
 }
