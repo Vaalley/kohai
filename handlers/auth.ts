@@ -20,7 +20,7 @@ const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
  * an error message if the email or username already exists.
  */
 export async function register(c: Context) {
-	const { email, password, username } = await c.req.valid("json" as never);
+	const { email, password, username } = await c.req.valid("json");
 
 	// Check if email or username already exists
 	const existingUser = await getCollection("users").findOne({
@@ -71,7 +71,7 @@ export async function register(c: Context) {
  * message if the user is not found or the password is invalid.
  */
 export async function login(c: Context) {
-	const { email, password } = await c.req.valid("json" as never);
+	const { email, password } = await c.req.valid("json");
 
 	// Find user by email
 	const collection = getCollection("users");
