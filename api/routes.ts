@@ -30,18 +30,9 @@ export function setupRoutes(app: Hono) {
 	auth.post("/logout", logout);
 	auth.get("/me", me);
 
-	//  ------------------
-	// |  Test JWT route  |
-	//  ------------------
-	const jwt = app.basePath("/jwt").use(jwtAuth());
-
-	jwt.get("/", (c: Context) => {
-		return c.json({ message: "You are authorized!" });
-	});
-
-	//  --------------------
-	// |  Test IGDB routes  |
-	//  --------------------
+	//  ---------------
+	// |  IGDB routes  |
+	//  ---------------
 	const igdb = app.basePath("/igdb").use(igdbAuth());
 
 	igdb.post("/games/search", search);
@@ -54,4 +45,13 @@ export function setupRoutes(app: Hono) {
 	api.get("/", (c: Context) => c.json({ message: "Hello, World!" }));
 
 	logger.info("✅ Routes registered successfully 🪄");
+
+	//  ------------------
+	// |  Test JWT route  |
+	//  ------------------
+	const jwt = app.basePath("/jwt").use(jwtAuth());
+
+	jwt.get("/", (c: Context) => {
+		return c.json({ message: "You are authorized!" });
+	});
 }
