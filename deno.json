@@ -6,11 +6,11 @@
 	},
 	"imports": {
 		"@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
-		"@hono/zod-validator": "npm:@hono/zod-validator@^0.4.3",
+		"@hono/valibot-validator": "npm:@hono/valibot-validator@^0.5.2",
+		"@valibot/valibot": "jsr:@valibot/valibot@^1.0.0",
 		"@zilla/logger": "jsr:@zilla/logger@^1.0.1",
 		"hono": "jsr:@hono/hono@^4.7.7",
-		"mongodb": "npm:mongodb@^6.16.0",
-		"zod": "npm:zod@^3.24.3"
+		"mongodb": "npm:mongodb@^6.16.0"
 	},
 	"fmt": {
 		"useTabs": true,

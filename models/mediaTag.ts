@@ -1,12 +1,17 @@
-import { z } from "zod";
+import * as v from "@valibot/valibot";
 import { ObjectId } from "mongodb";
 
-export const MediaTagSchema = z.object({
-	_id: z.instanceof(ObjectId).optional(),
-	mediaSlug: z.string(),
-	mediaType: z.enum(["video-game", "movie"]),
-	tags: z.array(z.string()),
-	updated_at: z.date(),
+export enum MediaType {
+	VIDEO_GAME = "video-game",
+	MOVIE = "movie",
+}
+
+export const MediaTagSchema = v.object({
+	_id: v.optional(v.instance(ObjectId)),
+	mediaSlug: v.string(),
+	mediaType: v.enum(MediaType),
+	tags: v.array(v.string()),
+	updated_at: v.date(),
 });
 
-export type MediaTag = z.infer<typeof MediaTagSchema>;
+export type MediaTag = v.InferOutput<typeof MediaTagSchema>;

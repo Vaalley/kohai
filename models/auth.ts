@@ -1,12 +1,12 @@
-import { z } from "zod";
+import * as v from "@valibot/valibot";
 
-export const LoginSchema = z.object({
-	email: z.string().email(),
-	password: z.string().min(8),
+export const LoginSchema = v.object({
+	email: v.pipe(v.string(), v.email()),
+	password: v.pipe(v.string(), v.minLength(8)),
 });
 
-export const RegisterSchema = z.object({
-	username: z.string().min(3).max(32),
-	email: z.string().email(),
-	password: z.string().min(8),
+export const RegisterSchema = v.object({
+	username: v.pipe(v.string(), v.minLength(3), v.maxLength(32)),
+	email: v.pipe(v.string(), v.email()),
+	password: v.pipe(v.string(), v.minLength(8)),
 });
