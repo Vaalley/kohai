@@ -14,6 +14,14 @@ let tokenRefreshPromise: Promise<void> | null = null;
 export async function connectIgdb() {
 	const startTime = Date.now();
 	logger.info("🔄 Attempting IGDB connection... 🎮");
+
+	// check if token is already valid
+	if (isIgdbTokenValid()) {
+		logger.info("✅ IGDB token is already valid");
+		logger.debug("IGDB token: " + getEnv("IGDB_ACCESS_TOKEN"));
+		return;
+	}
+
 	const response = await fetch(
 		`https://id.twitch.tv/oauth2/token`,
 		{
