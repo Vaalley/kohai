@@ -14,10 +14,8 @@ const startTime = new Date();
 export function health(c: Context) {
 	const uptime = Math.floor(new Date().getTime() - startTime.getTime());
 
-	// Get environment using the getEnv function
-	const environment = getEnv("ENV", "development");
+	const environment = getEnv("ENV");
 
-	// Get memory usage from Deno
 	const memoryUsage = Deno.memoryUsage();
 
 	return c.json({
