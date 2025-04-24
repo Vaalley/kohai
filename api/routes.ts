@@ -1,23 +1,22 @@
 import { Context, Hono } from "hono";
 import { vValidator } from "@hono/valibot-validator";
-import { LoginSchema, RegisterSchema } from "../models/auth.ts";
-import { apiKeyAuth } from "./middleware/apiKeyAuth.ts";
-import { igdbAuth } from "./middleware/igdbAuth.ts";
-import { jwtAuth } from "./middleware/jwtAuth.ts";
-import { handleTokenRefresh as refreshToken, login, logout, me, register } from "../handlers/auth.ts";
-import { search } from "../handlers/igdb.ts";
-import { logger } from "../utils/logger.ts";
+import { LoginSchema, RegisterSchema } from "@models/auth.ts";
+import { apiKeyAuth } from "@api/middleware/apiKeyAuth.ts";
+import { igdbAuth } from "@api/middleware/igdbAuth.ts";
+import { jwtAuth } from "@api/middleware/jwtAuth.ts";
+import { handleTokenRefresh as refreshToken, login, logout, me, register } from "@handlers/auth.ts";
+import { search } from "@handlers/igdb.ts";
+import { health } from "@handlers/healthcheck.ts";
+import { logger } from "@utils/logger.ts";
 
 // Register routes
 export function setupRoutes(app: Hono) {
 	logger.info("🔄 Registering routes... 🛣️");
 
-	//  -----------------
-	// |  Health checks  |
-	//  -----------------
-	app.get("/livez", (c: Context) => c.json({ status: "ok" }));
-	app.get("/readyz", (c: Context) => c.json({ status: "ok" }));
-	app.get("/startupz", (c: Context) => c.json({ status: "ok" }));
+	//  ----------------
+	// |  Health check  |
+	//  ----------------
+	app.get("/health", health);
 
 	//  ---------------
 	// |  Auth routes  |

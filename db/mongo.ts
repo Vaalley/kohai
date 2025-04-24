@@ -1,6 +1,6 @@
-import { getEnv } from "../config/config.ts";
 import { Collection, Db, Document, MongoClient } from "mongodb";
-import { logger } from "../utils/logger.ts";
+import { getEnv } from "@config/config.ts";
+import { logger } from "@utils/logger.ts";
 
 let client: MongoClient;
 

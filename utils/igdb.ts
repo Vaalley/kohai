@@ -1,5 +1,5 @@
-import { getEnv, setEnv } from "../config/config.ts";
-import { logger } from "./logger.ts";
+import { getEnv, setEnv } from "@config/config.ts";
+import { logger } from "@utils/logger.ts";
 
 // Token refresh mutex to prevent concurrent token refreshes
 let tokenRefreshPromise: Promise<void> | null = null;
@@ -46,9 +46,7 @@ export async function connectIgdb() {
 	const expiresAt = Date.now() + (data.expires_in * 1000);
 	setEnv("IGDB_EXPIRES_AT", expiresAt.toString());
 
-	if (getEnv("ENV") === "development") {
-		logger.info("🔑 IGDB access token: " + data.access_token);
-	}
+	logger.debug("🔑 IGDB access token: " + data.access_token);
 
 	logger.info("✅ Connected to IGDB 🔗");
 	logger.info(`⏲️ IGDB connection time: ${Date.now() - startTime}ms`);

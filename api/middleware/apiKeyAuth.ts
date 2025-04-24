@@ -1,5 +1,5 @@
 import { Context, Next } from "hono";
-import { getEnv } from "../../config/config.ts";
+import { getEnv } from "@config/config.ts";
 
 /**
  * API key authentication middleware.

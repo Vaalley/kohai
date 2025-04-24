@@ -1,6 +1,6 @@
 import { Context, Next } from "hono";
 import { jwt } from "hono/jwt";
-import { getEnv } from "../../config/config.ts";
+import { getEnv } from "@config/config.ts";
 
 /**
  * JWT authentication middleware.
