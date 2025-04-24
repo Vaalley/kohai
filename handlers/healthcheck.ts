@@ -1,6 +1,7 @@
 import { Context } from "hono";
+import { format as formatBytes } from "@std/fmt/bytes";
+import { format as formatTime } from "@std/fmt/duration";
 import { getEnv } from "@config/config.ts";
-import { formatBytes, formatUptime } from "@utils/format.ts";
 
 // Track when the server started
 const startTime = new Date();
@@ -11,7 +12,7 @@ const startTime = new Date();
  * @returns JSON response with health status and system information
  */
 export function health(c: Context) {
-	const uptime = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+	const uptime = Math.floor(new Date().getTime() - startTime.getTime());
 
 	// Get environment using the getEnv function
 	const environment = getEnv("ENV", "development");
@@ -23,8 +24,8 @@ export function health(c: Context) {
 		status: "ok",
 		timestamp: new Date().toISOString(),
 		uptime: {
-			seconds: uptime,
-			formatted: formatUptime(uptime),
+			ms: uptime,
+			formatted: formatTime(uptime, { ignoreZero: true }),
 		},
 		environment,
 		system: {
