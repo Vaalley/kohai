@@ -8,6 +8,8 @@ import { connectIgdb } from "./utils/igdb.ts";
 import { closeApp, startServer } from "./utils/server.ts";
 import { logger } from "./utils/logger.ts";
 
+// test 1
+
 // Main entry point
 async function main() {
 	const startTime = Date.now();
