@@ -1,6 +1,6 @@
 import { Context, Next } from "hono";
-import { ensureValidIgdbToken } from "../../utils/igdb.ts";
-import { logger } from "../../utils/logger.ts";
+import { ensureValidIgdbToken } from "@utils/igdb.ts";
+import { logger } from "@utils/logger.ts";
 
 /**
  * IGDB authentication middleware.

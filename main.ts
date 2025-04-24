@@ -1,12 +1,12 @@
 import { Hono } from "hono";
-import { getEnv } from "./config/config.ts";
-import { connectMongo } from "./db/mongo.ts";
-import { setupRoutes } from "./api/routes.ts";
+import { getEnv } from "@config/config.ts";
+import { connectMongo } from "@db/mongo.ts";
+import { setupRoutes } from "@api/routes.ts";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
-import { connectIgdb } from "./utils/igdb.ts";
-import { closeApp, startServer } from "./utils/server.ts";
-import { logger } from "./utils/logger.ts";
+import { connectIgdb } from "@utils/igdb.ts";
+import { closeApp, startServer } from "@utils/server.ts";
+import { logger } from "@utils/logger.ts";
 
 // Main entry point
 async function main() {

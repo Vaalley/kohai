@@ -1,10 +1,10 @@
 import { Context } from "hono";
-import { getCollection } from "../db/mongo.ts";
-import { hash, verify as verifyBcrypt } from "@felix/bcrypt";
-import { User } from "../models/user.ts";
 import { sign, verify as verifyJwt } from "hono/jwt";
-import { getEnv, isProduction } from "../config/config.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { hash, verify as verifyBcrypt } from "@felix/bcrypt";
+import { getCollection } from "@db/mongo.ts";
+import { User } from "@models/user.ts";
+import { getEnv, isProduction } from "@config/config.ts";
 
 const ACCESS_TOKEN_MAX_AGE = 60 * 15; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days

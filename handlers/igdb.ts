@@ -1,6 +1,6 @@
 import { Context } from "hono";
-import { getEnv } from "../config/config.ts";
-import { logger } from "../utils/logger.ts";
+import { getEnv } from "@config/config.ts";
+import { logger } from "@utils/logger.ts";
 
 const BASE_URL = "https://api.igdb.com/v4";
 const DEFAULT_FIELDS = "fields name,summary,genres.name,platforms.name,first_release_date,slug";

@@ -10,7 +10,15 @@
 		"@valibot/valibot": "jsr:@valibot/valibot@^1.0.0",
 		"@zilla/logger": "jsr:@zilla/logger@^1.0.1",
 		"hono": "jsr:@hono/hono@^4.7.7",
-		"mongodb": "npm:mongodb@^6.16.0"
+		"mongodb": "npm:mongodb@^6.16.0",
+
+		"@/": "./",
+		"@config/": "./config/",
+		"@handlers/": "./handlers/",
+		"@models/": "./models/",
+		"@db/": "./db/",
+		"@utils/": "./utils/",
+		"@api/": "./api/"
 	},
 	"fmt": {
 		"useTabs": true,

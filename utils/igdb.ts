@@ -1,5 +1,5 @@
-import { getEnv, setEnv } from "../config/config.ts";
-import { logger } from "./logger.ts";
+import { getEnv, setEnv } from "@config/config.ts";
+import { logger } from "@utils/logger.ts";
 
 // Token refresh mutex to prevent concurrent token refreshes
 let tokenRefreshPromise: Promise<void> | null = null;
