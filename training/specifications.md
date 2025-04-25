@@ -105,7 +105,7 @@ Example flow:
 
 Example collections state for "Red Dead Redemption 2" scenario:
 
-```json
+```js
 // users collection
 {
   "_id": ObjectId("507f1f77bcf86cd799439011"),
