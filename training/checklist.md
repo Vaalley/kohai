@@ -30,7 +30,7 @@
 ### Spécifications Techniques
 
 - [x] Traduire les besoins du client en spécifications techniques
-- [x] Identifier et justifier les technologies et langages appropriés
+- [ ] Identifier et justifier les technologies et langages appropriés
 - [ ] Documenter les choix techniques de manière argumentée
 
 ### Veille et Innovation
@@ -59,9 +59,9 @@
 ### Intégration et Style
 
 - [ ] Importer et optimiser les "actifs" (images, vidéos, audio)
-- [ ] Intégrer au moins une police personnalisée
+- [x] Intégrer au moins une police personnalisée
 - [ ] Mettre en œuvre une structure responsive moderne (flexbox, grid layout)
-- [ ] Utiliser au moins un préprocesseur CSS
+- [x] Utiliser au moins un préprocesseur CSS
 - [ ] Implémenter l'approche Desktop-first avec media queries
 - [ ] Vérifier l'accessibilité de la typographie
 
@@ -94,7 +94,7 @@
 
 ### Sécurité et Maintenance
 
-- [x] Vérifier l'absence de failles de sécurité (XSS, SQL injection)
+- [ ] Vérifier l'absence de failles de sécurité (XSS, SQL injection)
 - [ ] S'assurer qu'il n'y a pas d'erreurs 500
 - [ ] Documenter les procédures de maintenance
 - [ ] Identifier les axes d'amélioration et d'évolutivité
@@ -109,11 +109,11 @@
 ## Points Critiques à Vérifier
 
 - [ ] Site responsive sur tous les appareils
-- [ ] Nommage cohérent des variables/URLs/champs
-- [ ] Code organisé, commenté et indenté
-- [ ] Mots de passe sécurisés (bcrypt, pas de MD5/SHA1)
+- [x] Nommage cohérent des variables/URLs/champs
+- [x] Code organisé, commenté et indenté
+- [x] Mots de passe sécurisés (bcrypt, pas de MD5/SHA1)
 - [ ] Espace d'administration avec au moins un CRUD complet
-- [ ] Projet original (pas de copier-coller d'exercices ou de code généré automatiquement)
+- [x] Projet original (pas de copier-coller d'exercices ou de code généré automatiquement)
 
 ## Dates Importantes
 
