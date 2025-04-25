@@ -17,7 +17,7 @@ export async function connectMongo(): Promise<void> {
 	const uri = getEnv("MONGODB_URI");
 
 	client = await MongoClient.connect(uri, {
-		serverSelectionTimeoutMS: 10000,
+		connectTimeoutMS: 10000,
 		timeoutMS: 10000,
 	});
 

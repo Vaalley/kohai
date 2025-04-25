@@ -76,7 +76,10 @@ popular tags for each piece of media, providing an organic, community-driven des
 ### C. Tagging System
 
 - Users can add up to 3 descriptive words per media item
-- Word validation system to ensure quality (no duplicates, profanity filter)
+- Word validation system to ensure quality:
+  - Duplicate Prevention: Check for existing identical tags (case-insensitive) submitted by the _same user_ for the _same media item_.
+  - Profanity Filter: Implement filtering using a dedicated external library/package (e.g., a Deno-compatible port or equivalent of `npm:bad-words`). This
+    leverages curated lists and handles common variations, reducing manual maintenance.
 - Real-time aggregation of popular tags
 - Visual representation of tag popularity when visiting a media item's page
 
@@ -86,15 +89,15 @@ Example flow:
    - 3 UserContribution records are created to track this specific user's tags
    - This enables viewing user's tagging history
 2. The system then updates the MediaTag record for "Red Dead Redemption 2"
-   - If "story" was already used by 5 other users, its count increases to 6
+   - If "story" wasn't used before, it's added
    - This aggregated view powers the tag popularity visualization
 
 ## 3. Technical Architecture
 
 ### A. Database (MongoDB)
 
-- Initial deployment on MongoDB Atlas
-- Potential migration to self-hosted solution
+- Initial deployment on MongoDB Atlas (production environment)
+- Migration to dockerized MongoDB solution for local development
 - Collections structure:
   - Users (see user.ts for schema)
   - MediaTags (see mediaTag.ts for schema)
@@ -156,6 +159,8 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 ### B. Backend (Deno + Hono)
 
+The backend is in its own repository, separate from the frontend. -> [backend repository](https://github.com/Vaalley/kohai)
+
 - RESTful API architecture
 - Endpoints:
   - Authentication (/auth/*)
@@ -166,7 +171,7 @@ Example collections state for "Red Dead Redemption 2" scenario:
 - External API integration layer
 - Code organization:
   - Consistent camelCase naming convention
-  - JSDoc documentation for all functions and classes
+  - JSDoc documentation for all functions
   - Modular structure with clear separation of concerns
 - Security implementations:
   - Password hashing using bcrypt (10+ salt rounds)
@@ -175,6 +180,8 @@ Example collections state for "Red Dead Redemption 2" scenario:
   - CSRF protection
 
 ### C. Frontend (SvelteKit + Native CSS)
+
+The frontend is in its own repository, separate from the backend. -> [frontend repository](https://github.com/Vaalley/kohai-ui)
 
 - HTML structure:
   - Semantic HTML5 elements (header, nav, main, section, article, footer)
@@ -266,8 +273,6 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 ## 9. Future Considerations
 
-- Migration plan for self-hosted MongoDB
 - Scalability strategy
 - Caching system enhancement
 - Backup and recovery procedures
-- Analytics implementation (Posthog?)
