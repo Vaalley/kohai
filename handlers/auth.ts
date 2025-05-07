@@ -90,13 +90,13 @@ export async function login(c: Context) {
 	const accessTokenPayload = {
 		email: user.email,
 		username: user.username,
-		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE, // 15 minutes
+		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
 	};
 
 	const refreshTokenPayload = {
 		email: user.email,
 		username: user.username,
-		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE, // 30 days
+		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
 	};
 
 	const secret = getEnv("JWT_SECRET");
@@ -113,7 +113,7 @@ export async function login(c: Context) {
 		secure: isProduction(),
 		path: "/",
 		sameSite: "Lax",
-		maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
+		maxAge: ACCESS_TOKEN_MAX_AGE,
 	});
 
 	setCookie(c, "refresh_token", refreshToken, {
@@ -121,7 +121,7 @@ export async function login(c: Context) {
 		secure: isProduction(),
 		path: "/",
 		sameSite: "Lax",
-		maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
+		maxAge: REFRESH_TOKEN_MAX_AGE,
 	});
 
 	// Update the user's last login date
@@ -328,7 +328,7 @@ export async function refreshTokens(c: Context) {
 		secure: isProduction(),
 		path: "/",
 		sameSite: "Lax",
-		maxAge: ACCESS_TOKEN_MAX_AGE, // 15 minutes in seconds
+		maxAge: ACCESS_TOKEN_MAX_AGE,
 	});
 
 	setCookie(c, "refresh_token", newRefreshToken, {
@@ -336,7 +336,7 @@ export async function refreshTokens(c: Context) {
 		secure: isProduction(),
 		path: "/",
 		sameSite: "Lax",
-		maxAge: REFRESH_TOKEN_MAX_AGE, // 30 days in seconds
+		maxAge: REFRESH_TOKEN_MAX_AGE,
 	});
 
 	// Return the tokens for verification
