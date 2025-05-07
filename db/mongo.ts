@@ -1,4 +1,4 @@
-import { Collection, Db, Document, MongoClient } from 'mongodb';
+import { Collection, Db, Document, MongoClient, MongoClientOptions } from 'mongodb';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 
@@ -19,7 +19,7 @@ export async function connectMongo(): Promise<void> {
 	client = await MongoClient.connect(uri, {
 		connectTimeoutMS: 10000,
 		timeoutMS: 10000,
-	});
+	} as MongoClientOptions);
 
 	// Verify connection
 	await isConnected();
