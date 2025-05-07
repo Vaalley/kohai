@@ -1,7 +1,7 @@
-import { Context } from "hono";
-import { format as formatBytes } from "@std/fmt/bytes";
-import { format as formatTime } from "@std/fmt/duration";
-import { getEnv } from "@config/config.ts";
+import { Context } from 'hono';
+import { format as formatBytes } from '@std/fmt/bytes';
+import { format as formatTime } from '@std/fmt/duration';
+import { getEnv } from '@config/config.ts';
 
 // Track when the server started
 const startTime = new Date();
@@ -14,12 +14,12 @@ const startTime = new Date();
 export function health(c: Context) {
 	const uptime = Math.floor(new Date().getTime() - startTime.getTime());
 
-	const environment = getEnv("ENV");
+	const environment = getEnv('ENV');
 
 	const memoryUsage = Deno.memoryUsage();
 
 	return c.json({
-		status: "ok",
+		status: 'ok',
 		timestamp: new Date().toISOString(),
 		uptime: {
 			ms: uptime,
@@ -34,7 +34,7 @@ export function health(c: Context) {
 				external: formatBytes(memoryUsage.external),
 			},
 			runtime: {
-				name: "Deno",
+				name: 'Deno',
 				version: Deno.version.deno,
 				v8: Deno.version.v8,
 				typescript: Deno.version.typescript,

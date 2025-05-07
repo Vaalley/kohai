@@ -1,4 +1,4 @@
-name: Deno fmt check
+name: Deno Code Quality
 
 on:
     push:
@@ -14,4 +14,9 @@ jobs:
             - uses: denoland/setup-deno@v2
               with:
                   deno-version: v2.x
-            - run: deno fmt --check
+            - name: Check formatting
+              run: deno fmt --check
+            - name: Check linting
+              run: deno lint
+            - name: Check types
+              run: deno check

@@ -1,6 +1,6 @@
-import * as v from "@valibot/valibot";
-import { ObjectId } from "mongodb";
-import { MediaType } from "./mediaTag.ts";
+import * as v from '@valibot/valibot';
+import { ObjectId } from 'mongodb';
+import { MediaType } from './mediaTag.ts';
 
 export const UserContributionSchema = v.object({
 	_id: v.optional(v.instance(ObjectId)),

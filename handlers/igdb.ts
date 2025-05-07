@@ -1,9 +1,9 @@
-import { Context } from "hono";
-import { getEnv } from "@config/config.ts";
-import { logger } from "@utils/logger.ts";
+import { Context } from 'hono';
+import { getEnv } from '@config/config.ts';
+import { logger } from '@utils/logger.ts';
 
-const BASE_URL = "https://api.igdb.com/v4";
-const DEFAULT_FIELDS = "fields name,summary,genres.name,platforms.name,first_release_date,slug";
+const BASE_URL = 'https://api.igdb.com/v4';
+const DEFAULT_FIELDS = 'fields name,summary,genres.name,platforms.name,first_release_date,slug';
 
 // LRU-style cache for search results
 const searchCache = new Map<string, { data: unknown; time: number }>();
@@ -22,20 +22,20 @@ const MAX_SEARCH_CACHE_SIZE = 30;
  */
 export async function search(c: Context) {
 	// Get and process query
-	let bodyQuery = "";
+	let bodyQuery = '';
 	try {
 		bodyQuery = await c.req.text();
 	} catch (e) {
-		logger.warn("Failed to read request body", e);
+		logger.warn('Failed to read request body', e);
 	}
 
 	// Return early if no query
 	if (!bodyQuery.trim()) {
-		return c.json({ success: false, message: "No query provided" });
+		return c.json({ success: false, message: 'No query provided' });
 	}
 
 	// Add default fields if needed and create cache key
-	const igdbQuery = !bodyQuery.includes("fields") ? `${DEFAULT_FIELDS}; ${bodyQuery}` : bodyQuery;
+	const igdbQuery = !bodyQuery.includes('fields') ? `${DEFAULT_FIELDS}; ${bodyQuery}` : bodyQuery;
 	const cacheKey = igdbQuery.trim();
 
 	// Check cache
@@ -47,11 +47,11 @@ export async function search(c: Context) {
 	// Make request to IGDB API
 	try {
 		const response = await fetch(`${BASE_URL}/games`, {
-			method: "POST",
+			method: 'POST',
 			headers: {
-				"Content-Type": "application/json",
-				"Client-ID": getEnv("IGDB_CLIENT_ID"),
-				"Authorization": `Bearer ${getEnv("IGDB_ACCESS_TOKEN")}`,
+				'Content-Type': 'application/json',
+				'Client-ID': getEnv('IGDB_CLIENT_ID'),
+				'Authorization': `Bearer ${getEnv('IGDB_ACCESS_TOKEN')}`,
 			},
 			body: igdbQuery,
 		});
@@ -60,7 +60,7 @@ export async function search(c: Context) {
 		if (!response.ok) {
 			const errorText = await response.text();
 			logger.error(`IGDB API error: ${response.status} ${errorText}`);
-			return c.json({ success: false, message: "Failed to search", error: errorText });
+			return c.json({ success: false, message: 'Failed to search', error: errorText });
 		}
 
 		// Process successful response
@@ -74,7 +74,7 @@ export async function search(c: Context) {
 
 		return c.json({ success: true, data });
 	} catch (e) {
-		logger.error("IGDB request failed", e);
-		return c.json({ success: false, message: "Failed to search" });
+		logger.error('IGDB request failed', e);
+		return c.json({ success: false, message: 'Failed to search' });
 	}
 }

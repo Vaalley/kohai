@@ -1,6 +1,6 @@
-import { Context, Next } from "hono";
-import { ensureValidIgdbToken } from "@utils/igdb.ts";
-import { logger } from "@utils/logger.ts";
+import { Context, Next } from 'hono';
+import { ensureValidIgdbToken } from '@utils/igdb.ts';
+import { logger } from '@utils/logger.ts';
 
 /**
  * IGDB authentication middleware.
@@ -17,11 +17,11 @@ export function igdbAuth() {
 			// Check and refresh token if needed
 			if (!await ensureValidIgdbToken()) {
 				logger.error(
-					"Failed to obtain valid IGDB token after refresh attempt",
+					'Failed to obtain valid IGDB token after refresh attempt',
 				);
 				return c.json(
 					{
-						error: "IGDB service temporarily unavailable",
+						error: 'IGDB service temporarily unavailable',
 					},
 					503,
 				);
@@ -30,10 +30,10 @@ export function igdbAuth() {
 			// Continue to the next middleware/handler
 			await next();
 		} catch (error) {
-			logger.error("IGDB authentication error:", error);
+			logger.error('IGDB authentication error:', error);
 			return c.json(
 				{
-					error: "IGDB service temporarily unavailable",
+					error: 'IGDB service temporarily unavailable',
 				},
 				503,
 			);

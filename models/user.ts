@@ -1,5 +1,5 @@
-import * as v from "@valibot/valibot";
-import { ObjectId } from "mongodb";
+import * as v from '@valibot/valibot';
+import { ObjectId } from 'mongodb';
 
 export const UserSchema = v.object({
 	_id: v.optional(v.instance(ObjectId)),
