@@ -16,7 +16,7 @@ export function setupRoutes(app: Hono) {
 	//  ----------------
 	// |  Health check  |
 	//  ----------------
-	app.get('/health', health);
+	app.all('/health', health);
 
 	//  ---------------
 	// |  Auth routes  |
