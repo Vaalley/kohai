@@ -18,3 +18,5 @@ jobs:
               run: deno fmt --check
             - name: Run linter
               run: deno lint
+            - name: Type check
+              run: deno check
