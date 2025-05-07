@@ -1,5 +1,5 @@
-import { Hono } from "hono";
-import { logger } from "@utils/logger.ts";
+import { Hono } from 'hono';
+import { logger } from '@utils/logger.ts';
 
 /**
  * Starts a Hono server with the given app, port, hostname, and AbortController.
@@ -18,7 +18,7 @@ export function startServer(
 	hostname: string,
 	startTime: number,
 ): Deno.HttpServer {
-	logger.info("🔄 Starting server... 🎛️");
+	logger.info('🔄 Starting server... 🎛️');
 
 	const server = Deno.serve({
 		port: Number(port),

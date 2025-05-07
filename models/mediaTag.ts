@@ -1,9 +1,9 @@
-import * as v from "@valibot/valibot";
-import { ObjectId } from "mongodb";
+import * as v from '@valibot/valibot';
+import { ObjectId } from 'mongodb';
 
 export enum MediaType {
-	VIDEO_GAME = "video-game",
-	MOVIE = "movie",
+	VIDEO_GAME = 'video-game',
+	MOVIE = 'movie',
 }
 
 export const MediaTagSchema = v.object({

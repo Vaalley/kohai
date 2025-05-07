@@ -1,5 +1,5 @@
-import { getEnv, setEnv } from "@config/config.ts";
-import { logger } from "@utils/logger.ts";
+import { getEnv, setEnv } from '@config/config.ts';
+import { logger } from '@utils/logger.ts';
 
 // Token refresh mutex to prevent concurrent token refreshes
 let tokenRefreshPromise: Promise<void> | null = null;
@@ -13,28 +13,28 @@ let tokenRefreshPromise: Promise<void> | null = null;
  */
 export async function connectIgdb() {
 	const startTime = Date.now();
-	logger.info("🔄 Attempting IGDB connection... 🎮");
+	logger.info('🔄 Attempting IGDB connection... 🎮');
 
 	// check if token is already valid
 	if (isIgdbTokenValid()) {
-		logger.info("✅ IGDB token is already valid");
-		logger.debug("IGDB token: " + getEnv("IGDB_ACCESS_TOKEN"));
+		logger.info('✅ IGDB token is already valid');
+		logger.debug('IGDB token: ' + getEnv('IGDB_ACCESS_TOKEN'));
 		return;
 	}
 
 	const response = await fetch(
 		`https://id.twitch.tv/oauth2/token`,
 		{
-			method: "POST",
+			method: 'POST',
 			headers: {
-				"User-Agent": "Kohai (https://github.com/Vaalley/kohai)",
-				"Accept": "application/json",
-				"Content-Type": "application/json",
+				'User-Agent': 'Kohai (https://github.com/Vaalley/kohai)',
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				client_id: getEnv("IGDB_CLIENT_ID"),
-				client_secret: getEnv("IGDB_CLIENT_SECRET"),
-				grant_type: "client_credentials",
+				client_id: getEnv('IGDB_CLIENT_ID'),
+				client_secret: getEnv('IGDB_CLIENT_SECRET'),
+				grant_type: 'client_credentials',
 			}),
 		},
 	);
@@ -46,17 +46,17 @@ export async function connectIgdb() {
 	const data = await response.json();
 
 	if (!data.access_token) {
-		throw new Error("Failed to get access token from IGDB");
+		throw new Error('Failed to get access token from IGDB');
 	}
 
-	setEnv("IGDB_ACCESS_TOKEN", data.access_token);
+	setEnv('IGDB_ACCESS_TOKEN', data.access_token);
 
 	const expiresAt = Date.now() + (data.expires_in * 1000);
-	setEnv("IGDB_EXPIRES_AT", expiresAt.toString());
+	setEnv('IGDB_EXPIRES_AT', expiresAt.toString());
 
-	logger.debug("🔑 IGDB access token: " + data.access_token);
+	logger.debug('🔑 IGDB access token: ' + data.access_token);
 
-	logger.info("✅ Connected to IGDB 🔗");
+	logger.info('✅ Connected to IGDB 🔗');
 	logger.info(`⏲️ IGDB connection time: ${Date.now() - startTime}ms`);
 }
 
@@ -65,7 +65,7 @@ export async function connectIgdb() {
  * If no expiration date is set, returns null.
  */
 export function getIgdbExpiration(): Date | null {
-	const expiresAtStr = getEnv("IGDB_EXPIRES_AT");
+	const expiresAtStr = getEnv('IGDB_EXPIRES_AT');
 	if (!expiresAtStr) return null;
 
 	const expiresAtMs = parseInt(expiresAtStr, 10);
@@ -79,7 +79,7 @@ export function getIgdbExpiration(): Date | null {
  * Returns true if the token is valid, false otherwise.
  */
 export function isIgdbTokenValid(): boolean {
-	const token = getEnv("IGDB_ACCESS_TOKEN");
+	const token = getEnv('IGDB_ACCESS_TOKEN');
 	if (!token) return false;
 
 	const expiration = getIgdbExpiration();
@@ -111,7 +111,7 @@ export async function ensureValidIgdbToken(): Promise<boolean> {
 			}
 		} catch (error) {
 			logger.warn(
-				"Previous IGDB token refresh failed, attempting again.",
+				'Previous IGDB token refresh failed, attempting again.',
 				error,
 			);
 		}
@@ -120,7 +120,7 @@ export async function ensureValidIgdbToken(): Promise<boolean> {
 	tokenRefreshPromise = (async () => {
 		try {
 			logger.info(
-				"IGDB token expired or missing, reconnecting...",
+				'IGDB token expired or missing, reconnecting...',
 			);
 			await connectIgdb();
 		} finally {

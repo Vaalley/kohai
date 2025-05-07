@@ -25,6 +25,7 @@
 	"fmt": {
 		"useTabs": true,
 		"indentWidth": 4,
-		"lineWidth": 160
+		"lineWidth": 160,
+		"singleQuote": true
 	}
 }

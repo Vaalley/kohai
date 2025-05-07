@@ -1,5 +1,5 @@
-import { Logger, LogLevel } from "@zilla/logger";
-import { isProduction } from "@config/config.ts";
+import { Logger, LogLevel } from '@zilla/logger';
+import { isProduction } from '@config/config.ts';
 
 export const logger = new Logger();
 

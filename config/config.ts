@@ -1,5 +1,5 @@
-import "jsr:@std/dotenv/load";
-import { logger } from "@utils/logger.ts";
+import 'jsr:@std/dotenv/load';
+import { logger } from '@utils/logger.ts';
 
 /**
  * Retrieves the value of an environment variable.
@@ -9,10 +9,10 @@ import { logger } from "@utils/logger.ts";
  * @returns The value of the environment variable, or the default value if not set.
  * Logs a warning if the environment variable is not set and the default is used.
  */
-export function getEnv(key: string, defaultValue: string = ""): string {
+export function getEnv(key: string, defaultValue: string = ''): string {
 	const value = Deno.env.get(key) ?? defaultValue;
 
-	if (value == "") {
+	if (value == '') {
 		logger.warn(
 			`⚠️ Warning: Environment variable \`${key}\` is not set`,
 		);
@@ -35,7 +35,7 @@ export function setEnv(key: string, value: string) {
 		return;
 	}
 
-	if (value.trim() == "") {
+	if (value.trim() == '') {
 		logger.warn(
 			`⚠️ Warning: Attempting to set env variable \`${key}\` with empty value`,
 		);
@@ -54,5 +54,5 @@ export function setEnv(key: string, value: string) {
  * @returns True if the app is running in production mode, false otherwise.
  */
 export function isProduction(): boolean {
-	return getEnv("ENV") == "production";
+	return getEnv('ENV') == 'production';
 }

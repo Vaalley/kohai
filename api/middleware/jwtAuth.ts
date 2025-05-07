@@ -1,6 +1,6 @@
-import { Context, Next } from "hono";
-import { jwt } from "hono/jwt";
-import { getEnv } from "@config/config.ts";
+import { Context, Next } from 'hono';
+import { jwt } from 'hono/jwt';
+import { getEnv } from '@config/config.ts';
 
 /**
  * JWT authentication middleware.
@@ -15,8 +15,8 @@ import { getEnv } from "@config/config.ts";
 export function jwtAuth() {
 	return (c: Context, next: Next) => {
 		const jwtMiddleware = jwt({
-			secret: getEnv("JWT_SECRET"),
-			cookie: "access_token",
+			secret: getEnv('JWT_SECRET'),
+			cookie: 'access_token',
 		});
 		return jwtMiddleware(c, next);
 	};
