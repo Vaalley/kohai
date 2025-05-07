@@ -16,7 +16,7 @@ jobs:
                   deno-version: v2.x
             - name: Check formatting
               run: deno fmt --check
-            - name: Run linter
+            - name: Check linting
               run: deno lint
-            - name: Type check
+            - name: Check types
               run: deno check
