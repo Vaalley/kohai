@@ -30,11 +30,11 @@ export function setupRoutes(app: Hono) {
 	auth.get('/me', me);
 
 	//  ---------------
-	// |  IGDB routes  |
+	// |  Games routes  |
 	//  ---------------
-	const igdb = app.basePath('/igdb').use(igdbAuth());
+	const games = app.basePath('/games').use(igdbAuth());
 
-	igdb.post('/games/search', search);
+	games.post('/search', search);
 
 	//  ------------------------
 	// |  Protected API routes  |
