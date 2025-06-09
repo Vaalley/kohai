@@ -5,11 +5,16 @@ import { logger } from '@utils/logger.ts';
 let tokenRefreshPromise: Promise<void> | null = null;
 
 /**
- * Establishes a connection to the IGDB API.
+ * Establishes a connection to the IGDB API and retrieves an access token.
  *
- * Retrieves an access token from the IGDB server using the client ID and
- * client secret environment variables. The access token is then stored in
- * the environment variable `IGDB_ACCESS_TOKEN`.
+ * The function first checks if the current IGDB token is valid. If not, it sends a POST
+ * request to the Twitch OAuth2 API to obtain a new access token using client credentials.
+ * The access token and its expiration time are stored in the environment variables
+ * `IGDB_ACCESS_TOKEN` and `IGDB_EXPIRES_AT`, respectively.
+ *
+ * Logs the connection attempt and token status, and measures the connection time.
+ *
+ * Throws an error if the access token cannot be retrieved or if the HTTP request fails.
  */
 export async function connectIgdb() {
 	const startTime = Date.now();
@@ -62,7 +67,7 @@ export async function connectIgdb() {
 
 /**
  * Returns the expiration date of the IGDB token as a Date object.
- * If no expiration date is set, returns null.
+ * If no expiration date is set or it's not a valid number, returns null.
  */
 export function getIgdbExpiration(): Date | null {
 	const expiresAtStr = getEnv('IGDB_EXPIRES_AT');
@@ -77,6 +82,9 @@ export function getIgdbExpiration(): Date | null {
 /**
  * Checks if the current IGDB token is valid (exists and not expired).
  * Returns true if the token is valid, false otherwise.
+ *
+ * A token is considered valid if it exists and its expiration date is at
+ * least 5 minutes in the future.
  */
 export function isIgdbTokenValid(): boolean {
 	const token = getEnv('IGDB_ACCESS_TOKEN');
@@ -93,10 +101,13 @@ export function isIgdbTokenValid(): boolean {
 
 /**
  * Ensures a valid IGDB token is available for API calls.
+ *
  * If the token is missing or expired, it will reconnect to IGDB.
  *
  * Uses a mutex pattern to prevent concurrent token refreshes when
  * multiple requests detect an expired token simultaneously.
+ *
+ * Returns true if a valid token is available, false otherwise.
  */
 export async function ensureValidIgdbToken(): Promise<boolean> {
 	if (isIgdbTokenValid()) {

@@ -164,17 +164,17 @@ The backend is in its own repository, separate from the frontend. -> [backend re
 - RESTful API architecture
 - Endpoints:
   - Authentication (/auth/*)
-  - Media management (/media/*)
+  - Game management (/games/*)
   - Tag management (/tags/*)
   - User management (/users/*)
 - Rate limiting and caching system
 - External API integration layer
 - Code organization:
   - Consistent camelCase naming convention
-  - JSDoc documentation for all functions
+  - JSDoc documentation for most functions
   - Modular structure with clear separation of concerns
 - Security implementations:
-  - Password hashing using bcrypt (10+ salt rounds)
+  - Password hashing using bcrypt
   - JWT for authentication with appropriate expiration
   - Input validation and sanitization
   - CSRF protection
@@ -188,18 +188,14 @@ The frontend is in its own repository, separate from the backend. -> [frontend r
   - ARIA attributes for enhanced accessibility
   - W3C validation compliance
 - Atomic Design Structure:
-  - Atoms: buttons, inputs, tags, icons
-  - Molecules: search bars, tag groups, media cards
-  - Organisms: navigation, media details, tag submission forms
-  - Templates: layout structures
-  - Pages: complete views
+  - Atoms, Molecules, Organisms, Templates, Pages
 - CSS implementation:
   - SCSS as preprocessor, compiling to native CSS
   - Desktop-first responsive design approach
   - CSS Grid and Flexbox for layouts
   - Custom design system
 - Asset optimization:
-  - WebP image format with fallbacks
+  - WebP image format
   - SVG for icons and simple graphics
 - JavaScript interactivity:
   - Debounced search functionality
