@@ -90,12 +90,12 @@ export async function connectIgdb() {
 	);
 
 	if (!response.ok) {
-        let errorBody = 'Could not read error body.';
-        try {
-            errorBody = await response.text();
-        } catch (e) {
-            logger.error('Failed to read error body from IGDB token request:', e);
-        }
+		let errorBody = 'Could not read error body.';
+		try {
+			errorBody = await response.text();
+		} catch (e) {
+			logger.error('Failed to read error body from IGDB token request:', e);
+		}
 		logger.error(`HTTP error fetching IGDB token! Status: ${response.status}. Body: ${errorBody}`);
 		throw new Error(`Failed to fetch IGDB token. Status: ${response.status}`);
 	}
@@ -125,14 +125,14 @@ export async function connectIgdb() {
 export function getIgdbExpiration(): Date | null {
 	const expiresAtStr = getEnv('IGDB_EXPIRES_AT');
 	if (!expiresAtStr) {
-        logger.debug('IGDB_EXPIRES_AT not found in environment.');
-        return null;
-    }
+		logger.debug('IGDB_EXPIRES_AT not found in environment.');
+		return null;
+	}
 	const expiresAt = parseInt(expiresAtStr, 10);
 	if (isNaN(expiresAt)) {
-        logger.warn(`IGDB_EXPIRES_AT ('${expiresAtStr}') is not a valid number.`);
+		logger.warn(`IGDB_EXPIRES_AT ('${expiresAtStr}') is not a valid number.`);
 		return null;
-    }
+	}
 	return new Date(expiresAt);
 }
 
