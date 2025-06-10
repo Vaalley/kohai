@@ -10,17 +10,17 @@
     "jsr:@std/encoding@0.221": "0.221.0",
     "jsr:@std/fmt@0.221": "0.221.0",
     "jsr:@std/fmt@1": "1.0.6",
-    "jsr:@std/fmt@^1.0.7": "1.0.7",
+    "jsr:@std/fmt@^1.0.8": "1.0.8",
     "jsr:@std/fs@0.221": "0.221.0",
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@valibot/valibot@^1.1.0": "1.1.0",
     "jsr:@zilla/logger@^1.0.1": "1.0.1",
-    "npm:@hono/valibot-validator@~0.5.2": "0.5.2_hono@4.7.8_valibot@1.1.0",
+    "npm:@hono/valibot-validator@~0.5.2": "0.5.2_hono@4.7.11_valibot@1.1.0",
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
-    "npm:hono@^4.7.8": "4.7.8",
+    "npm:hono@^4.7.11": "4.7.11",
     "npm:is-what@5": "5.2.0",
-    "npm:mongodb@^6.16.0": "6.16.0"
+    "npm:mongodb@^6.17.0": "6.17.0"
   },
   "jsr": {
     "@denosaurs/plug@1.0.6": {
@@ -59,8 +59,8 @@
     "@std/fmt@1.0.6": {
       "integrity": "a2c56a69a2369876ddb3ad6a500bb6501b5bad47bb3ea16bfb0c18974d2661fc"
     },
-    "@std/fmt@1.0.7": {
-      "integrity": "2a727c043d8df62cd0b819b3fb709b64dd622e42c3b1bb817ea7e6cc606360fb"
+    "@std/fmt@1.0.8": {
+      "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
     },
     "@std/fs@0.221.0": {
       "integrity": "028044450299de8ed5a716ade4e6d524399f035513b85913794f4e81f07da286",
@@ -88,7 +88,7 @@
     }
   },
   "npm": {
-    "@hono/valibot-validator@0.5.2_hono@4.7.8_valibot@1.1.0": {
+    "@hono/valibot-validator@0.5.2_hono@4.7.11_valibot@1.1.0": {
       "integrity": "sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw==",
       "dependencies": [
         "hono",
@@ -116,14 +116,14 @@
         "@types/webidl-conversions"
       ]
     },
-    "bson@6.10.3": {
-      "integrity": "sha512-MTxGsqgYTwfshYWTRdmZRC+M7FnG1b4y7RO7p2k3X24Wq0yv1m77Wsj0BzlPzd/IowgESfsruQCUToa7vbOpPQ=="
+    "bson@6.10.4": {
+      "integrity": "sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng=="
     },
     "date-fns@4.1.0": {
       "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
-    "hono@4.7.8": {
-      "integrity": "sha512-PCibtFdxa7/Ldud9yddl1G81GjYaeMYYTq4ywSaNsYbB1Lug4mwtOMJf2WXykL0pntYwmpRJeOI3NmoDgD+Jxw=="
+    "hono@4.7.11": {
+      "integrity": "sha512-rv0JMwC0KALbbmwJDEnxvQCeJh+xbS3KEWW5PC9cMJ08Ur9xgatI0HmtgYZfOdOSOeYsp5LO2cOhdI8cLEbDEQ=="
     },
     "is-what@5.2.0": {
       "integrity": "sha512-IPOooAvDsC9AaL36TR6/pWlCTgQcCgZZR2IY6p8DCjJ84WVdH/f6SCZr8ngAY9wohbF5bvjOoqrVnBQGZiln/A=="
@@ -138,8 +138,8 @@
         "whatwg-url"
       ]
     },
-    "mongodb@6.16.0": {
-      "integrity": "sha512-D1PNcdT0y4Grhou5Zi/qgipZOYeWrhLEpk33n3nm6LGtz61jvO88WlrWCK/bigMjpnOdAUKKQwsGIl0NtWMyYw==",
+    "mongodb@6.17.0": {
+      "integrity": "sha512-neerUzg/8U26cgruLysKEjJvoNSXhyID3RvzvdcpsIi2COYM3FS3o9nlH7fxFtefTb942dX3W9i37oPfCVj4wA==",
       "dependencies": [
         "@mongodb-js/saslprep",
         "bson",
@@ -181,12 +181,12 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.5",
-      "jsr:@std/fmt@^1.0.7",
+      "jsr:@std/fmt@^1.0.8",
       "jsr:@valibot/valibot@^1.1.0",
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/valibot-validator@~0.5.2",
-      "npm:hono@^4.7.8",
-      "npm:mongodb@^6.16.0"
+      "npm:hono@^4.7.11",
+      "npm:mongodb@^6.17.0"
     ]
   }
 }

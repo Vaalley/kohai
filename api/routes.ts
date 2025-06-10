@@ -30,7 +30,7 @@ export function setupRoutes(app: Hono) {
 	auth.get('/me', me);
 
 	//  ---------------
-	// |  Games routes  |
+	// |  Games routes |
 	//  ---------------
 	const games = app.basePath('/games').use(igdbAuth());
 

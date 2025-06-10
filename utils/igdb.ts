@@ -142,6 +142,9 @@ let tokenRefreshPromise: Promise<void> | null = null;
 /**
  * Checks if the current IGDB token is valid (exists and not expired).
  * Returns true if the token is valid, false otherwise.
+ *
+ * A token is considered valid if it exists and its expiration date is at
+ * least 5 minutes in the future.
  */
 export function isIgdbTokenValid(): boolean {
 	const token = getEnv('IGDB_ACCESS_TOKEN');
@@ -158,10 +161,13 @@ export function isIgdbTokenValid(): boolean {
 
 /**
  * Ensures a valid IGDB token is available for API calls.
+ *
  * If the token is missing or expired, it will reconnect to IGDB.
  *
  * Uses a mutex pattern to prevent concurrent token refreshes when
  * multiple requests detect an expired token simultaneously.
+ *
+ * Returns true if a valid token is available, false otherwise.
  */
 export async function ensureValidIgdbToken(): Promise<boolean> {
 	if (isIgdbTokenValid()) {
