@@ -23,7 +23,15 @@ export async function connectMongo(): Promise<void> {
 
 	// Verify connection
 	await isConnected();
-	logger.info('✅ Successfully connected to MongoDB! 🔗');
+
+	// Determine if it's a local or remote connection for logging
+	let connectionType = 'remote';
+	const lowerCaseUri = uri.toLowerCase();
+	if (lowerCaseUri.includes('localhost') || lowerCaseUri.includes('127.0.0.1') || lowerCaseUri.includes('mongo:')) {
+		connectionType = 'local Docker';
+	}
+
+	logger.info(`✅ Successfully connected to ${connectionType} MongoDB! 🔗`);
 	logger.info(`⏲️ MongoDB connection time: ${Date.now() - startTime}ms`);
 }
 
