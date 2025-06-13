@@ -1,7 +1,7 @@
 import { Context } from 'hono';
 import { sign, verify as verifyJwt } from 'hono/jwt';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { hash, verify as verifyArgon2 } from '@felix/argon2';
+import { hash, verify as verifyArgon2 } from '@bronti/argon2';
 import { getCollection } from '@db/mongo.ts';
 import { User } from '@models/user.ts';
 import { getEnv, isProduction } from '@config/config.ts';
