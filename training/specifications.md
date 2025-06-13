@@ -174,7 +174,7 @@ The backend is in its own repository, separate from the frontend. -> [backend re
   - JSDoc documentation for most functions
   - Modular structure with clear separation of concerns
 - Security implementations:
-  - Password hashing using bcrypt
+  - Password hashing using argon2
   - JWT for authentication with appropriate expiration
   - Input validation and sanitization
   - CSRF protection
@@ -227,7 +227,7 @@ The frontend is in its own repository, separate from the backend. -> [frontend r
 - API key security with environment variables
 - Input sanitization and validation
 - CORS policy configuration
-- Password hashing using bcrypt
+- Password hashing using argon2
 - Session management with secure cookies
 - XSS prevention
 - NoSQL injection prevention

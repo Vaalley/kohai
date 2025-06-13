@@ -1,7 +1,7 @@
 import { Context } from 'hono';
 import { sign, verify as verifyJwt } from 'hono/jwt';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { hash, verify as verifyBcrypt } from '@felix/bcrypt';
+import { hash, verify as verifyArgon2 } from '@felix/argon2';
 import { getCollection } from '@db/mongo.ts';
 import { User } from '@models/user.ts';
 import { getEnv, isProduction } from '@config/config.ts';
@@ -82,7 +82,7 @@ export async function login(c: Context) {
 	}
 
 	// Verify password
-	const isPasswordValid = await verifyBcrypt(password, user.password);
+	const isPasswordValid = await verifyArgon2(password, user.password);
 	if (!isPasswordValid) {
 		return c.json({ success: false, error: 'Invalid password' });
 	}
