@@ -4,7 +4,6 @@
     "jsr:@denosaurs/plug@^1.0.6": "1.1.0",
     "jsr:@denosaurs/plug@^1.1.0": "1.1.0",
     "jsr:@felix/argon2@^3.0.2": "3.0.2",
-    "jsr:@felix/bcrypt@^1.0.5": "1.0.5",
     "jsr:@std/assert@*": "0.221.0",
     "jsr:@std/assert@0.221": "0.221.0",
     "jsr:@std/async@*": "1.0.10",
@@ -51,12 +50,6 @@
       "integrity": "62a7ab62f29ecc3532b4f28131c383a602bc471dbcb9c74658d8e65f6588208a",
       "dependencies": [
         "jsr:@denosaurs/plug@^1.1.0"
-      ]
-    },
-    "@felix/bcrypt@1.0.5": {
-      "integrity": "c8312e10cfda0e34c06c0d906667a0c602b472b7c64c75cfdcb44b934b885836",
-      "dependencies": [
-        "jsr:@denosaurs/plug@^1.0.6"
       ]
     },
     "@std/assert@0.221.0": {
@@ -214,7 +207,6 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/argon2@^3.0.2",
-      "jsr:@felix/bcrypt@^1.0.5",
       "jsr:@std/fmt@^1.0.8",
       "jsr:@valibot/valibot@^1.1.0",
       "jsr:@zilla/logger@^1.0.1",
