@@ -90,7 +90,7 @@
 - [x] Développer des interactions utilisateur-serveur via formulaires et liens (requêtes GET/POST)
 - [ ] Créer une interface d'administration complète (CRUD)
 - [x] Implémenter les fonctionnalités d'inscription, connexion et déconnexion
-- [x] Mettre en place un hachage sécurisé des mots de passe (bcrypt)
+- [x] Mettre en place un hachage sécurisé des mots de passe (argon2)
 
 ### Sécurité et Maintenance
 
@@ -111,7 +111,7 @@
 - [ ] Site responsive sur tous les appareils
 - [x] Nommage cohérent des variables/URLs/champs
 - [x] Code organisé, commenté et indenté
-- [x] Mots de passe sécurisés (bcrypt, pas de MD5/SHA1)
+- [x] Mots de passe sécurisés (argon2, pas de MD5/SHA1)
 - [ ] Espace d'administration avec au moins un CRUD complet
 - [x] Projet original (pas de copier-coller d'exercices ou de code généré automatiquement)
 
