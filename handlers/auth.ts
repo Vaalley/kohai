@@ -6,6 +6,17 @@ import { getCollection } from '@db/mongo.ts';
 import { User } from '@models/user.ts';
 import { getEnv, isProduction } from '@config/config.ts';
 
+interface JwtPayload {
+	id: string;
+	email: string;
+	username: string;
+	isadmin: boolean;
+	created_at: string;
+	updated_at: string;
+	last_login?: string;
+	exp: number;
+}
+
 const ACCESS_TOKEN_MAX_AGE = 60 * 15; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
@@ -102,15 +113,23 @@ export async function login(c: Context) {
 		return c.json({ success: false, error: 'Invalid password' });
 	}
 
-	const accessTokenPayload = {
+	const userData = {
+		id: user._id.toString(),
 		email: user.email,
 		username: user.username,
+		isadmin: user.isadmin || false,
+		created_at: user.created_at.toISOString(),
+		updated_at: user.updated_at.toISOString(),
+		last_login: user.last_login?.toISOString(),
+	};
+
+	const accessTokenPayload = {
+		...userData,
 		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
 	};
 
 	const refreshTokenPayload = {
-		email: user.email,
-		username: user.username,
+		...userData,
 		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
 	};
 
@@ -228,35 +247,30 @@ export async function me(c: Context) {
 	// Try to get user info from access token first
 	const accessToken = getCookie(c, 'access_token');
 	if (accessToken) {
-		const payload = await verifyJwt(
-			accessToken,
-			getEnv('JWT_SECRET'),
-		);
+		try {
+			const payload = await verifyJwt(accessToken, getEnv('JWT_SECRET'));
+			const userData = payload as unknown as JwtPayload;
 
-		return c.json({ success: true, user: payload });
+			// Remove the exp field from the response
+			const { exp: _exp, ...user } = userData;
+
+			return c.json({ success: true, user });
+		} catch (err) {
+			// If token is invalid, try to refresh it
+			console.error('Access token validation failed:', err);
+		}
 	}
 
 	// Access token missing or invalid, try to refresh using refresh token
 	try {
-		// Get new tokens
 		const { accessToken: newAccessToken } = await refreshTokens(c);
+		const payload = await verifyJwt(newAccessToken, getEnv('JWT_SECRET'));
+		const userData = payload as unknown as JwtPayload;
 
-		if (!newAccessToken) {
-			return c.json(
-				{
-					success: false,
-					error: 'Token refresh failed, please login again. Sorry :(',
-				},
-				401,
-			);
-		}
+		// Remove the exp field from the response
+		const { exp: _exp, ...user } = userData;
 
-		// Verify and return user info
-		const payload = await verifyJwt(
-			newAccessToken,
-			getEnv('JWT_SECRET'),
-		);
-		return c.json({ success: true, user: payload });
+		return c.json({ success: true, user });
 	} catch (err) {
 		// Refresh token invalid or refresh failed
 		deleteCookie(c, 'access_token');
@@ -322,24 +336,25 @@ export async function refreshTokens(c: Context) {
 		throw new Error('No refresh token');
 	}
 
-	const payload = await verifyJwt(
-		refreshToken,
-		getEnv('JWT_SECRET'),
-	);
+	const payload = await verifyJwt(refreshToken, getEnv('JWT_SECRET'));
 	if (!payload) {
 		throw new Error('Invalid refresh token');
 	}
 
-	// Generate new tokens
+	// Cast the payload to our JwtPayload type
+	const userPayload = payload as unknown as JwtPayload;
+
+	// Extract user data from the refresh token payload
+	const { exp: _, ...userData } = userPayload;
+
+	// Generate new tokens with all user data
 	const accessTokenPayload = {
-		email: payload.email,
-		username: payload.username,
+		...userData,
 		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
 	};
 
 	const refreshTokenPayload = {
-		email: payload.email,
-		username: payload.username,
+		...userData,
 		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
 	};
 
