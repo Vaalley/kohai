@@ -14,6 +14,14 @@ const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
  * data if successful, or an error message if the email or username
  * already exists.
  *
+ * This function takes the user's email, password, and username from
+ * the request, checks if the email or username already exists in the
+ * database, and hashes the password using Argon2. If the email or
+ * username does not exist, it creates a new user in the database
+ * with the provided information and returns a success message with
+ * the user's ID, email, and username. If the email or username
+ * already exists, it returns an error message.
+ *
  * @param c - The Hono context object.
  *
  * @returns A JSON response with the user's data if successful, or
@@ -63,12 +71,19 @@ export async function register(c: Context) {
 }
 
 /**
- * Logs in a user.
+ * Logs in a user by verifying their email and password, then generating and
+ * setting access and refresh tokens in cookies.
+ *
+ * This function takes the user's email and password from the request, checks
+ * the database for a matching user, and verifies the password using Argon2.
+ * If the user is found and the password is valid, it generates JWT access and
+ * refresh tokens and sets them as HTTP-only cookies. It also updates the user's
+ * last login date in the database.
  *
  * @param c - The Hono context object.
  *
- * @returns A JSON response with the user's data if successful, or an error
- * message if the user is not found or the password is invalid.
+ * @returns A JSON response with the user's data and tokens if successful, or
+ * an error message if the user is not found or the password is invalid.
  */
 export async function login(c: Context) {
 	const { email, password } = await c.req.json();
@@ -149,6 +164,12 @@ export async function login(c: Context) {
 /**
  * Logs out the current user by clearing the session cookie.
  *
+ * First, it checks if an access token and/or refresh token is present. If
+ * either is missing, it returns an error.
+ *
+ * Then, it deletes both tokens from the user's cookies and returns a success
+ * message.
+ *
  * @param c - The Hono context object.
  *
  * @returns A JSON response with a success message if the logout was successful,
@@ -173,13 +194,22 @@ export function logout(c: Context) {
 }
 
 /**
- * Returns the current user, or an error if the user is not logged in.
+ * Returns the current user if the user is logged in, or an error if the user
+ * is not logged in or the token is invalid.
+ *
+ * First, it checks if the access token is present and valid. If it is, it
+ * returns the user data from the access token payload.
+ *
+ * If the access token is missing or invalid, it tries to refresh the token
+ * using the refresh token. If the refresh token is invalid or the refresh
+ * fails, it clears both cookies and returns a 401 Unauthorized response.
  *
  * @param c - The Hono context object.
  *
  * @returns A JSON response with a success message and the current user's
- * data if the user is logged in, or an error message if the user is not
- * logged in or the token is invalid.
+ * data if the user is logged in, or a JSON response with an error message
+ * if the user is not logged in or the token is invalid. The response will
+ * have a 401 status code if the token is invalid or expired.
  */
 export async function me(c: Context) {
 	// Check if refresh token is present
