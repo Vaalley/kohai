@@ -74,7 +74,7 @@ src/
    deno task dev
    ```
 
-The API will be available at `http://localhost:8000` by default.
+The API will be available at `http://localhost:2501` by default.
 
 ## 📜 Available Scripts
 
@@ -103,8 +103,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🌟 Acknowledgments
 
-- Built with ❤️ using Deno and Hono
-- Game data integration with IGDB API
+- Built with ❤️ using [Deno](https://deno.com/)
+- Server framework [Hono](https://hono.dev/)
+- Database [MongoDB](https://www.mongodb.com/)
+- Input validation [Valibot](https://valibot.dev/)
+- Containerization [Docker](https://www.docker.com/)
+- Game data integration with [IGDB](https://api-docs.igdb.com/)
 
 ---
 

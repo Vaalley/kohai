@@ -42,7 +42,7 @@ async function main() {
 	const app = new Hono();
 
 	// Get port and hostname from environment
-	const PORT = getEnv('PORT', '3333');
+	const PORT = getEnv('PORT', '2501');
 	const HOSTNAME = getEnv('HOSTNAME', '0.0.0.0');
 
 	// Enable CORS
