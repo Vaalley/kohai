@@ -1,6 +1,7 @@
-import { Collection, Db, Document, MongoClient, MongoClientOptions } from 'mongodb';
+import { Collection, Db, Document, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
+import { User } from '@models/user.ts';
 
 let client: MongoClient;
 
@@ -70,4 +71,24 @@ export async function isConnected(): Promise<boolean> {
 		logger.error('❌ MongoDB connection verification failed:', err);
 		throw err;
 	}
+}
+
+/**
+ * Retrieves a user document from the 'users' collection by its ID.
+ *
+ * @param id - The string representation of the user's ObjectId.
+ * @returns A promise that resolves to the User document if found, or null if no user is found with the given ID.
+ */
+export async function getUserById(id: string): Promise<User> {
+	if (!ObjectId.isValid(id)) {
+		throw new Error(`Invalid user ID format: ${id}`);
+	}
+
+	const collection = getCollection<User>('users');
+
+	const user = await collection.findOne({ _id: new ObjectId(id) });
+	if (!user) {
+		throw new Error(`User with ID ${id} not found.`);
+	}
+	return user;
 }
