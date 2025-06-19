@@ -9,7 +9,7 @@ import { jwtAuth } from '@/api/middleware/jwtAuth.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
 import { deleteUser, getUser } from '@handlers/users.ts';
-import { search } from '@handlers/igdb.ts';
+import { getGame, search } from '@handlers/igdb.ts';
 import { health } from '@handlers/healthcheck.ts';
 
 import { logger } from '@utils/logger.ts';
@@ -43,6 +43,7 @@ export function setupRoutes(app: Hono) {
 	const games = app.basePath('/games').use(igdbAuth());
 
 	games.post('/search', search);
+	games.get('/gameInfo/:id', getGame);
 
 	//  ---------------
 	// |  Users routes |
