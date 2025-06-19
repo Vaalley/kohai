@@ -93,6 +93,13 @@ export async function getUserById(id: string): Promise<User> {
 	return user;
 }
 
+/**
+ * Deletes a user document from the 'users' collection by its ID.
+ *
+ * @param id - The string representation of the user's ObjectId.
+ * @returns A promise that resolves to the result of the deletion operation.
+ * @throws {Error} If the user ID is invalid or if the user is not found.
+ */
 export async function deleteUserById(id: string): Promise<DeleteResult> {
 	if (!ObjectId.isValid(id)) {
 		throw new Error(`Invalid user ID format: ${id}`);

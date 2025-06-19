@@ -27,6 +27,18 @@ export async function getUser(c: Context) {
 	}
 }
 
+/**
+ * Deletes a user by their ID from the request parameters and returns a JSON response
+ * with the result of the deletion.
+ *
+ * This function extracts the user ID from the request parameters, checks if the
+ * authenticated user is trying to delete their own account, and if so, calls the
+ * `deleteUserById` function to delete the user document from the database.
+ *
+ * @param c - The Hono context object containing the request and response.
+ *
+ * @returns A JSON response with a success message and the result of the deletion.
+ */
 export async function deleteUser(c: Context) {
 	// get the user id from the request that needs to be deleted
 	const id = c.req.param('id');
