@@ -7,8 +7,12 @@ const DEFAULT_FIELDS = 'fields name,summary,genres.name,platforms.name,first_rel
 
 // LRU-style cache for search results
 const searchCache = new Map<string, { data: unknown; time: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache lifetime
-const MAX_SEARCH_CACHE_SIZE = 30;
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes cache lifetime
+const MAX_SEARCH_CACHE_SIZE = 50;
+
+// LRU-style cache for game info
+const gameCache = new Map<string, { data: unknown; time: number }>();
+const MAX_GAME_CACHE_SIZE = 50;
 
 /**
  * Handles IGDB search requests.
@@ -76,5 +80,63 @@ export async function search(c: Context) {
 	} catch (e) {
 		logger.error('IGDB request failed', e);
 		return c.json({ success: false, message: 'Failed to search' });
+	}
+}
+
+/**
+ * Fetches game details from the IGDB API using the provided slug.
+ *
+ * This function first checks the cache for the game data associated
+ * with the slug. If cached data is found and is still valid, it returns
+ * the cached data. Otherwise, it makes a request to the IGDB API to
+ * fetch the game details.
+ *
+ * The fetched data is cached for future requests. If the cache reaches
+ * its maximum size, the oldest entry is removed. In case of an error
+ * during the API request, an error message is logged and returned.
+ *
+ * @param c - The Hono context object containing the request and response.
+ *
+ * @returns A JSON response with the game data if successful, or an error
+ * message if the request fails.
+ */
+export async function getGame(c: Context) {
+	const id = Number(c.req.param('id'));
+
+	// Check cache
+	const cached = gameCache.get(String(id));
+	if (cached && (Date.now() - cached.time < CACHE_TTL)) {
+		return c.json({ success: true, data: cached.data });
+	}
+
+	try {
+		const response = await fetch(`${BASE_URL}/games`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Client-ID': getEnv('IGDB_CLIENT_ID'),
+				'Authorization': `Bearer ${getEnv('IGDB_ACCESS_TOKEN')}`,
+			},
+			body: `fields name,summary,cover.image_id; where id = ${id};`,
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			logger.error(`IGDB API error: ${response.status} ${errorText}`);
+			return c.json({ success: false, message: 'Failed to get game', error: errorText });
+		}
+
+		const data = await response.json();
+
+		// Manage cache (remove oldest entry if at capacity)
+		if (gameCache.size >= MAX_GAME_CACHE_SIZE) {
+			gameCache.delete([...gameCache.keys()][0]);
+		}
+		gameCache.set(String(id), { data, time: Date.now() });
+
+		return c.json({ success: true, data });
+	} catch (e) {
+		logger.error('IGDB request failed', e);
+		return c.json({ success: false, message: 'Failed to get game' });
 	}
 }

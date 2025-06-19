@@ -14,6 +14,8 @@ provides a robust API for the Kohai platform, handling user authentication, game
 
 ## ✨ Features
 
+The frontend for this application is available at [https://github.com/Vaalley/kohai-ui](https://github.com/Vaalley/kohai-ui).
+
 - **RESTful API** endpoints for all platform functionality
 - JWT-based authentication system
 - MongoDB integration for data persistence
