@@ -1,4 +1,4 @@
-import { Collection, Db, Document, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
+import { Collection, Db, DeleteResult, Document, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 import { User } from '@models/user.ts';
@@ -87,6 +87,20 @@ export async function getUserById(id: string): Promise<User> {
 	const collection = getCollection<User>('users');
 
 	const user = await collection.findOne({ _id: new ObjectId(id) });
+	if (!user) {
+		throw new Error(`User with ID ${id} not found.`);
+	}
+	return user;
+}
+
+export async function deleteUserById(id: string): Promise<DeleteResult> {
+	if (!ObjectId.isValid(id)) {
+		throw new Error(`Invalid user ID format: ${id}`);
+	}
+
+	const collection = getCollection<User>('users');
+
+	const user = await collection.deleteOne({ _id: new ObjectId(id) });
 	if (!user) {
 		throw new Error(`User with ID ${id} not found.`);
 	}

@@ -1,12 +1,17 @@
 import { Hono } from 'hono';
 import { vValidator } from '@hono/valibot-validator';
+
 import { LoginSchema, RegisterSchema } from '@models/auth.ts';
+
 import { apiKeyAuth } from '@api/middleware/apiKeyAuth.ts';
 import { igdbAuth } from '@api/middleware/igdbAuth.ts';
+import { jwtAuth } from '@/api/middleware/jwtAuth.ts';
+
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
-import { getUser } from '@handlers/users.ts';
+import { deleteUser, getUser } from '@handlers/users.ts';
 import { search } from '@handlers/igdb.ts';
 import { health } from '@handlers/healthcheck.ts';
+
 import { logger } from '@utils/logger.ts';
 
 // Register routes
@@ -45,6 +50,7 @@ export function setupRoutes(app: Hono) {
 	const users = api.basePath('/users');
 
 	users.get('/:id', getUser);
+	users.delete('/:id', jwtAuth(), deleteUser);
 
 	logger.info('✅ Routes registered successfully 🪄');
 }
