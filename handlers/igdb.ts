@@ -182,7 +182,7 @@ export async function getTags(c: Context) {
 
 	const userContributionsCollection = getCollection<UserContribution>('userContributions');
 
-	const tagCounts: { tag: string; count: number }[] = [];
+	let tagCounts: { tag: string; count: number }[] = [];
 
 	for (const tag of mediaTag.tags) {
 		const count = await userContributionsCollection.countDocuments({
@@ -197,9 +197,9 @@ export async function getTags(c: Context) {
 	tagCounts.sort((a, b) => b.count - a.count);
 
 	// Apply limit if provided and valid
-	const result = limit && limit > 0 ? tagCounts.slice(0, limit) : tagCounts;
+	tagCounts = limit && limit > 0 ? tagCounts.slice(0, limit) : tagCounts;
 
-	return c.json({ success: true, data: result });
+	return c.json({ success: true, data: tagCounts });
 }
 
 /**
