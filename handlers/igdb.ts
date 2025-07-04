@@ -166,10 +166,11 @@ export async function getGame(c: Context) {
  * @returns A JSON response with the tags and their counts.
  */
 export async function getTags(c: Context) {
+	// get the id of the game
 	const id = Number(c.req.param('id'));
+
 	// get the tags from the database
 	// of a specific game
-
 	const mediaTagsCollection = getCollection<MediaTag>('mediaTags');
 	const mediaTag = await mediaTagsCollection.findOne({ mediaSlug: String(id), mediaType: MediaType.VIDEO_GAME });
 

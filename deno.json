@@ -2,7 +2,6 @@
 	"tasks": {
 		"dev": "deno -A --watch main.ts",
 		"test": "deno test test/ --parallel -A --reporter=dot",
-		"update": "deno outdated --update --latest",
 		"tidy": "deno fmt && deno lint --fix"
 	},
 	"imports": {
