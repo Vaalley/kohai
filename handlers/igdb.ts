@@ -166,8 +166,10 @@ export async function getGame(c: Context) {
  * @returns A JSON response with the tags and their counts.
  */
 export async function getTags(c: Context) {
-	// get the id of the game
+	// get the id and optional count from the request parameters
 	const id = Number(c.req.param('id'));
+	const countParam = c.req.query('count');
+	const limit = countParam ? Number(countParam) : undefined;
 
 	// get the tags from the database
 	// of a specific game
@@ -191,7 +193,13 @@ export async function getTags(c: Context) {
 		tagCounts.push({ tag, count });
 	}
 
-	return c.json({ success: true, data: tagCounts });
+	// Sort tags by count in descending order
+	tagCounts.sort((a, b) => b.count - a.count);
+
+	// Apply limit if provided and valid
+	const result = limit && limit > 0 ? tagCounts.slice(0, limit) : tagCounts;
+
+	return c.json({ success: true, data: result });
 }
 
 /**
