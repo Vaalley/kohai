@@ -354,7 +354,9 @@ async function processUserTags(
 
 	// Update existing contributions that are in finalTags
 	const contributionsToUpdateIds = existingContributions
-		.filter((uc: UserContribution) => finalTags.includes(uc.tag) && uc._id !== undefined && tagsToUpdate.some((id) => id.equals(uc._id!)))
+		.filter((uc: UserContribution) =>
+			finalTags.includes(uc.tag) && uc._id !== undefined && tagsToUpdate.some((id) => id.equals(uc._id!))
+		)
 		.map((uc: UserContribution) => uc._id as ObjectId);
 
 	if (contributionsToUpdateIds.length > 0) {
