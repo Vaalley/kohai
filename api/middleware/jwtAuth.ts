@@ -13,11 +13,11 @@ import { getEnv } from '@config/config.ts';
  * @returns A Hono middleware function that validates the JWT.
  */
 export function jwtAuth() {
-	return (c: Context, next: Next) => {
+	return async (c: Context, next: Next) => {
 		const jwtMiddleware = jwt({
 			secret: getEnv('JWT_SECRET'),
 			cookie: 'access_token',
 		});
-		return jwtMiddleware(c, next);
+		await jwtMiddleware(c, next);
 	};
 }
