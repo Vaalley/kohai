@@ -2,8 +2,9 @@
 
 ## 1. Project Overview
 
-Kohai is a web application that enables users to associate descriptive words with video games, creating a crowdsourced tagging system. Users can view aggregated
-popular tags for each piece of media, providing an organic, community-driven description system.
+Kohai is a web application that enables users to associate descriptive words with video games, creating a crowdsourced
+tagging system. Users can view aggregated popular tags for each piece of media, providing an organic, community-driven
+description system.
 
 ### A. Target Audience
 
@@ -43,7 +44,8 @@ popular tags for each piece of media, providing an organic, community-driven des
     - _Allocated Budget (Development):_ ~€30,000
     - _Estimated Hours:_ ~400 hours
   - **Sophie (Project Manager)**
-    - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline adherence.
+    - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline
+      adherence.
     - _Allocated Budget:_ (Covered under general project overhead)
     - _Estimated Hours:_ Part-time project oversight.
   - **Pierre (QA Specialist)**
@@ -77,9 +79,11 @@ popular tags for each piece of media, providing an organic, community-driven des
 
 - Users can add up to 3 descriptive words per media item
 - Word validation system to ensure quality:
-  - Duplicate Prevention: Check for existing identical tags (case-insensitive) submitted by the _same user_ for the _same media item_.
-  - Profanity Filter: Implement filtering using a dedicated external library/package (e.g., a Deno-compatible port or equivalent of `npm:bad-words`). This
-    leverages curated lists and handles common variations, reducing manual maintenance.
+  - Duplicate Prevention: Check for existing identical tags (case-insensitive) submitted by the _same user_ for the
+    _same media item_.
+  - Profanity Filter: Implement filtering using a dedicated external library/package (e.g., a Deno-compatible port or
+    equivalent of `npm:bad-words`). This leverages curated lists and handles common variations, reducing manual
+    maintenance.
 - Real-time aggregation of popular tags
 - Visual representation of tag popularity when visiting a media item's page
 
@@ -159,7 +163,8 @@ Example collections state for "Red Dead Redemption 2" scenario:
 
 ### B. Backend (Deno + Hono)
 
-The backend is in its own repository, separate from the frontend. -> [backend repository](https://github.com/Vaalley/kohai)
+The backend is in its own repository, separate from the frontend. ->
+[backend repository](https://github.com/Vaalley/kohai)
 
 - RESTful API architecture
 - Endpoints:
@@ -181,7 +186,8 @@ The backend is in its own repository, separate from the frontend. -> [backend re
 
 ### C. Frontend (SvelteKit + Native CSS)
 
-The frontend is in its own repository, separate from the backend. -> [frontend repository](https://github.com/Vaalley/kohai-ui)
+The frontend is in its own repository, separate from the backend. ->
+[frontend repository](https://github.com/Vaalley/kohai-ui)
 
 - HTML structure:
   - Semantic HTML5 elements (header, nav, main, section, article, footer)
@@ -240,7 +246,8 @@ The frontend is in its own repository, separate from the backend. -> [frontend r
 
 - Page load time < 2 seconds
 - API response time < 500ms
-- Server startup time < 5 seconds (includes connecting to database and external APIs, setting up the app, the routes, global middlewares)
+- Server startup time < 5 seconds (includes connecting to database and external APIs, setting up the app, the routes,
+  global middlewares)
 - Support for concurrent users
 - Efficient caching strategy
 - Optimized database queries
