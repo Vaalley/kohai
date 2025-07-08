@@ -1,6 +1,6 @@
 {
 	"tasks": {
-		"dev": "deno -A --watch main.ts",
+		"dev": "docker compose up -d && deno -A --watch main.ts",
 		"test": "deno test test/ --parallel -A --reporter=dot",
 		"tidy": "deno fmt && deno lint --fix"
 	},
