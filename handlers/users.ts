@@ -1,5 +1,7 @@
 import { Context } from 'hono';
-import { deleteUserById, getUserById } from '@db/mongo.ts';
+import { deleteUserById, getUserById, getCollection } from '@db/mongo.ts';
+import { UserContribution } from '@models/userContribution.ts';
+import { ObjectId } from 'mongodb';
 
 /**
  * Retrieves a user by their ID from the request parameters and returns a JSON response
@@ -54,6 +56,108 @@ export async function deleteUser(c: Context) {
 
 		const result = await deleteUserById(id);
 		return c.json({ success: true, message: 'User deleted successfully', data: result });
+	} catch (error) {
+		if (error instanceof Error) {
+			return c.json({ success: false, message: error.message }, 404);
+		}
+		return c.json({ success: false, message: 'Internal server error.' }, 500);
+	}
+}
+
+/**
+ * Retrieves user statistics from the database and returns a JSON response with the data.
+ *
+ * The statistics include:
+ * - Top 10 most used tags
+ * - Last 10 tags (most recent contributions)
+ * - Total number of contributions
+ * - Number of unique games tagged
+ * - Date of the first contribution
+ * - Date of the last contribution
+ * - Tag diversity (number of unique tags used)
+ *
+ * @param c - The Hono context object containing the request and response.
+ *
+ * @returns A JSON response with the user statistics.
+ */
+export async function getUserStats(c: Context) {
+	const id = c.req.param('id');
+
+	try {
+		// Verify user exists
+		const user = await getUserById(id);
+		if (!user) {
+			return c.json({ success: false, message: 'User not found' }, 404);
+		}
+
+		const userContributionsCollection = getCollection<UserContribution>('userContributions');
+		const userId = new ObjectId(id);
+
+		// Get all user contributions
+		const allContributions = await userContributionsCollection
+			.find({ userId })
+			.sort({ timestamp: -1 })
+			.toArray();
+
+		if (allContributions.length === 0) {
+			return c.json({
+				success: true,
+				data: {
+					topTags: [],
+					recentTags: [],
+					totalContributions: 0,
+					uniqueGamesTagged: 0,
+					firstContributionDate: null,
+					lastContributionDate: null,
+					tagDiversity: 0
+				}
+			});
+		}
+
+		// Calculate tag frequency for top tags
+		const tagFrequency = new Map<string, number>();
+		const uniqueGames = new Set<string>();
+
+		for (const contribution of allContributions) {
+			tagFrequency.set(contribution.tag, (tagFrequency.get(contribution.tag) || 0) + 1);
+			uniqueGames.add(contribution.mediaSlug);
+		}
+
+		// Get top 10 most used tags
+		const topTags = Array.from(tagFrequency.entries())
+			.sort((a, b) => b[1] - a[1])
+			.slice(0, 10)
+			.map(([tag, count]) => ({ tag, count }));
+
+		// Get last 10 tags (most recent contributions)
+		const recentTags = allContributions
+			.slice(0, 10)
+			.map(contribution => ({
+				tag: contribution.tag,
+				mediaSlug: contribution.mediaSlug,
+				mediaType: contribution.mediaType,
+				timestamp: contribution.timestamp
+			}));
+
+		// Calculate statistics
+		const totalContributions = allContributions.length;
+		const uniqueGamesTagged = uniqueGames.size;
+		const firstContributionDate = allContributions[allContributions.length - 1].timestamp;
+		const lastContributionDate = allContributions[0].timestamp;
+		const tagDiversity = tagFrequency.size;
+
+		return c.json({
+			success: true,
+			data: {
+				topTags,
+				recentTags,
+				totalContributions,
+				uniqueGamesTagged,
+				firstContributionDate,
+				lastContributionDate,
+				tagDiversity
+			}
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			return c.json({ success: false, message: error.message }, 404);

@@ -2,10 +2,10 @@ import { Context } from 'hono';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 import { Collection, ObjectId } from 'mongodb';
-import { getCollection } from '../db/mongo.ts';
-import { MediaTag, MediaType } from '../models/mediaTag.ts';
-import { UserContribution } from '../models/userContribution.ts';
-import { containsBadWords } from '../utils/badwords.ts';
+import { getCollection } from '@db/mongo.ts';
+import { MediaTag, MediaType } from '@models/mediaTag.ts';
+import { UserContribution } from '@models/userContribution.ts';
+import { containsBadWords } from '@utils/badwords.ts';
 
 //  ----------------
 // |  GAME HANDLERS |
