@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { deleteUserById, getUserById, getCollection } from '@db/mongo.ts';
+import { deleteUserById, getCollection, getUserById } from '@db/mongo.ts';
 import { UserContribution } from '@models/userContribution.ts';
 import { ObjectId } from 'mongodb';
 
@@ -109,8 +109,8 @@ export async function getUserStats(c: Context) {
 					uniqueGamesTagged: 0,
 					firstContributionDate: null,
 					lastContributionDate: null,
-					tagDiversity: 0
-				}
+					tagDiversity: 0,
+				},
 			});
 		}
 
@@ -132,11 +132,11 @@ export async function getUserStats(c: Context) {
 		// Get last 10 tags (most recent contributions)
 		const recentTags = allContributions
 			.slice(0, 10)
-			.map(contribution => ({
+			.map((contribution) => ({
 				tag: contribution.tag,
 				mediaSlug: contribution.mediaSlug,
 				mediaType: contribution.mediaType,
-				timestamp: contribution.timestamp
+				timestamp: contribution.timestamp,
 			}));
 
 		// Calculate statistics
@@ -155,8 +155,8 @@ export async function getUserStats(c: Context) {
 				uniqueGamesTagged,
 				firstContributionDate,
 				lastContributionDate,
-				tagDiversity
-			}
+				tagDiversity,
+			},
 		});
 	} catch (error) {
 		if (error instanceof Error) {
