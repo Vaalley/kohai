@@ -8,7 +8,7 @@ import { igdbAuth } from '@api/middleware/igdbAuth.ts';
 import { jwtAuth } from '@/api/middleware/jwtAuth.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
-import { deleteUser, getUser } from '@handlers/users.ts';
+import { deleteUser, getUser, getUserStats } from '@handlers/users.ts';
 import { createTags, getGame, getTags, search } from '@handlers/igdb.ts';
 import { health } from '@handlers/healthcheck.ts';
 
@@ -59,6 +59,7 @@ export function setupRoutes(app: Hono) {
 	const users = api.basePath('/users');
 
 	users.get('/:id', getUser);
+	users.get('/:id/stats', getUserStats);
 	users.delete('/:id', jwtAuth(), deleteUser);
 
 	logger.info('✅ Routes registered successfully 🪄');
