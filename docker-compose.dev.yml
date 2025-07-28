@@ -1,7 +1,7 @@
 services:
     mongodb:
         image: mongo:8.0.12
-        container_name: kohai-mongodb
+        container_name: kohai-mongodb-dev
         ports:
             - '27017:27017'
         environment:
@@ -9,22 +9,27 @@ services:
             - MONGO_INITDB_ROOT_PASSWORD=admin
             - MONGO_INITDB_DATABASE=kohai-db
         volumes:
-            - mongodb_data:/data/db
+            - mongodb_data_dev:/data/db
         restart: unless-stopped
 
     kohai-app:
         build: .
-        container_name: kohai-app
+        container_name: kohai-app-dev
         ports:
             - '2501:2501'
         environment:
             - PORT=2501
             - HOSTNAME=0.0.0.0
             - MONGODB_URI=mongodb://root:admin@mongodb:27017/kohai-db?authSource=admin
+            - ENV=development
+        volumes:
+            - .:/app
+            - /app/node_modules
         depends_on:
             - mongodb
         restart: unless-stopped
+        command: deno run -A --watch main.ts
 
 volumes:
-    mongodb_data:
+    mongodb_data_dev:
         driver: local

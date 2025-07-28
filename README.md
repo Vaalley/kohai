@@ -50,9 +50,7 @@ src/
 
 ### Prerequisites
 
-- [Deno](https://deno.com/) (v2.x)
-- [Docker](https://www.docker.com/) (for MongoDB)
-- [Docker Compose](https://docs.docker.com/compose/) (for local development)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
 ### Installation
 
@@ -68,12 +66,24 @@ src/
    # Edit .env with your configuration
    ```
 
-3. **Start MongoDB**
-   ```bash
-   docker compose up -d
-   ```
+3. **Start the services**
 
-4. **Run the development server**
+For a fully containerized setup, you can run the entire application using Docker. See
+[README.docker.md](README.docker.md) for detailed instructions.
+
+For local development with hot reloading (recommended):
+
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
+
+For production-like environment:
+
+```bash
+docker compose up -d
+```
+
+4. **Run the development server** (if not using Docker)
    ```bash
    deno task dev
    ```
