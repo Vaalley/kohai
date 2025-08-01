@@ -82,12 +82,18 @@ export async function deleteUser(c: Context) {
  */
 export async function getUserStats(c: Context) {
 	const id = c.req.param('id');
+	const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
 
 	try {
 		// Verify user exists
 		const user = await getUserById(id);
 		if (!user) {
 			return c.json({ success: false, message: 'User not found' }, 404);
+		}
+
+		// Check if the requesting user is admin or is requesting their own stats
+		if (!jwtPayload.isadmin && jwtPayload.id !== id) {
+			return c.json({ success: false, message: 'Unauthorized access to user stats' }, 403);
 		}
 
 		const userContributionsCollection = getCollection<UserContribution>('userContributions');
