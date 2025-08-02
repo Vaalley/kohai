@@ -1,6 +1,7 @@
 import { Context } from 'hono';
-import { deleteUserById, getCollection, getUserById } from '@db/mongo.ts';
+import { deleteUserByUsername, getCollection, getUserByUsername } from '@db/mongo.ts';
 import { UserContribution } from '@models/userContribution.ts';
+import { logger } from '@utils/logger.ts';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -16,10 +17,10 @@ import { ObjectId } from 'mongodb';
  * @returns A JSON response with a success message and the user's data.
  */
 export async function getUser(c: Context) {
-	const id = c.req.param('id');
+	const username = c.req.param('username');
 
 	try {
-		const user = await getUserById(id);
+		const user = await getUserByUsername(username);
 		return c.json({ success: true, data: user });
 	} catch (error) {
 		if (error instanceof Error) {
@@ -42,19 +43,19 @@ export async function getUser(c: Context) {
  * @returns A JSON response with a success message and the result of the deletion.
  */
 export async function deleteUser(c: Context) {
-	// get the user id from the request that needs to be deleted
-	const id = c.req.param('id');
+	// get the user username from the request that needs to be deleted
+	const username = c.req.param('username');
 
 	try {
 		// Get the JWT payload from the context (set by jwtAuth middleware)
 		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
 
 		// Check if the authenticated user is trying to delete their own account
-		if (jwtPayload.id !== id) {
+		if (jwtPayload.username !== username) {
 			return c.json({ success: false, message: 'You are not authorized to delete this user.' }, 403);
 		}
 
-		const result = await deleteUserById(id);
+		const result = await deleteUserByUsername(username);
 		return c.json({ success: true, message: 'User deleted successfully', data: result });
 	} catch (error) {
 		if (error instanceof Error) {
@@ -81,27 +82,28 @@ export async function deleteUser(c: Context) {
  * @returns A JSON response with the user statistics.
  */
 export async function getUserStats(c: Context) {
-	const id = c.req.param('id');
-	const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+	const username = c.req.param('username');
 
 	try {
 		// Verify user exists
-		const user = await getUserById(id);
+		const user = await getUserByUsername(username);
 		if (!user) {
 			return c.json({ success: false, message: 'User not found' }, 404);
 		}
 
-		// Check if the requesting user is admin or is requesting their own stats
-		if (!jwtPayload.isadmin && jwtPayload.id !== id) {
-			return c.json({ success: false, message: 'Unauthorized access to user stats' }, 403);
+		// Try to get JWT payload for authenticated requests (optional)
+		let _jwtPayload: { id: string; email: string; username: string; isadmin: boolean } | null = null;
+		try {
+			_jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		} catch (_e) {
+			// JWT payload not available, which is fine for public requests
 		}
 
 		const userContributionsCollection = getCollection<UserContribution>('userContributions');
-		const userId = new ObjectId(id);
 
-		// Get all user contributions
+		// Get all user contributions using the user's _id
 		const allContributions = await userContributionsCollection
-			.find({ userId })
+			.find({ userId: new ObjectId(user._id) })
 			.sort({ timestamp: -1 })
 			.toArray();
 
@@ -166,6 +168,7 @@ export async function getUserStats(c: Context) {
 		});
 	} catch (error) {
 		if (error instanceof Error) {
+			logger.info(`❌ Error getting user stats for user with username: ${username} error: ${error.message}`);
 			return c.json({ success: false, message: error.message }, 404);
 		}
 		return c.json({ success: false, message: 'Internal server error.' }, 500);

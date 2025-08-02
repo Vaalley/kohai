@@ -59,9 +59,9 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	const users = api.basePath('/users');
 
-	users.get('/:id', getUser);
-	users.get('/:id/stats', getUserStats);
-	users.delete('/:id', jwtAuth(), deleteUser);
+	users.get('/:username', getUser);
+	users.get('/:username/stats', getUserStats);
+	users.delete('/:username', jwtAuth(), deleteUser);
 
 	logger.info('✅ Routes registered successfully 🪄');
 }
