@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { deleteUserByUsername, getCollection, getUserByUsername } from '@db/mongo.ts';
+import { deleteUserByUsername, getCollection, getUserByUsername, promoteUserToAdmin } from '@db/mongo.ts';
 import { UserContribution } from '@models/userContribution.ts';
 import { logger } from '@utils/logger.ts';
 import { ObjectId } from 'mongodb';
@@ -28,6 +28,38 @@ export async function getUser(c: Context) {
 		}
 		return c.json({ success: false, message: 'Internal server error.' }, 500);
 	}
+}
+
+/**
+ * Promotes a user to admin. Only admins can perform this action and the target must not already be an admin.
+ *
+ * @param c - The Hono context object containing the request and response.
+ * @returns A JSON response indicating success or failure.
+ */
+export async function promoteUser(c: Context) {
+  const username = c.req.param('username');
+
+  try {
+    // Must be authenticated and an admin
+    const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+    if (!jwtPayload?.isadmin) {
+      return c.json({ success: false, message: 'Only admins can promote users.' }, 403);
+    }
+
+    // Ensure target user exists and is not already admin
+    const user = await getUserByUsername(username);
+    if (user.isadmin) {
+      return c.json({ success: false, message: 'User is already an admin.' }, 400);
+    }
+
+    const result = await promoteUserToAdmin(username);
+    return c.json({ success: true, message: 'User promoted to admin successfully', data: { matched: result.matchedCount, modified: result.modifiedCount } });
+  } catch (error) {
+    if (error instanceof Error) {
+      return c.json({ success: false, message: error.message }, 404);
+    }
+    return c.json({ success: false, message: 'Internal server error.' }, 500);
+  }
 }
 
 /**

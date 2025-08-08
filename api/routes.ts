@@ -9,7 +9,7 @@ import { jwtAuth } from '@/api/middleware/jwtAuth.ts';
 import { authRateLimiter, basicRateLimiter } from '@api/middleware/rateLimiter.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
-import { deleteUser, getUser, getUserStats } from '@handlers/users.ts';
+import { deleteUser, getUser, getUserStats, promoteUser } from '@handlers/users.ts';
 import { createTags, getGame, getTags, search } from '@handlers/igdb.ts';
 import { health } from '@handlers/healthcheck.ts';
 
@@ -62,6 +62,7 @@ export function setupRoutes(app: Hono) {
 	users.get('/:username', getUser);
 	users.get('/:username/stats', getUserStats);
 	users.delete('/:username', jwtAuth(), deleteUser);
+	users.put('/:username/promote', jwtAuth(), promoteUser);
 
 	logger.info('✅ Routes registered successfully 🪄');
 }

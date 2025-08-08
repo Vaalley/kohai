@@ -1,4 +1,4 @@
-import { Collection, Db, DeleteResult, Document, MongoClient, MongoClientOptions } from 'mongodb';
+import { Collection, Db, DeleteResult, Document, MongoClient, MongoClientOptions, UpdateResult } from 'mongodb';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 import { User } from '@models/user.ts';
@@ -104,4 +104,21 @@ export async function deleteUserByUsername(username: string): Promise<DeleteResu
 		throw new Error(`User with username ${username} not found.`);
 	}
 	return user;
+}
+
+/**
+ * Promotes a user to admin by setting the isadmin flag to true.
+ *
+ * @param username - The username of the user to promote.
+ * @returns The MongoDB UpdateResult of the operation.
+ * @throws {Error} If the user is not found.
+ */
+export async function promoteUserToAdmin(username: string): Promise<UpdateResult<User>> {
+  const collection = getCollection<User>('users');
+
+  const result = await collection.updateOne({ username }, { $set: { isadmin: true, updated_at: new Date() } });
+  if (result.matchedCount === 0) {
+    throw new Error(`User with username ${username} not found.`);
+  }
+  return result as UpdateResult<User>;
 }
