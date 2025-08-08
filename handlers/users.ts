@@ -1,6 +1,7 @@
 import { Context } from 'hono';
-import { deleteUserById, getCollection, getUserById } from '@db/mongo.ts';
+import { deleteUserByUsername, getCollection, getUserByUsername, promoteUserToAdmin } from '@db/mongo.ts';
 import { UserContribution } from '@models/userContribution.ts';
+import { logger } from '@utils/logger.ts';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -16,11 +17,47 @@ import { ObjectId } from 'mongodb';
  * @returns A JSON response with a success message and the user's data.
  */
 export async function getUser(c: Context) {
-	const id = c.req.param('id');
+	const username = c.req.param('username');
 
 	try {
-		const user = await getUserById(id);
+		const user = await getUserByUsername(username);
 		return c.json({ success: true, data: user });
+	} catch (error) {
+		if (error instanceof Error) {
+			return c.json({ success: false, message: error.message }, 404);
+		}
+		return c.json({ success: false, message: 'Internal server error.' }, 500);
+	}
+}
+
+/**
+ * Promotes a user to admin. Only admins can perform this action and the target must not already be an admin.
+ *
+ * @param c - The Hono context object containing the request and response.
+ * @returns A JSON response indicating success or failure.
+ */
+export async function promoteUser(c: Context) {
+	const username = c.req.param('username');
+
+	try {
+		// Must be authenticated and an admin
+		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		if (!jwtPayload?.isadmin) {
+			return c.json({ success: false, message: 'Only admins can promote users.' }, 403);
+		}
+
+		// Ensure target user exists and is not already admin
+		const user = await getUserByUsername(username);
+		if (user.isadmin) {
+			return c.json({ success: false, message: 'User is already an admin.' }, 400);
+		}
+
+		const result = await promoteUserToAdmin(username);
+		return c.json({
+			success: true,
+			message: 'User promoted to admin successfully',
+			data: { matched: result.matchedCount, modified: result.modifiedCount },
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			return c.json({ success: false, message: error.message }, 404);
@@ -42,19 +79,19 @@ export async function getUser(c: Context) {
  * @returns A JSON response with a success message and the result of the deletion.
  */
 export async function deleteUser(c: Context) {
-	// get the user id from the request that needs to be deleted
-	const id = c.req.param('id');
+	// get the user username from the request that needs to be deleted
+	const username = c.req.param('username');
 
 	try {
 		// Get the JWT payload from the context (set by jwtAuth middleware)
 		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
 
 		// Check if the authenticated user is trying to delete their own account
-		if (jwtPayload.id !== id) {
+		if (jwtPayload.username !== username && !jwtPayload.isadmin) {
 			return c.json({ success: false, message: 'You are not authorized to delete this user.' }, 403);
 		}
 
-		const result = await deleteUserById(id);
+		const result = await deleteUserByUsername(username);
 		return c.json({ success: true, message: 'User deleted successfully', data: result });
 	} catch (error) {
 		if (error instanceof Error) {
@@ -81,21 +118,28 @@ export async function deleteUser(c: Context) {
  * @returns A JSON response with the user statistics.
  */
 export async function getUserStats(c: Context) {
-	const id = c.req.param('id');
+	const username = c.req.param('username');
 
 	try {
 		// Verify user exists
-		const user = await getUserById(id);
+		const user = await getUserByUsername(username);
 		if (!user) {
 			return c.json({ success: false, message: 'User not found' }, 404);
 		}
 
-		const userContributionsCollection = getCollection<UserContribution>('userContributions');
-		const userId = new ObjectId(id);
+		// Try to get JWT payload for authenticated requests (optional)
+		let _jwtPayload: { id: string; email: string; username: string; isadmin: boolean } | null = null;
+		try {
+			_jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		} catch (_e) {
+			// JWT payload not available, which is fine for public requests
+		}
 
-		// Get all user contributions
+		const userContributionsCollection = getCollection<UserContribution>('userContributions');
+
+		// Get all user contributions using the user's _id
 		const allContributions = await userContributionsCollection
-			.find({ userId })
+			.find({ userId: new ObjectId(user._id) })
 			.sort({ timestamp: -1 })
 			.toArray();
 
@@ -160,6 +204,7 @@ export async function getUserStats(c: Context) {
 		});
 	} catch (error) {
 		if (error instanceof Error) {
+			logger.info(`❌ Error getting user stats for user with username: ${username} error: ${error.message}`);
 			return c.json({ success: false, message: error.message }, 404);
 		}
 		return c.json({ success: false, message: 'Internal server error.' }, 500);

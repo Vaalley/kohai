@@ -1,4 +1,4 @@
-import { Collection, Db, DeleteResult, Document, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
+import { Collection, Db, DeleteResult, Document, MongoClient, MongoClientOptions, UpdateResult } from 'mongodb';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 import { User } from '@models/user.ts';
@@ -74,42 +74,51 @@ export async function isConnected(): Promise<boolean> {
 }
 
 /**
- * Retrieves a user document from the 'users' collection by its ID.
+ * Retrieves a user document from the 'users' collection by its username.
  *
- * @param id - The string representation of the user's ObjectId.
- * @returns A promise that resolves to the User document if found, or null if no user is found with the given ID.
+ * @param username - The username of the user to retrieve.
+ * @returns A promise that resolves to the User document if found, or null if no user is found with the given username.
  */
-export async function getUserById(id: string): Promise<User> {
-	if (!ObjectId.isValid(id)) {
-		throw new Error(`Invalid user ID format: ${id}`);
-	}
-
+export async function getUserByUsername(username: string): Promise<User> {
 	const collection = getCollection<User>('users');
 
-	const user = await collection.findOne({ _id: new ObjectId(id) });
+	const user = await collection.findOne({ username });
 	if (!user) {
-		throw new Error(`User with ID ${id} not found.`);
+		throw new Error(`User with username ${username} not found.`);
 	}
 	return user;
 }
 
 /**
- * Deletes a user document from the 'users' collection by its ID.
+ * Deletes a user document from the 'users' collection by its username.
  *
- * @param id - The string representation of the user's ObjectId.
+ * @param username - The username of the user to delete.
  * @returns A promise that resolves to the result of the deletion operation.
- * @throws {Error} If the user ID is invalid or if the user is not found.
+ * @throws {Error} If the username is invalid or if the user is not found.
  */
-export async function deleteUserById(id: string): Promise<DeleteResult> {
-	if (!ObjectId.isValid(id)) {
-		throw new Error(`Invalid user ID format: ${id}`);
-	}
-
+export async function deleteUserByUsername(username: string): Promise<DeleteResult> {
 	const collection = getCollection<User>('users');
 
-	const user = await collection.deleteOne({ _id: new ObjectId(id) });
+	const user = await collection.deleteOne({ username });
 	if (!user) {
-		throw new Error(`User with ID ${id} not found.`);
+		throw new Error(`User with username ${username} not found.`);
 	}
 	return user;
+}
+
+/**
+ * Promotes a user to admin by setting the isadmin flag to true.
+ *
+ * @param username - The username of the user to promote.
+ * @returns The MongoDB UpdateResult of the operation.
+ * @throws {Error} If the user is not found.
+ */
+export async function promoteUserToAdmin(username: string): Promise<UpdateResult<User>> {
+	const collection = getCollection<User>('users');
+
+	const result = await collection.updateOne({ username }, { $set: { isadmin: true, updated_at: new Date() } });
+	if (result.matchedCount === 0) {
+		throw new Error(`User with username ${username} not found.`);
+	}
+	return result as UpdateResult<User>;
 }
