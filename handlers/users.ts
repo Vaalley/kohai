@@ -51,7 +51,7 @@ export async function deleteUser(c: Context) {
 		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
 
 		// Check if the authenticated user is trying to delete their own account
-		if (jwtPayload.username !== username) {
+		if (jwtPayload.username !== username && !jwtPayload.isadmin) {
 			return c.json({ success: false, message: 'You are not authorized to delete this user.' }, 403);
 		}
 
