@@ -114,11 +114,11 @@ export async function deleteUserByUsername(username: string): Promise<DeleteResu
  * @throws {Error} If the user is not found.
  */
 export async function promoteUserToAdmin(username: string): Promise<UpdateResult<User>> {
-  const collection = getCollection<User>('users');
+	const collection = getCollection<User>('users');
 
-  const result = await collection.updateOne({ username }, { $set: { isadmin: true, updated_at: new Date() } });
-  if (result.matchedCount === 0) {
-    throw new Error(`User with username ${username} not found.`);
-  }
-  return result as UpdateResult<User>;
+	const result = await collection.updateOne({ username }, { $set: { isadmin: true, updated_at: new Date() } });
+	if (result.matchedCount === 0) {
+		throw new Error(`User with username ${username} not found.`);
+	}
+	return result as UpdateResult<User>;
 }
