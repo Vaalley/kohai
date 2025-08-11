@@ -6,7 +6,7 @@ import { LoginSchema, RegisterSchema } from '@models/auth.ts';
 import { apiKeyAuth } from '@api/middleware/apiKeyAuth.ts';
 import { igdbAuth } from '@api/middleware/igdbAuth.ts';
 import { jwtAuth } from '@/api/middleware/jwtAuth.ts';
-import { authRateLimiter, basicRateLimiter } from '@api/middleware/rateLimiter.ts';
+import { authRateLimiter } from '@api/middleware/rateLimiter.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
 import { deleteUser, getUser, getUserStats, promoteUser } from '@handlers/users.ts';
@@ -20,7 +20,7 @@ import { logger } from '@utils/logger.ts';
 export function setupRoutes(app: Hono) {
 	logger.info('🔄 Registering routes... 🛣️');
 
-	const api = app.basePath('/api').use(basicRateLimiter).use(apiKeyAuth());
+	const api = app.basePath('/api').use(apiKeyAuth());
 
 	//  ----------------
 	// |  Health check  |
@@ -44,15 +44,15 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	const games = app.basePath('/games').use(igdbAuth());
 
-	games.post('/search', basicRateLimiter, search);
-	games.get('/gameInfo/:id', getGame);
+	games.post('/search', search);
+	games.get('/:id', getGame);
 
 	//  ---------------
 	// |  Tags routes |
 	//  ---------------
 	const tags = app.basePath('/tags').use(igdbAuth());
 
-	tags.get('/:id', basicRateLimiter, getTags);
+	tags.get('/:id', getTags);
 	tags.put('/:id', jwtAuth(), createTags);
 
 	//  ---------------
@@ -61,7 +61,7 @@ export function setupRoutes(app: Hono) {
 	const users = api.basePath('/users');
 
 	users.get('/:username', getUser);
-	users.get('/:username/stats', getUserStats);
+	users.get('/stats/:username', getUserStats);
 	users.delete('/:username', jwtAuth(), deleteUser);
 	users.put('/:username/promote', jwtAuth(), promoteUser);
 
