@@ -21,7 +21,15 @@ export async function getUser(c: Context) {
 
 	try {
 		const user = await getUserByUsername(username);
-		return c.json({ success: true, data: user });
+		// Sanitize user object to avoid exposing sensitive fields
+		const safeUser = {
+			id: user._id?.toString(),
+			username: user.username,
+			// Public fields only; exclude password, email, isadmin by default
+			created_at: user.created_at,
+			last_login: user.last_login ?? null,
+		};
+		return c.json({ success: true, data: safeUser });
 	} catch (error) {
 		if (error instanceof Error) {
 			return c.json({ success: false, message: error.message }, 404);
@@ -139,7 +147,7 @@ export async function getUserStats(c: Context) {
 
 		// Get all user contributions using the user's _id
 		const allContributions = await userContributionsCollection
-			.find({ userId: new ObjectId(user._id) })
+			.find({ userId: user._id as ObjectId })
 			.sort({ timestamp: -1 })
 			.toArray();
 

@@ -44,7 +44,7 @@ export async function search(c: Context) {
 
 	// Return early if no query
 	if (!bodyQuery.trim()) {
-		return c.json({ success: false, message: 'No query provided' });
+		return c.json({ success: false, message: 'No query provided' }, 400);
 	}
 
 	// Add default fields if needed and create cache key
@@ -62,7 +62,7 @@ export async function search(c: Context) {
 		const response = await fetch(`${BASE_URL}/games`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'text/plain',
 				'Client-ID': getEnv('IGDB_CLIENT_ID'),
 				'Authorization': `Bearer ${getEnv('IGDB_ACCESS_TOKEN')}`,
 			},
@@ -73,7 +73,7 @@ export async function search(c: Context) {
 		if (!response.ok) {
 			const errorText = await response.text();
 			logger.error(`IGDB API error: ${response.status} ${errorText}`);
-			return c.json({ success: false, message: 'Failed to search', error: errorText });
+			return c.json({ success: false, message: 'Failed to search', error: errorText }, 502);
 		}
 
 		// Process successful response
@@ -88,7 +88,7 @@ export async function search(c: Context) {
 		return c.json({ success: true, data });
 	} catch (e) {
 		logger.error('IGDB request failed', e);
-		return c.json({ success: false, message: 'Failed to search' });
+		return c.json({ success: false, message: 'Failed to search' }, 502);
 	}
 }
 
@@ -122,7 +122,7 @@ export async function getGame(c: Context) {
 		const response = await fetch(`${BASE_URL}/games`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'text/plain',
 				'Client-ID': getEnv('IGDB_CLIENT_ID'),
 				'Authorization': `Bearer ${getEnv('IGDB_ACCESS_TOKEN')}`,
 			},
@@ -132,7 +132,7 @@ export async function getGame(c: Context) {
 		if (!response.ok) {
 			const errorText = await response.text();
 			logger.error(`IGDB API error: ${response.status} ${errorText}`);
-			return c.json({ success: false, message: 'Failed to get game', error: errorText });
+			return c.json({ success: false, message: 'Failed to get game', error: errorText }, 502);
 		}
 
 		const data = await response.json();
@@ -146,7 +146,7 @@ export async function getGame(c: Context) {
 		return c.json({ success: true, data });
 	} catch (e) {
 		logger.error('IGDB request failed', e);
-		return c.json({ success: false, message: 'Failed to get game' });
+		return c.json({ success: false, message: 'Failed to get game' }, 502);
 	}
 }
 
@@ -169,7 +169,8 @@ export async function getTags(c: Context) {
 	// get the id and optional count from the request parameters
 	const id = Number(c.req.param('id'));
 	const countParam = c.req.query('count');
-	const limit = countParam ? Number(countParam) : undefined;
+	const parsed = countParam ? Number(countParam) : NaN;
+	const limit = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
 
 	// get the tags from the database
 	// of a specific game
@@ -182,22 +183,17 @@ export async function getTags(c: Context) {
 
 	const userContributionsCollection = getCollection<UserContribution>('userContributions');
 
-	let tagCounts: { tag: string; count: number }[] = [];
-
-	for (const tag of mediaTag.tags) {
-		const count = await userContributionsCollection.countDocuments({
-			mediaSlug: String(id),
-			mediaType: MediaType.VIDEO_GAME,
-			tag: tag,
-		});
-		tagCounts.push({ tag, count });
+	const pipeline: Record<string, unknown>[] = [
+		{ $match: { mediaSlug: String(id), mediaType: MediaType.VIDEO_GAME, tag: { $in: mediaTag.tags } } },
+		{ $group: { _id: '$tag', count: { $sum: 1 } } },
+		{ $sort: { count: -1 } },
+	];
+	if (limit && limit > 0) {
+		pipeline.push({ $limit: limit });
 	}
+	pipeline.push({ $project: { _id: 0, tag: '$_id', count: 1 } });
 
-	// Sort tags by count in descending order
-	tagCounts.sort((a, b) => b.count - a.count);
-
-	// Apply limit if provided and valid
-	tagCounts = limit && limit > 0 ? tagCounts.slice(0, limit) : tagCounts;
+	const tagCounts = await userContributionsCollection.aggregate<{ tag: string; count: number }>(pipeline).toArray();
 
 	return c.json({ success: true, data: tagCounts });
 }
@@ -219,7 +215,25 @@ export async function createTags(c: Context) {
 	// id of the game to create tags for
 	const gameId = String(c.req.param('id'));
 	// tags to create
-	const { tags } = await c.req.json() as { tags: string[] };
+	let payload: unknown;
+	try {
+		payload = await c.req.json();
+	} catch (_) {
+		return c.json({ success: false, message: 'Invalid JSON body' }, 400);
+	}
+	const tags = (payload as { tags?: unknown })?.tags;
+	if (!Array.isArray(tags)) {
+		return c.json({ success: false, message: 'No tags provided' }, 400);
+	}
+	// Normalize: keep strings only, trim, drop empties, dedupe while preserving order
+	const normalizedTags = Array.from(
+		new Set(
+			tags
+				.filter((t): t is string => typeof t === 'string')
+				.map((t) => t.trim())
+				.filter((t) => t.length > 0),
+		),
+	);
 
 	// get the jwt payload (for the user id)
 	const jwtPayload = c.get('jwtPayload');
@@ -230,11 +244,11 @@ export async function createTags(c: Context) {
 
 	const userId = new ObjectId(jwtPayload.id);
 
-	if (!tags || !Array.isArray(tags) || tags.length === 0) {
+	if (normalizedTags.length === 0) {
 		return c.json({ success: false, message: 'No tags provided' }, 400);
 	}
 
-	if (containsBadWords(tags)) {
+	if (containsBadWords(normalizedTags)) {
 		return c.json({ success: false, message: 'Tags contain inappropriate words' }, 400);
 	}
 
@@ -245,17 +259,19 @@ export async function createTags(c: Context) {
 		await processUserTags(
 			userId,
 			gameId,
-			tags,
+			normalizedTags,
 			userContributionsCollection,
 		);
 
-		// After processing individual user contributions, aggregate all tags for this game
-		const allGameContributions = await userContributionsCollection.find({
-			mediaSlug: gameId,
-			mediaType: MediaType.VIDEO_GAME,
-		}).toArray();
-
-		const aggregatedTags = Array.from(new Set(allGameContributions.map((uc) => uc.tag)));
+		// After processing individual user contributions, aggregate distinct tags for this game via aggregation
+		const distinctTags = await userContributionsCollection
+			.aggregate<{ tag: string }>([
+				{ $match: { mediaSlug: gameId, mediaType: MediaType.VIDEO_GAME } },
+				{ $group: { _id: '$tag' } },
+				{ $project: { _id: 0, tag: '$_id' } },
+			])
+			.toArray();
+		const aggregatedTags = distinctTags.map((d) => d.tag);
 
 		// Update mediaTags collection with the aggregated set of tags
 		const now = new Date();
@@ -345,8 +361,12 @@ async function processUserTags(
 		...tagsToInsert, // New ones
 	];
 
-	// Sort by updated_at (or timestamp for new ones) descending and take top 3
-	allRelevantContributions.sort((a, b) => b.updated_at.getTime() - a.updated_at.getTime());
+	// Sort by updated_at (fallback to timestamp) descending and take top 3
+	allRelevantContributions.sort((a, b) => {
+		const atA = (a.updated_at ?? a.timestamp).getTime();
+		const atB = (b.updated_at ?? b.timestamp).getTime();
+		return atB - atA;
+	});
 	const finalContributions = allRelevantContributions.slice(0, 3);
 	const finalTags = finalContributions.map((uc: UserContribution) => uc.tag);
 
