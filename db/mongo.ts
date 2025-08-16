@@ -99,11 +99,11 @@ export async function getUserByUsername(username: string): Promise<User> {
 export async function deleteUserByUsername(username: string): Promise<DeleteResult> {
 	const collection = getCollection<User>('users');
 
-	const user = await collection.deleteOne({ username });
-	if (!user) {
+	const result = await collection.deleteOne({ username });
+	if (result.deletedCount === 0) {
 		throw new Error(`User with username ${username} not found.`);
 	}
-	return user;
+	return result;
 }
 
 /**
