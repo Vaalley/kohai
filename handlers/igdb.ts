@@ -195,7 +195,7 @@ export async function getTags(c: Context) {
 
 	const tagCounts = await userContributionsCollection.aggregate<{ tag: string; count: number }>(pipeline).toArray();
 
-	return c.json({ success: true, data: limitedTagCounts });
+	return c.json({ success: true, data: tagCounts });
 }
 
 /**

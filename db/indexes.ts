@@ -26,7 +26,9 @@ export async function createIndexes(): Promise<void> {
 
 		// UserContributions collection indexes
 		const userContributionsCollection = getCollection('userContributions');
-		await userContributionsCollection.createIndex({ userId: 1, mediaSlug: 1, mediaType: 1, tag: 1 }, { unique: true });
+		await userContributionsCollection.createIndex({ userId: 1, mediaSlug: 1, mediaType: 1, tag: 1 }, {
+			unique: true,
+		});
 		await userContributionsCollection.createIndex({ userId: 1 });
 		await userContributionsCollection.createIndex({ mediaSlug: 1, mediaType: 1 });
 		await userContributionsCollection.createIndex({ tag: 1 });

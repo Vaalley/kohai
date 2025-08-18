@@ -45,7 +45,7 @@ export function startServer(
  */
 export async function closeApp(exitCode: number = 0) {
 	logger.info(`🚨 Starting graceful shutdown with exit code ${exitCode}`);
-	
+
 	try {
 		// Close MongoDB connection
 		await closeMongo();
@@ -53,7 +53,7 @@ export async function closeApp(exitCode: number = 0) {
 	} catch (error) {
 		logger.error('❌ Error closing MongoDB connection:', error);
 	}
-	
+
 	logger.info('👋 Goodbye!');
 	Deno.exit(exitCode);
 }
