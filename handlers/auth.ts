@@ -127,30 +127,21 @@ export async function login(c: Context) {
 		return c.json({ success: false, message: 'Invalid email or password' }, 401);
 	}
 
-	const userData = {
-		id: user._id.toString(),
-		email: user.email,
+	// Minimize JWT payload - only essential claims
+	const tokenPayload = {
+		sub: user._id.toString(),
 		username: user.username,
 		isadmin: user.isadmin || false,
-		created_at: user.created_at.toISOString(),
-		updated_at: user.updated_at.toISOString(),
-		last_login: user.last_login?.toISOString(),
-	};
-
-	const accessTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
 	};
 
 	const refreshTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
+		sub: user._id.toString(),
+		username: user.username,
 	};
 
+	// Generate an access token
 	const secret = getEnv('JWT_SECRET');
-
-	// Generate a session token
-	const accessToken = await sign(accessTokenPayload, secret);
+	const accessToken = await sign(tokenPayload, secret);
 
 	// Generate a refresh token
 	const refreshToken = await sign(refreshTokenPayload, secret);
@@ -323,20 +314,27 @@ export async function refreshTokens(c: Context) {
 	}
 
 	// Cast the payload to our JwtPayload type
-	const userPayload = payload as unknown as JwtPayload;
+	const refreshPayload = payload as unknown as { sub: string; username: string };
 
-	// Extract user data from the refresh token payload
-	const { exp: _, ...userData } = userPayload;
+	// Get fresh user data for isadmin status
+	const { ObjectId } = await import('mongodb');
+	const user = await getCollection('users').findOne({ _id: new ObjectId(refreshPayload.sub) });
+	if (!user) {
+		deleteCookie(c, 'access_token');
+		deleteCookie(c, 'refresh_token');
+		throw new Error('User not found');
+	}
 
-	// Generate new tokens with all user data
+	// Generate new tokens with minimal payload
 	const accessTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
+		sub: refreshPayload.sub,
+		username: refreshPayload.username,
+		isadmin: user.isadmin || false,
 	};
 
 	const refreshTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
+		sub: refreshPayload.sub,
+		username: refreshPayload.username,
 	};
 
 	const newAccessToken = await sign(

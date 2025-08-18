@@ -122,3 +122,16 @@ export async function promoteUserToAdmin(username: string): Promise<UpdateResult
 	}
 	return result as UpdateResult<User>;
 }
+
+/**
+ * Closes the MongoDB connection gracefully.
+ * This should be called when shutting down the application.
+ *
+ * @returns A promise that resolves when the connection is closed.
+ */
+export async function closeMongo(): Promise<void> {
+	if (client) {
+		await client.close();
+		logger.info('MongoDB connection closed');
+	}
+}

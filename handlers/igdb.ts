@@ -195,7 +195,7 @@ export async function getTags(c: Context) {
 
 	const tagCounts = await userContributionsCollection.aggregate<{ tag: string; count: number }>(pipeline).toArray();
 
-	return c.json({ success: true, data: tagCounts });
+	return c.json({ success: true, data: limitedTagCounts });
 }
 
 /**
@@ -236,13 +236,13 @@ export async function createTags(c: Context) {
 	);
 
 	// get the jwt payload (for the user id)
-	const jwtPayload = c.get('jwtPayload');
+	const jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 
-	if (!jwtPayload || !jwtPayload.id) {
+	if (!jwtPayload || !jwtPayload.sub) {
 		return c.json({ success: false, message: 'Authentication required' }, 401);
 	}
 
-	const userId = new ObjectId(jwtPayload.id);
+	const userId = new ObjectId(jwtPayload.sub);
 
 	if (normalizedTags.length === 0) {
 		return c.json({ success: false, message: 'No tags provided' }, 400);

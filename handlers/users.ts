@@ -49,7 +49,7 @@ export async function promoteUser(c: Context) {
 
 	try {
 		// Must be authenticated and an admin
-		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		const jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 		if (!jwtPayload?.isadmin) {
 			return c.json({ success: false, message: 'Only admins can promote users.' }, 403);
 		}
@@ -92,7 +92,7 @@ export async function deleteUser(c: Context) {
 
 	try {
 		// Get the JWT payload from the context (set by jwtAuth middleware)
-		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		const jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 
 		// Check if the authenticated user is trying to delete their own account
 		if (jwtPayload.username !== username && !jwtPayload.isadmin) {
@@ -136,9 +136,9 @@ export async function getUserStats(c: Context) {
 		}
 
 		// Try to get JWT payload for authenticated requests (optional)
-		let _jwtPayload: { id: string; email: string; username: string; isadmin: boolean } | null = null;
+		let _jwtPayload: { sub: string; username: string; isadmin: boolean } | null = null;
 		try {
-			_jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+			_jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 		} catch (_e) {
 			// JWT payload not available, which is fine for public requests
 		}

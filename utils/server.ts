@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { logger } from '@utils/logger.ts';
+import { closeMongo } from '@db/mongo.ts';
 
 /**
  * Starts a Hono server with the given app, port, hostname, and AbortController.
@@ -37,12 +38,39 @@ export function startServer(
 }
 
 /**
- * Closes the server/app by exiting the process with the given exit code.
+ * Gracefully shuts down the application, closing all connections.
  *
  * @param exitCode - Optional exit code to terminate the process. Defaults to 0.
  * @returns void
  */
-export function closeApp(exitCode: number = 0) {
-	logger.info(`🚨 Closing server with exit code ${exitCode}`);
+export async function closeApp(exitCode: number = 0) {
+	logger.info(`🚨 Starting graceful shutdown with exit code ${exitCode}`);
+	
+	try {
+		// Close MongoDB connection
+		await closeMongo();
+		logger.info('✅ MongoDB connection closed');
+	} catch (error) {
+		logger.error('❌ Error closing MongoDB connection:', error);
+	}
+	
+	logger.info('👋 Goodbye!');
 	Deno.exit(exitCode);
+}
+
+/**
+ * Sets up signal handlers for graceful shutdown.
+ */
+export function setupSignalHandlers() {
+	// Handle SIGINT (Ctrl+C)
+	Deno.addSignalListener('SIGINT', async () => {
+		logger.info('\n📥 Received SIGINT signal');
+		await closeApp(0);
+	});
+
+	// Handle SIGTERM
+	Deno.addSignalListener('SIGTERM', async () => {
+		logger.info('\n📥 Received SIGTERM signal');
+		await closeApp(0);
+	});
 }
