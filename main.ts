@@ -1,11 +1,13 @@
 import { Hono } from 'hono';
-import { getEnv } from '@config/config.ts';
+import { getEnv, isProduction } from '@config/config.ts';
 import { connectMongo } from '@db/mongo.ts';
+import { createIndexes, validateCollections } from '@db/indexes.ts';
 import { setupRoutes } from '@api/routes.ts';
+import { basicRateLimiter } from '@api/middleware/rateLimiter.ts';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { connectIgdb } from '@utils/igdb.ts';
-import { closeApp, startServer } from '@utils/server.ts';
+import { closeApp, setupSignalHandlers, startServer } from '@utils/server.ts';
 import { logger } from '@utils/logger.ts';
 
 // Main entry point
@@ -30,6 +32,10 @@ async function main() {
 				throw new Error('IGDB connection failed');
 			}),
 		]);
+
+		// Create database indexes and validate collections
+		await createIndexes();
+		await validateCollections();
 	} catch (error) {
 		logger.error(
 			'❌ Error connecting to services, shutting down server:',
@@ -45,10 +51,14 @@ async function main() {
 	const PORT = getEnv('PORT', '2501');
 	const HOSTNAME = getEnv('HOSTNAME', '0.0.0.0');
 
-	// Enable CORS
+	// Apply global rate limiting
+	app.use('*', basicRateLimiter);
+
+	// CORS configuration
+	const corsOrigin = getEnv('CORS_ORIGIN') || (isProduction() ? '' : '*');
 	app.use(cors({
+		origin: corsOrigin || '*',
 		credentials: true,
-		origin: getEnv('CORS_ORIGIN'),
 	}));
 
 	// Enable secure headers
@@ -57,12 +67,15 @@ async function main() {
 	// Register routes
 	setupRoutes(app);
 
+	// Setup signal handlers for graceful shutdown
+	setupSignalHandlers();
+
 	// Start the server
 	try {
 		startServer(app, PORT, HOSTNAME, startTime);
 	} catch (error) {
 		logger.error('❌ Error starting server:', error);
-		closeApp(1);
+		await closeApp(1);
 	}
 }
 
