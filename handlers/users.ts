@@ -25,7 +25,6 @@ export async function getUser(c: Context) {
 		const safeUser = {
 			id: user._id?.toString(),
 			username: user.username,
-			// Public fields only; exclude password, email, isadmin by default
 			created_at: user.created_at,
 			last_login: user.last_login ?? null,
 		};

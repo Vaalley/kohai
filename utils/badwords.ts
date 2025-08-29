@@ -7,9 +7,9 @@ const badWords = [
 	'gook',
 	'rape',
 	'rapist',
-  ];
-  
-  const leetMap: Record<string, string> = {
+];
+
+const leetMap: Record<string, string> = {
 	'0': 'o',
 	'1': 'i',
 	'3': 'e',
@@ -20,27 +20,26 @@ const badWords = [
 	'$': 's',
 	'!': 'i',
 	'|': 'i',
-  };
-  
-  // Normalize a tag: lowercase, remove spaces/punctuation, convert leetspeak
-  function normalizeTag(tag: string): string {
+};
+
+// Normalize a tag: lowercase, remove spaces/punctuation, convert leetspeak
+function normalizeTag(tag: string): string {
 	let normalized = tag.toLowerCase();
 	normalized = normalized.replace(/[^a-z0-9@!$|]/g, ''); // remove spaces & symbols
 	normalized = normalized.split('')
-	  .map(char => leetMap[char] || char)
-	  .join('');
+		.map((char) => leetMap[char] || char)
+		.join('');
 	return normalized;
-  }
-  
-  export function containsBadWords(tags: string[]): boolean {
+}
+
+export function containsBadWords(tags: string[]): boolean {
 	for (const tag of tags) {
-	  const normalized = normalizeTag(tag);
-	  for (const badWord of badWords) {
-		if (normalized.includes(badWord)) {
-		  return true;
+		const normalized = normalizeTag(tag);
+		for (const badWord of badWords) {
+			if (normalized.includes(badWord)) {
+				return true;
+			}
 		}
-	  }
 	}
 	return false;
-  }
-  
+}
