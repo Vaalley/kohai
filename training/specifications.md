@@ -115,6 +115,7 @@ description system.
     _same media item_.
   - Profanity Filter: Implement custom filtering. It must handle common variations, leetspeak, etc.
 - Real-time aggregation of popular tags
+  - Example: When 10 users tag "The Witcher 3" as "rpg" and 5 as "open-world", these counts are immediately reflected
 - Visual representation of tag popularity when visiting a media item's page
 
 Example flow:
