@@ -8,7 +8,7 @@ description system.
 
 ### A. Target Audience
 
-- Gaming enthusiasts aged 16-45
+- Gaming enthusiasts aged 18-45
 - Content creators looking for descriptive metadata
 - Casual gamers seeking game recommendations based on descriptive attributes
 
@@ -27,31 +27,59 @@ description system.
 
 - Development timeline: 9 months (January 2025 - September 2025)
 - Launch date: September 22, 2025
-- Budget allocation (Total: €80,000):
-  - Development: 75% (€60,000)
-  - Design: 20% (€16,000)
-  - Testing: 5% (€4,000)
+  - Planning & Setup: January 2025
+  - Core Development: February - July 2025
+  - Testing & Refinement: August - September 2025
+- Budget allocation (Total: €120,000):
+  - Development (Frontend + Backend): €80,000 (66.7%)
+  - Project Management: €15,000 (12.5%)
+  - Quality Assurance: €10,000 (8.3%)
+  - DevOps: €15,000 (12.5%)
 
 ### E. Project Organization
 
 - Team structure:
-  - **Mark (Frontend Developer & Designer)**
-    - _Role:_ UI/UX implementation, responsive design, client-side logic, asset preparation.
-    - _Allocated Budget (Dev + Design):_ ~€46,000
-    - _Estimated Hours:_ ~610 hours
+  - **Marc (Frontend Developer & Designer)**
+    - _Role:_ UI/UX implementation, responsive design, client-side logic, asset preparation, accessibility.
+    - _Hourly Rate:_ €65-75 (Senior frontend developer in Nantes)
+    - _Allocated Budget (Dev + Design):_ €50,000
+    - _Estimated Hours:_ ~700 hours
+    - _Tools:_ (SvelteKit)[https://kit.svelte.dev/], (Native
+      CSS)[https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables], (Slack)[https://slack.com/],
+      (Figma)[https://www.figma.com/]
+
   - **Léo (Backend Developer)**
     - _Role:_ API development, database management, server-side logic, external API integration.
-    - _Allocated Budget (Development):_ ~€30,000
-    - _Estimated Hours:_ ~400 hours
+    - _Hourly Rate:_ €45-55 (Mid-level backend developer in Nantes)
+    - _Allocated Budget (Development):_ €35,000
+    - _Estimated Hours:_ ~650 hours
+    - _Tools:_ (Deno)[https://deno.com/], (Hono)[https://github.com/honojs/hono], (MongoDB)[https://www.mongodb.com/],
+      (MongoDB Compass)[https://www.mongodb.com/products/tools/compass], (Slack)[https://slack.com/]
+
   - **Sophie (Project Manager)**
     - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline
       adherence.
-    - _Allocated Budget:_ (Covered under general project overhead)
-    - _Estimated Hours:_ Part-time project oversight.
+    - _Hourly Rate:_ €45-55 (Mid-level PM in Nantes)
+    - _Allocated Budget (Management):_ €12,000
+    - _Estimated Hours:_ ~250 hours (part-time, 15-20h/week)
+    - _Tools:_ (Jira)[https://www.atlassian.com/fr/software/jira], (Slack)[https://slack.com/]
+
   - **Pierre (QA Specialist)**
-    - _Role:_ Test plan creation, manual testing execution, bug reporting & tracking, quality assurance checks.
-    - _Allocated Budget (Testing):_ ~€4,000
-    - _Estimated Hours:_ ~55 hours
+    - _Role:_ Test plan creation, manual testing execution, bug reporting & tracking, quality assurance checks,
+      accessibility testing.
+    - _Hourly Rate:_ €40-45 (Mid-level QA in Nantes)
+    - _Allocated Budget (Testing):_ €8,000
+    - _Estimated Hours:_ ~180 hours (part-time, 10h/week)
+    - _Tools:_ (Responsive Web Test)[https://responsivewebtest.com/], (Slack)[https://slack.com/]
+
+  - **Léa (DevOps / Sysadmin)**
+    - _Role:_ Infrastructure management, deployment, monitoring, and maintenance.
+    - _Hourly Rate:_ €45-55 (Mid-level DevOps in Nantes)
+    - _Allocated Budget (DevOps):_ €12,000
+    - _Estimated Hours:_ ~240 hours (part-time, 15h/week)
+    - _Tools:_ (Docker)[https://www.docker.com/], (MongoDB)[https://www.mongodb.com/], (MongoDB
+      Compass)[https://www.mongodb.com/products/tools/compass], (Slack)[https://slack.com/]
+
 - Project tracking:
   - Weekly sprint planning
   - Sprint retrospectives at the end of each sprint
@@ -66,6 +94,8 @@ description system.
 
 ### A. User Management
 
+![Diagramme de use cases](<uml/Diagramme de use cases.png>)
+
 - User registration and authentication system
 - Personal profile management
 - Viewing history of user contributions
@@ -77,14 +107,15 @@ description system.
 
 ### C. Tagging System
 
+![Diagramme d'activity](<uml/Diagramme d'activity.png>)
+
 - Users can add up to 3 descriptive words per media item
 - Word validation system to ensure quality:
   - Duplicate Prevention: Check for existing identical tags (case-insensitive) submitted by the _same user_ for the
     _same media item_.
-  - Profanity Filter: Implement filtering using a dedicated external library/package (e.g., a Deno-compatible port or
-    equivalent of `npm:bad-words`). This leverages curated lists and handles common variations, reducing manual
-    maintenance.
+  - Profanity Filter: Implement custom filtering. It must handle common variations, leetspeak, etc.
 - Real-time aggregation of popular tags
+  - Example: When 10 users tag "The Witcher 3" as "rpg" and 5 as "open-world", these counts are immediately reflected
 - Visual representation of tag popularity when visiting a media item's page
 
 Example flow:
@@ -99,6 +130,8 @@ Example flow:
 ## 3. Technical Architecture
 
 ### A. Database (MongoDB)
+
+[![Diagramme de classes](<uml/Diagramme de classes.png>)]
 
 - Initial deployment on MongoDB Atlas (production environment)
 - Migration to dockerized MongoDB solution for local development
@@ -189,6 +222,12 @@ The backend is in its own repository, separate from the frontend. ->
 The frontend is in its own repository, separate from the backend. ->
 [frontend repository](https://github.com/Vaalley/kohai-ui)
 
+Link to Figma design:
+[Figma](https://www.figma.com/design/1IhPcRj8AN9X1P0s88zKOd/Kohai?node-id=0-1&p=f&t=TktpkDxhEdrlY4mP-0)
+
+- SvelteKit
+  - Use of runes
+  - Wildcard routes for dynamic routing
 - HTML structure:
   - Semantic HTML5 elements (header, nav, main, section, article, footer)
   - ARIA attributes for enhanced accessibility
@@ -237,9 +276,8 @@ The frontend is in its own repository, separate from the backend. ->
 - Session management with secure cookies
 - XSS prevention
 - NoSQL injection prevention
-- CSRF token implementation
+- CSRF SameSite cookie attribute
 - Security headers configuration
-- Regular security audits
 - Dependency vulnerability scanning
 
 ## 6. Performance Requirements
