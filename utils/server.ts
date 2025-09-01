@@ -60,17 +60,28 @@ export async function closeApp(exitCode: number = 0) {
 
 /**
  * Sets up signal handlers for graceful shutdown.
+ * Uses platform-appropriate signals for each operating system.
  */
 export function setupSignalHandlers() {
-	// Handle SIGINT (Ctrl+C)
+	const isWindows = Deno.build.os === 'windows';
+
+	// Handle SIGINT (Ctrl+C) - works on all platforms
 	Deno.addSignalListener('SIGINT', async () => {
 		logger.info('\n📥 Received SIGINT signal');
 		await closeApp(0);
 	});
 
-	// Handle SIGTERM
-	Deno.addSignalListener('SIGTERM', async () => {
-		logger.info('\n📥 Received SIGTERM signal');
-		await closeApp(0);
-	});
+	// Handle SIGTERM - only available on unix
+	if (!isWindows) {
+		Deno.addSignalListener('SIGTERM', async () => {
+			logger.info('\n📥 Received SIGTERM signal');
+			await closeApp(0);
+		});
+	} else {
+		// Handle SIGBREAK - only available on windows
+		Deno.addSignalListener('SIGBREAK', async () => {
+			logger.info('\n📥 Received SIGBREAK signal');
+			await closeApp(0);
+		});
+	}
 }
