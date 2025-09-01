@@ -26,12 +26,12 @@ export function setupRoutes(app: Hono) {
 	// |  Health check  |
 	//  ----------------
 
-	app.all('/health', health);
+	api.all('/health', health);
 
 	//  ---------------
 	// |  Auth routes  |
 	//  ---------------
-	const auth = app.basePath('/auth');
+	const auth = api.basePath('/auth');
 
 	auth.post('/register', authRateLimiter, vValidator('json', RegisterSchema), register);
 	auth.post('/login', authRateLimiter, vValidator('json', LoginSchema), login);
@@ -42,7 +42,7 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	// |  Games routes |
 	//  ---------------
-	const games = app.basePath('/games').use(igdbAuth());
+	const games = api.basePath('/games').use(igdbAuth());
 
 	games.post('/search', search);
 	games.get('/:id', getGame);
@@ -50,7 +50,7 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	// |  Tags routes |
 	//  ---------------
-	const tags = app.basePath('/tags').use(igdbAuth());
+	const tags = api.basePath('/tags').use(igdbAuth());
 
 	tags.get('/:id', getTags);
 	tags.put('/:id', jwtAuth(), createTags);
@@ -68,6 +68,7 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	// |  Stats routes |
 	//  ---------------
+
 	api.get('/stats', getAppStats);
 
 	logger.info('✅ Routes registered successfully 🪄');
