@@ -93,6 +93,50 @@ export async function search(c: Context) {
 }
 
 /**
+ * Fetches 8 random games from the top 100 games on IGDB.
+ *
+ * This function queries the IGDB API for the top 100 games sorted by total_rating_count
+ * and returns 8 randomly selected games with their basic information including
+ * name, id and cover image.
+ *
+ * @param c - The Hono context object containing the request and response.
+ *
+ * @returns A JSON response with 8 random games from the top 100, or an error
+ * message if the request fails.
+ */
+export async function getRandomTopGames(c: Context) {
+	try {
+		const response = await fetch(`${BASE_URL}/games`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'text/plain',
+				'Client-ID': getEnv('IGDB_CLIENT_ID'),
+				'Authorization': `Bearer ${getEnv('IGDB_ACCESS_TOKEN')}`,
+			},
+			body:
+				`fields id,name,cover.image_id; where total_rating_count != null & total_rating_count > 100; sort total_rating_count desc; limit 100;`,
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			logger.error(`IGDB API error: ${response.status} ${errorText}`);
+			return c.json({ success: false, message: 'Failed to get top games', error: errorText }, 502);
+		}
+
+		const topGames = await response.json();
+
+		// Randomly select 8 games from the top 100
+		const shuffled = [...topGames].sort(() => 0.5 - Math.random());
+		const randomGames = shuffled.slice(0, 8);
+
+		return c.json({ success: true, data: randomGames });
+	} catch (e) {
+		logger.error('IGDB request failed', e);
+		return c.json({ success: false, message: 'Failed to get top games' }, 502);
+	}
+}
+
+/**
  * Fetches game details from the IGDB API using the provided slug.
  *
  * This function first checks the cache for the game data associated
