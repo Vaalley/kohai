@@ -53,8 +53,8 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	const tags = api.basePath('/tags').use(igdbAuth());
 
-	tags.get('/:id', getTags);
-	tags.put('/:id', jwtAuth(), createTags);
+	tags.get('/:slug', getTags);
+	tags.put('/:slug', jwtAuth(), createTags);
 
 	//  ---------------
 	// |  Users routes |

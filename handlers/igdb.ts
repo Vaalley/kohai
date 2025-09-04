@@ -210,8 +210,8 @@ export async function getGame(c: Context) {
  * @returns A JSON response with the tags and their counts.
  */
 export async function getTags(c: Context) {
-	// get the id and optional count from the request parameters
-	const id = Number(c.req.param('id'));
+	// get the slug and optional count from the request parameters
+	const slug = c.req.param('slug');
 	const countParam = c.req.query('count');
 	const parsed = countParam ? Number(countParam) : NaN;
 	const limit = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
@@ -219,7 +219,7 @@ export async function getTags(c: Context) {
 	// get the tags from the database
 	// of a specific game
 	const mediaTagsCollection = getCollection<MediaTag>('mediaTags');
-	const mediaTag = await mediaTagsCollection.findOne({ mediaSlug: String(id), mediaType: MediaType.VIDEO_GAME });
+	const mediaTag = await mediaTagsCollection.findOne({ mediaSlug: slug, mediaType: MediaType.VIDEO_GAME });
 
 	if (!mediaTag) {
 		return c.json({ success: false, message: 'No tags found for this game' }, 404);
@@ -228,7 +228,7 @@ export async function getTags(c: Context) {
 	const userContributionsCollection = getCollection<UserContribution>('userContributions');
 
 	const pipeline: Record<string, unknown>[] = [
-		{ $match: { mediaSlug: String(id), mediaType: MediaType.VIDEO_GAME, tag: { $in: mediaTag.tags } } },
+		{ $match: { mediaSlug: slug, mediaType: MediaType.VIDEO_GAME, tag: { $in: mediaTag.tags } } },
 		{ $group: { _id: '$tag', count: { $sum: 1 } } },
 		{ $sort: { count: -1 } },
 	];
@@ -256,8 +256,8 @@ export async function getTags(c: Context) {
  * message if the request fails.
  */
 export async function createTags(c: Context) {
-	// id of the game to create tags for
-	const gameId = String(c.req.param('id'));
+	// slug of the game to create tags for
+	const gameSlug = c.req.param('slug');
 	// tags to create
 	let payload: unknown;
 	try {
@@ -302,7 +302,7 @@ export async function createTags(c: Context) {
 	try {
 		await processUserTags(
 			userId,
-			gameId,
+			gameSlug,
 			normalizedTags,
 			userContributionsCollection,
 		);
@@ -310,7 +310,7 @@ export async function createTags(c: Context) {
 		// After processing individual user contributions, aggregate distinct tags for this game via aggregation
 		const distinctTags = await userContributionsCollection
 			.aggregate<{ tag: string }>([
-				{ $match: { mediaSlug: gameId, mediaType: MediaType.VIDEO_GAME } },
+				{ $match: { mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME } },
 				{ $group: { _id: '$tag' } },
 				{ $project: { _id: 0, tag: '$_id' } },
 			])
@@ -321,13 +321,13 @@ export async function createTags(c: Context) {
 		const now = new Date();
 		if (aggregatedTags.length > 0) {
 			await mediaTagsCollection.updateOne(
-				{ mediaSlug: gameId, mediaType: MediaType.VIDEO_GAME },
+				{ mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME },
 				{ $set: { tags: aggregatedTags, updated_at: now } }, // Replace all tags for this game
 				{ upsert: true },
 			);
 		} else {
 			// If no tags remain from any user, remove the mediaTag entry
-			await mediaTagsCollection.deleteOne({ mediaSlug: gameId, mediaType: MediaType.VIDEO_GAME });
+			await mediaTagsCollection.deleteOne({ mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME });
 		}
 
 		return c.json({ success: true, message: 'Tags processed successfully' });
