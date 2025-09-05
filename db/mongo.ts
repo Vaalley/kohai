@@ -67,9 +67,9 @@ export async function isConnected(): Promise<boolean> {
 	try {
 		await client.db().admin().ping();
 		return true;
-	} catch (err) {
-		logger.error('❌ MongoDB connection verification failed:', err);
-		throw err;
+	} catch (error) {
+		logger.error('❌ MongoDB connection verification failed:', error);
+		throw error;
 	}
 }
 

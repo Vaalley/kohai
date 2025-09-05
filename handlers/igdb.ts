@@ -38,8 +38,8 @@ export async function search(c: Context) {
 	let bodyQuery = '';
 	try {
 		bodyQuery = await c.req.text();
-	} catch (e) {
-		logger.warn('Failed to read request body', e);
+	} catch (error) {
+		logger.warn('Failed to read request body', error);
 	}
 
 	// Return early if no query
@@ -86,8 +86,8 @@ export async function search(c: Context) {
 		searchCache.set(cacheKey, { data, time: Date.now() });
 
 		return c.json({ success: true, data });
-	} catch (e) {
-		logger.error('IGDB request failed', e);
+	} catch (error) {
+		logger.error('IGDB request failed', error);
 		return c.json({ success: false, message: 'Failed to search' }, 502);
 	}
 }
@@ -130,8 +130,8 @@ export async function getRandomTopGames(c: Context) {
 		const randomGames = shuffled.slice(0, 8);
 
 		return c.json({ success: true, data: randomGames });
-	} catch (e) {
-		logger.error('IGDB request failed', e);
+	} catch (error) {
+		logger.error('IGDB request failed', error);
 		return c.json({ success: false, message: 'Failed to get top games' }, 502);
 	}
 }
@@ -188,8 +188,8 @@ export async function getGame(c: Context) {
 		gameCache.set(String(id), { data, time: Date.now() });
 
 		return c.json({ success: true, data });
-	} catch (e) {
-		logger.error('IGDB request failed', e);
+	} catch (error) {
+		logger.error('IGDB request failed', error);
 		return c.json({ success: false, message: 'Failed to get game' }, 502);
 	}
 }
@@ -273,9 +273,9 @@ export async function createTags(c: Context) {
 	const normalizedTags = Array.from(
 		new Set(
 			tags
-				.filter((t): t is string => typeof t === 'string')
-				.map((t) => t.trim())
-				.filter((t) => t.length > 0),
+				.filter((tag): tag is string => typeof tag === 'string')
+				.map((tag) => tag.trim())
+				.filter((tag) => tag.length > 0),
 		),
 	);
 
@@ -315,7 +315,7 @@ export async function createTags(c: Context) {
 				{ $project: { _id: 0, tag: '$_id' } },
 			])
 			.toArray();
-		const aggregatedTags = distinctTags.map((d) => d.tag);
+		const aggregatedTags = distinctTags.map((distinctTag) => distinctTag.tag);
 
 		// Update mediaTags collection with the aggregated set of tags
 		const now = new Date();
@@ -367,7 +367,9 @@ async function processUserTags(
 	}).toArray();
 
 	const existingTagsMap = new Map<string, UserContribution>();
-	existingContributions.forEach((uc: UserContribution) => existingTagsMap.set(uc.tag, uc));
+	existingContributions.forEach((userContribution: UserContribution) =>
+		existingTagsMap.set(userContribution.tag, userContribution)
+	);
 
 	const tagsToKeep: string[] = [];
 	const tagsToInsert: UserContribution[] = [];
@@ -401,24 +403,28 @@ async function processUserTags(
 	// Apply the 3-contribution limit
 	// Combine all tags (kept, new, updated) and sort by updated_at/timestamp to get the most recent 3
 	const allRelevantContributions = [
-		...existingContributions.filter((uc: UserContribution) => tagsToKeep.includes(uc.tag)), // Existing and kept
+		...existingContributions.filter((userContribution: UserContribution) =>
+			tagsToKeep.includes(userContribution.tag)
+		), // Existing and kept
 		...tagsToInsert, // New ones
 	];
 
 	// Sort by updated_at (fallback to timestamp) descending and take top 3
-	allRelevantContributions.sort((a, b) => {
-		const atA = (a.updated_at ?? a.timestamp).getTime();
-		const atB = (b.updated_at ?? b.timestamp).getTime();
-		return atB - atA;
+	allRelevantContributions.sort((contributionA, contributionB) => {
+		const timeA = (contributionA.updated_at ?? contributionA.timestamp).getTime();
+		const timeB = (contributionB.updated_at ?? contributionB.timestamp).getTime();
+		return timeB - timeA;
 	});
 	const finalContributions = allRelevantContributions.slice(0, 3);
-	const finalTags = finalContributions.map((uc: UserContribution) => uc.tag);
+	const finalTags = finalContributions.map((userContribution: UserContribution) => userContribution.tag);
 
 	// Perform database operations based on finalTags
 	// Delete contributions not in finalTags
 	const contributionsToDeleteIds = existingContributions
-		.filter((uc: UserContribution) => !finalTags.includes(uc.tag) && uc._id !== undefined)
-		.map((uc: UserContribution) => uc._id as ObjectId);
+		.filter((userContribution: UserContribution) =>
+			!finalTags.includes(userContribution.tag) && userContribution._id !== undefined
+		)
+		.map((userContribution: UserContribution) => userContribution._id as ObjectId);
 
 	if (contributionsToDeleteIds.length > 0) {
 		await userContributionsCollection.deleteMany({ _id: { $in: contributionsToDeleteIds } });
@@ -426,10 +432,11 @@ async function processUserTags(
 
 	// Update existing contributions that are in finalTags
 	const contributionsToUpdateIds = existingContributions
-		.filter((uc: UserContribution) =>
-			finalTags.includes(uc.tag) && uc._id !== undefined && tagsToUpdate.some((id) => id.equals(uc._id!))
+		.filter((userContribution: UserContribution) =>
+			finalTags.includes(userContribution.tag) && userContribution._id !== undefined &&
+			tagsToUpdate.some((id) => id.equals(userContribution._id!))
 		)
-		.map((uc: UserContribution) => uc._id as ObjectId);
+		.map((userContribution: UserContribution) => userContribution._id as ObjectId);
 
 	if (contributionsToUpdateIds.length > 0) {
 		await userContributionsCollection.updateMany(
@@ -439,7 +446,9 @@ async function processUserTags(
 	}
 
 	// Insert new contributions that are in finalTags
-	const contributionsToInsertFinal = tagsToInsert.filter((uc: UserContribution) => finalTags.includes(uc.tag));
+	const contributionsToInsertFinal = tagsToInsert.filter((userContribution: UserContribution) =>
+		finalTags.includes(userContribution.tag)
+	);
 	if (contributionsToInsertFinal.length > 0) {
 		await userContributionsCollection.insertMany(contributionsToInsertFinal);
 	}

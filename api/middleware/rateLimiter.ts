@@ -6,9 +6,9 @@ export const basicRateLimiter = rateLimiter({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
 	standardHeaders: 'draft-6', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-	keyGenerator: (c: Context) => { // Method to generate custom identifiers for clients.
-		const ip = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') ||
-			c.req.raw.headers.get('cf-connecting-ip') || 'unknown';
+	keyGenerator: (context: Context) => { // Method to generate custom identifiers for clients.
+		const ip = context.req.header('x-forwarded-for') || context.req.header('x-real-ip') ||
+			context.req.raw.headers.get('cf-connecting-ip') || 'unknown';
 		return ip;
 	},
 });
@@ -18,9 +18,9 @@ export const authRateLimiter = rateLimiter({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	limit: 5, // limit to 5 requests per `window` (here, per 15 minutes) for auth endpoints
 	standardHeaders: 'draft-6',
-	keyGenerator: (c: Context) => {
-		const ip = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') ||
-			c.req.raw.headers.get('cf-connecting-ip') || 'unknown';
+	keyGenerator: (context: Context) => {
+		const ip = context.req.header('x-forwarded-for') || context.req.header('x-real-ip') ||
+			context.req.raw.headers.get('cf-connecting-ip') || 'unknown';
 		return ip;
 	},
 });
@@ -31,15 +31,15 @@ export const createRateLimiter = (limit: number, windowMs: number = 15 * 60 * 10
 		windowMs,
 		limit,
 		standardHeaders: 'draft-6',
-		keyGenerator: (c: Context) => {
+		keyGenerator: (context: Context) => {
 			// Use API key if available, otherwise fallback to IP
-			const apiKey = c.req.header('x-api-key') || c.req.query('api_key');
+			const apiKey = context.req.header('x-api-key') || context.req.query('api_key');
 			if (apiKey) {
 				return `api:${apiKey}`;
 			}
 
-			const ip = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') ||
-				c.req.raw.headers.get('cf-connecting-ip') || 'unknown';
+			const ip = context.req.header('x-forwarded-for') || context.req.header('x-real-ip') ||
+				context.req.raw.headers.get('cf-connecting-ip') || 'unknown';
 			return `ip:${ip}`;
 		},
 	});

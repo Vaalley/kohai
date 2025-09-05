@@ -176,7 +176,7 @@ export async function getUserStats(c: Context) {
 
 		// Get top 10 most used tags
 		const topTags = Array.from(tagFrequency.entries())
-			.sort((a, b) => b[1] - a[1])
+			.sort((entryA, entryB) => entryB[1] - entryA[1])
 			.slice(0, 10)
 			.map(([tag, count]) => ({ tag, count }));
 

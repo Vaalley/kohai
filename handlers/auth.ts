@@ -250,12 +250,12 @@ export async function me(c: Context) {
 		const userData = payload as unknown as JwtPayload;
 		const { exp: _exp, ...user } = userData;
 		return c.json({ success: true, user });
-	} catch (err) {
+	} catch (error) {
 		// Cleanup on failure
 		deleteCookie(c, 'access_token');
 		deleteCookie(c, 'refresh_token');
-		const error = err as Error;
-		return c.json({ success: false, error: 'Session expired, please login again', message: error.message }, 401);
+		const err = error as Error;
+		return c.json({ success: false, error: 'Session expired, please login again', message: err.message }, 401);
 	}
 }
 
@@ -274,15 +274,15 @@ export async function handleTokenRefresh(c: Context) {
 	try {
 		await refreshTokens(c);
 		return c.json({ success: true, message: 'Tokens refreshed' });
-	} catch (err) {
+	} catch (error) {
 		// If refresh token is expired/invalid, clear both cookies
 		deleteCookie(c, 'access_token');
 		deleteCookie(c, 'refresh_token');
-		const error = err as Error;
+		const err = error as Error;
 		return c.json({
 			success: false,
 			error: 'Invalid or expired refresh token',
-			message: error.message,
+			message: err.message,
 		}, 401);
 	}
 }

@@ -27,7 +27,7 @@ function normalizeTag(tag: string): string {
 	let normalized = tag.toLowerCase();
 	normalized = normalized.replace(/[^a-z0-9@!$|]/g, ''); // remove spaces & symbols
 	normalized = normalized.split('')
-		.map((char) => leetMap[char] || char)
+		.map((character) => leetMap[character] || character)
 		.join('');
 	return normalized;
 }

@@ -93,8 +93,8 @@ export async function connectIgdb() {
 		let errorBody = 'Could not read error body.';
 		try {
 			errorBody = await response.text();
-		} catch (e) {
-			logger.error('Failed to read error body from IGDB token request:', e);
+		} catch (error) {
+			logger.error('Failed to read error body from IGDB token request:', error);
 		}
 		logger.error(`HTTP error fetching IGDB token! Status: ${response.status}. Body: ${errorBody}`);
 		throw new Error(`Failed to fetch IGDB token. Status: ${response.status}`);

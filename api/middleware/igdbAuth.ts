@@ -12,14 +12,14 @@ import { logger } from '@utils/logger.ts';
  * @returns A Hono middleware function that ensures a valid IGDB token.
  */
 export function igdbAuth() {
-	return async (c: Context, next: Next) => {
+	return async (context: Context, next: Next) => {
 		try {
 			// Check and refresh token if needed
 			if (!await ensureValidIgdbToken()) {
 				logger.error(
 					'Failed to obtain valid IGDB token after refresh attempt',
 				);
-				return c.json(
+				return context.json(
 					{
 						error: 'IGDB service temporarily unavailable',
 					},
@@ -31,7 +31,7 @@ export function igdbAuth() {
 			await next();
 		} catch (error) {
 			logger.error('IGDB authentication error:', error);
-			return c.json(
+			return context.json(
 				{
 					error: 'IGDB service temporarily unavailable',
 				},
