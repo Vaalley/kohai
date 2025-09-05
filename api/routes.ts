@@ -10,7 +10,8 @@ import { authRateLimiter } from '@api/middleware/rateLimiter.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
 import { deleteUser, getUser, getUserStats, promoteUser } from '@handlers/users.ts';
-import { createTags, getGame, getRandomTopGames, getTags, search } from '@handlers/igdb.ts';
+import { getGame, getRandomTopGames, search } from '@handlers/igdb.ts';
+import { createTags, getTags } from '@handlers/tags.ts';
 import { getAppStats } from '@handlers/stats.ts';
 import { health } from '@handlers/healthcheck.ts';
 
