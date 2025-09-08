@@ -72,29 +72,29 @@ export async function connectIgdb() {
 	}
 
 	logger.info('🔄 Fetching new IGDB access token...');
-	const response = await fetch(
-		`https://id.twitch.tv/oauth2/token`,
-		{
-			method: 'POST',
-			headers: {
-				'User-Agent': 'Kohai (https://github.com/Vaalley/kohai)',
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				client_id: getEnv('IGDB_CLIENT_ID'),
-				client_secret: getEnv('IGDB_CLIENT_SECRET'),
-				grant_type: 'client_credentials',
-			}),
+	const clientId = getEnv('IGDB_CLIENT_ID');
+	const clientSecret = getEnv('IGDB_CLIENT_SECRET');
+
+	const params = new URLSearchParams({
+		client_id: clientId,
+		client_secret: clientSecret,
+		grant_type: 'client_credentials',
+	});
+
+	const response = await fetch('https://id.twitch.tv/oauth2/token', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
 		},
-	);
+		body: params.toString(),
+	});
 
 	if (!response.ok) {
 		let errorBody = 'Could not read error body.';
 		try {
 			errorBody = await response.text();
-		} catch (e) {
-			logger.error('Failed to read error body from IGDB token request:', e);
+		} catch (error) {
+			logger.error('Failed to read error body from IGDB token request:', error);
 		}
 		logger.error(`HTTP error fetching IGDB token! Status: ${response.status}. Body: ${errorBody}`);
 		throw new Error(`Failed to fetch IGDB token. Status: ${response.status}`);

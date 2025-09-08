@@ -67,9 +67,9 @@ export async function isConnected(): Promise<boolean> {
 	try {
 		await client.db().admin().ping();
 		return true;
-	} catch (err) {
-		logger.error('❌ MongoDB connection verification failed:', err);
-		throw err;
+	} catch (error) {
+		logger.error('❌ MongoDB connection verification failed:', error);
+		throw error;
 	}
 }
 
@@ -99,11 +99,11 @@ export async function getUserByUsername(username: string): Promise<User> {
 export async function deleteUserByUsername(username: string): Promise<DeleteResult> {
 	const collection = getCollection<User>('users');
 
-	const user = await collection.deleteOne({ username });
-	if (!user) {
+	const result = await collection.deleteOne({ username });
+	if (result.deletedCount === 0) {
 		throw new Error(`User with username ${username} not found.`);
 	}
-	return user;
+	return result;
 }
 
 /**
@@ -121,4 +121,17 @@ export async function promoteUserToAdmin(username: string): Promise<UpdateResult
 		throw new Error(`User with username ${username} not found.`);
 	}
 	return result as UpdateResult<User>;
+}
+
+/**
+ * Closes the MongoDB connection gracefully.
+ * This should be called when shutting down the application.
+ *
+ * @returns A promise that resolves when the connection is closed.
+ */
+export async function closeMongo(): Promise<void> {
+	if (client) {
+		await client.close();
+		logger.info('MongoDB connection closed');
+	}
 }

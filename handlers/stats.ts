@@ -12,40 +12,44 @@ export async function getAppStats(c: Context) {
 		const contributionsCol = getCollection<UserContribution>('userContributions');
 		const usersCol = getCollection<User>('users');
 
-		// Totals
+		// Totals (accurate counts)
 		const [totalContributions, totalUsers, adminsCount] = await Promise.all([
 			contributionsCol.countDocuments({}),
-			usersCol.estimatedDocumentCount(),
+			usersCol.countDocuments({}),
 			usersCol.countDocuments({ isadmin: true }),
 		]);
 
-		// Distinct counts
-		const [distinctMediaSlugs, distinctTags] = await Promise.all([
-			contributionsCol.distinct('mediaSlug'),
-			contributionsCol.distinct('tag'),
-		]);
-
-		// First and last contribution timestamps
-		const [firstDoc] = await contributionsCol
-			.find({}, { projection: { timestamp: 1 } })
-			.sort({ timestamp: 1 })
-			.limit(1)
+		// Distinct counts and first/last contribution timestamps via aggregations
+		const [distinctMediaCountDoc] = await contributionsCol
+			.aggregate<{ count: number }>([
+				{ $group: { _id: '$mediaSlug' } },
+				{ $count: 'count' },
+			])
 			.toArray();
-		const [lastDoc] = await contributionsCol
-			.find({}, { projection: { timestamp: 1 } })
-			.sort({ timestamp: -1 })
-			.limit(1)
+		const [distinctTagsCountDoc] = await contributionsCol
+			.aggregate<{ count: number }>([
+				{ $group: { _id: '$tag' } },
+				{ $count: 'count' },
+			])
 			.toArray();
 
-		const firstContributionDate = firstDoc?.timestamp ?? null;
-		const lastContributionDate = lastDoc?.timestamp ?? null;
+		const [minMaxDoc] = await contributionsCol
+			.aggregate<{ first: Date | null; last: Date | null }>([
+				{ $group: { _id: null, first: { $min: '$timestamp' }, last: { $max: '$timestamp' } } },
+			])
+			.toArray();
+
+		const uniqueTaggedMediaTotal = distinctMediaCountDoc?.count ?? 0;
+		const uniqueTagsTotal = distinctTagsCountDoc?.count ?? 0;
+		const firstContributionDate = minMaxDoc?.first ?? null;
+		const lastContributionDate = minMaxDoc?.last ?? null;
 
 		return c.json({
 			success: true,
 			data: {
 				totalContributions,
-				uniqueTaggedMediaTotal: distinctMediaSlugs.length,
-				uniqueTagsTotal: distinctTags.length,
+				uniqueTaggedMediaTotal,
+				uniqueTagsTotal,
 				totalUsers,
 				adminsCount,
 				firstContributionDate,

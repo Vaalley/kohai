@@ -21,7 +21,14 @@ export async function getUser(c: Context) {
 
 	try {
 		const user = await getUserByUsername(username);
-		return c.json({ success: true, data: user });
+		// Sanitize user object to avoid exposing sensitive fields
+		const safeUser = {
+			id: user._id?.toString(),
+			username: user.username,
+			created_at: user.created_at,
+			last_login: user.last_login ?? null,
+		};
+		return c.json({ success: true, data: safeUser });
 	} catch (error) {
 		if (error instanceof Error) {
 			return c.json({ success: false, message: error.message }, 404);
@@ -41,7 +48,7 @@ export async function promoteUser(c: Context) {
 
 	try {
 		// Must be authenticated and an admin
-		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		const jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 		if (!jwtPayload?.isadmin) {
 			return c.json({ success: false, message: 'Only admins can promote users.' }, 403);
 		}
@@ -84,7 +91,7 @@ export async function deleteUser(c: Context) {
 
 	try {
 		// Get the JWT payload from the context (set by jwtAuth middleware)
-		const jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+		const jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 
 		// Check if the authenticated user is trying to delete their own account
 		if (jwtPayload.username !== username && !jwtPayload.isadmin) {
@@ -128,9 +135,9 @@ export async function getUserStats(c: Context) {
 		}
 
 		// Try to get JWT payload for authenticated requests (optional)
-		let _jwtPayload: { id: string; email: string; username: string; isadmin: boolean } | null = null;
+		let _jwtPayload: { sub: string; username: string; isadmin: boolean } | null = null;
 		try {
-			_jwtPayload = c.get('jwtPayload') as { id: string; email: string; username: string; isadmin: boolean };
+			_jwtPayload = c.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 		} catch (_e) {
 			// JWT payload not available, which is fine for public requests
 		}
@@ -139,7 +146,7 @@ export async function getUserStats(c: Context) {
 
 		// Get all user contributions using the user's _id
 		const allContributions = await userContributionsCollection
-			.find({ userId: new ObjectId(user._id) })
+			.find({ userId: user._id as ObjectId })
 			.sort({ timestamp: -1 })
 			.toArray();
 
@@ -169,7 +176,7 @@ export async function getUserStats(c: Context) {
 
 		// Get top 10 most used tags
 		const topTags = Array.from(tagFrequency.entries())
-			.sort((a, b) => b[1] - a[1])
+			.sort((entryA, entryB) => entryB[1] - entryA[1])
 			.slice(0, 10)
 			.map(([tag, count]) => ({ tag, count }));
 

@@ -21,6 +21,7 @@ export function health(c: Context) {
 	return c.json({
 		status: 'ok',
 		timestamp: new Date().toISOString(),
+		startedAt: startTime.toISOString(),
 		uptime: {
 			ms: uptime,
 			formatted: formatTime(uptime, { ignoreZero: true }),
@@ -43,6 +44,7 @@ export function health(c: Context) {
 				platform: Deno.build.os,
 				arch: Deno.build.arch,
 			},
+			pid: Deno.pid,
 		},
 	});
 }

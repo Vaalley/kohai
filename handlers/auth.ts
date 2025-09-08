@@ -5,6 +5,9 @@ import { hash, verify as verifyArgon2 } from '@bronti/argon2';
 import { getCollection } from '@db/mongo.ts';
 import { User } from '@models/user.ts';
 import { getEnv, isProduction } from '@config/config.ts';
+import { LoginSchema, RegisterSchema } from '@models/auth.ts';
+import * as v from '@valibot/valibot';
+import { logger } from '@utils/logger.ts';
 
 interface JwtPayload {
 	id: string;
@@ -39,7 +42,14 @@ const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
  * an error message if the email or username already exists.
  */
 export async function register(c: Context) {
-	const { email, password, username } = await c.req.json();
+	const body = await c.req.json();
+	const parsed = v.safeParse(RegisterSchema, body);
+	if (!parsed.success) {
+		return c.json({ success: false, message: 'Invalid input' }, 400);
+	}
+	const username = parsed.output.username.trim();
+	const email = parsed.output.email.trim().toLowerCase();
+	const password = parsed.output.password;
 
 	// Check if email or username already exists
 	const existingUser = await getCollection('users').findOne({
@@ -50,10 +60,7 @@ export async function register(c: Context) {
 	});
 
 	if (existingUser) {
-		return c.json({
-			success: false,
-			error: 'Email or username already exists',
-		});
+		return c.json({ success: false, message: 'Email or username already exists' }, 409);
 	}
 
 	// Hash the password
@@ -75,10 +82,10 @@ export async function register(c: Context) {
 	return c.json({
 		success: true,
 		message: `User '${username}' created successfully`,
-		id: result.insertedId,
+		id: result.insertedId.toString(),
 		email,
 		username,
-	});
+	}, 201);
 }
 
 /**
@@ -97,46 +104,44 @@ export async function register(c: Context) {
  * an error message if the user is not found or the password is invalid.
  */
 export async function login(c: Context) {
-	const { email, password } = await c.req.json();
+	const body = await c.req.json();
+	const parsed = v.safeParse(LoginSchema, body);
+	if (!parsed.success) {
+		return c.json({ success: false, message: 'Invalid email or password' }, 401);
+	}
+	const email = parsed.output.email.trim().toLowerCase();
+	const password = parsed.output.password;
 
 	// Find user by email
 	const collection = getCollection('users');
 	const user = await collection.findOne({ email });
 
 	if (!user) {
-		return c.json({ success: false, error: 'User not found' });
+		// Avoid user enumeration
+		return c.json({ success: false, message: 'Invalid email or password' }, 401);
 	}
 
 	// Verify password
 	const isPasswordValid = await verifyArgon2(password, user.password);
 	if (!isPasswordValid) {
-		return c.json({ success: false, error: 'Invalid password' });
+		return c.json({ success: false, message: 'Invalid email or password' }, 401);
 	}
 
-	const userData = {
-		id: user._id.toString(),
-		email: user.email,
+	// Minimize JWT payload - only essential claims
+	const tokenPayload = {
+		sub: user._id.toString(),
 		username: user.username,
 		isadmin: user.isadmin || false,
-		created_at: user.created_at.toISOString(),
-		updated_at: user.updated_at.toISOString(),
-		last_login: user.last_login?.toISOString(),
-	};
-
-	const accessTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
 	};
 
 	const refreshTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
+		sub: user._id.toString(),
+		username: user.username,
 	};
 
+	// Generate an access token
 	const secret = getEnv('JWT_SECRET');
-
-	// Generate a session token
-	const accessToken = await sign(accessTokenPayload, secret);
+	const accessToken = await sign(tokenPayload, secret);
 
 	// Generate a refresh token
 	const refreshToken = await sign(refreshTokenPayload, secret);
@@ -159,23 +164,21 @@ export async function login(c: Context) {
 	});
 
 	// Update the user's last login date
-	const result = await collection.updateOne(
+	await collection.updateOne(
 		{ email },
 		{ $set: { last_login: new Date() } },
 	);
 
-	if (result.modifiedCount === 0) {
-		return c.json({ success: false });
-	}
-
 	return c.json({
 		success: true,
 		user: {
+			id: user._id.toString(),
 			email: user.email,
 			username: user.username,
-			id: user._id,
-			access_token: accessToken,
-			refresh_token: refreshToken,
+			isadmin: user.isadmin || false,
+			created_at: user.created_at?.toISOString?.() ?? undefined,
+			updated_at: user.updated_at?.toISOString?.() ?? undefined,
+			last_login: (user.last_login ?? new Date())?.toISOString?.(),
 		},
 	});
 }
@@ -195,15 +198,7 @@ export async function login(c: Context) {
  * or an error message if the user is not logged in.
  */
 export function logout(c: Context) {
-	// Clear session cookie
-	const accessToken = getCookie(c, 'access_token');
-	const refreshToken = getCookie(c, 'refresh_token');
-	if (!accessToken && !refreshToken) {
-		return c.json({
-			success: false,
-			error: 'No access/refresh token',
-		});
-	}
+	// Clear session cookies
 
 	// Delete the token from the user's cookies
 	deleteCookie(c, 'access_token');
@@ -231,59 +226,36 @@ export function logout(c: Context) {
  * have a 401 status code if the token is invalid or expired.
  */
 export async function me(c: Context) {
-	// Check if refresh token is present
-	const refreshToken = getCookie(c, 'refresh_token');
-	if (!refreshToken) {
-		deleteCookie(c, 'access_token'); // Cleanup any stale access token
-		return c.json(
-			{
-				success: false,
-				error: 'Session expired, please login again',
-			},
-			401,
-		);
-	}
-
-	// Try to get user info from access token first
+	// Try access token first
 	const accessToken = getCookie(c, 'access_token');
 	if (accessToken) {
 		try {
 			const payload = await verifyJwt(accessToken, getEnv('JWT_SECRET'));
 			const userData = payload as unknown as JwtPayload;
-
-			// Remove the exp field from the response
 			const { exp: _exp, ...user } = userData;
-
 			return c.json({ success: true, user });
 		} catch (err) {
-			// If token is invalid, try to refresh it
-			console.error('Access token validation failed:', err);
+			logger.error('Access token validation failed', err);
 		}
 	}
 
-	// Access token missing or invalid, try to refresh using refresh token
+	// If access token missing/invalid, attempt refresh flow
 	try {
+		const refreshToken = getCookie(c, 'refresh_token');
+		if (!refreshToken) {
+			throw new Error('No refresh token');
+		}
 		const { accessToken: newAccessToken } = await refreshTokens(c);
 		const payload = await verifyJwt(newAccessToken, getEnv('JWT_SECRET'));
 		const userData = payload as unknown as JwtPayload;
-
-		// Remove the exp field from the response
 		const { exp: _exp, ...user } = userData;
-
 		return c.json({ success: true, user });
-	} catch (err) {
-		// Refresh token invalid or refresh failed
+	} catch (error) {
+		// Cleanup on failure
 		deleteCookie(c, 'access_token');
 		deleteCookie(c, 'refresh_token');
-		const error = err as Error;
-		return c.json(
-			{
-				success: false,
-				error: 'Session expired, please login again',
-				message: error.message,
-			},
-			401,
-		);
+		const err = error as Error;
+		return c.json({ success: false, error: 'Session expired, please login again', message: err.message }, 401);
 	}
 }
 
@@ -302,15 +274,15 @@ export async function handleTokenRefresh(c: Context) {
 	try {
 		await refreshTokens(c);
 		return c.json({ success: true, message: 'Tokens refreshed' });
-	} catch (err) {
+	} catch (error) {
 		// If refresh token is expired/invalid, clear both cookies
 		deleteCookie(c, 'access_token');
 		deleteCookie(c, 'refresh_token');
-		const error = err as Error;
+		const err = error as Error;
 		return c.json({
 			success: false,
 			error: 'Invalid or expired refresh token',
-			message: error.message,
+			message: err.message,
 		}, 401);
 	}
 }
@@ -342,20 +314,27 @@ export async function refreshTokens(c: Context) {
 	}
 
 	// Cast the payload to our JwtPayload type
-	const userPayload = payload as unknown as JwtPayload;
+	const refreshPayload = payload as unknown as { sub: string; username: string };
 
-	// Extract user data from the refresh token payload
-	const { exp: _, ...userData } = userPayload;
+	// Get fresh user data for isadmin status
+	const { ObjectId } = await import('mongodb');
+	const user = await getCollection('users').findOne({ _id: new ObjectId(refreshPayload.sub) });
+	if (!user) {
+		deleteCookie(c, 'access_token');
+		deleteCookie(c, 'refresh_token');
+		throw new Error('User not found');
+	}
 
-	// Generate new tokens with all user data
+	// Generate new tokens with minimal payload
 	const accessTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + ACCESS_TOKEN_MAX_AGE,
+		sub: refreshPayload.sub,
+		username: refreshPayload.username,
+		isadmin: user.isadmin || false,
 	};
 
 	const refreshTokenPayload = {
-		...userData,
-		exp: Math.floor(Date.now() / 1000) + REFRESH_TOKEN_MAX_AGE,
+		sub: refreshPayload.sub,
+		username: refreshPayload.username,
 	};
 
 	const newAccessToken = await sign(

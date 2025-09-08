@@ -10,7 +10,8 @@ import { authRateLimiter } from '@api/middleware/rateLimiter.ts';
 
 import { handleTokenRefresh as refreshToken, login, logout, me, register } from '@handlers/auth.ts';
 import { deleteUser, getUser, getUserStats, promoteUser } from '@handlers/users.ts';
-import { createTags, getGame, getTags, search } from '@handlers/igdb.ts';
+import { getGame, getRandomTopGames, search } from '@handlers/igdb.ts';
+import { createTags, getTags } from '@handlers/tags.ts';
 import { getAppStats } from '@handlers/stats.ts';
 import { health } from '@handlers/healthcheck.ts';
 
@@ -26,12 +27,12 @@ export function setupRoutes(app: Hono) {
 	// |  Health check  |
 	//  ----------------
 
-	app.all('/health', health);
+	api.all('/health', health);
 
 	//  ---------------
 	// |  Auth routes  |
 	//  ---------------
-	const auth = app.basePath('/auth');
+	const auth = api.basePath('/auth');
 
 	auth.post('/register', authRateLimiter, vValidator('json', RegisterSchema), register);
 	auth.post('/login', authRateLimiter, vValidator('json', LoginSchema), login);
@@ -42,18 +43,19 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	// |  Games routes |
 	//  ---------------
-	const games = app.basePath('/games').use(igdbAuth());
+	const games = api.basePath('/games').use(igdbAuth());
 
 	games.post('/search', search);
+	games.get('/top/random', getRandomTopGames);
 	games.get('/:id', getGame);
 
 	//  ---------------
 	// |  Tags routes |
 	//  ---------------
-	const tags = app.basePath('/tags').use(igdbAuth());
+	const tags = api.basePath('/tags').use(igdbAuth());
 
-	tags.get('/:id', getTags);
-	tags.put('/:id', jwtAuth(), createTags);
+	tags.get('/:slug', getTags);
+	tags.put('/:slug', jwtAuth(), createTags);
 
 	//  ---------------
 	// |  Users routes |
@@ -68,6 +70,7 @@ export function setupRoutes(app: Hono) {
 	//  ---------------
 	// |  Stats routes |
 	//  ---------------
+
 	api.get('/stats', getAppStats);
 
 	logger.info('✅ Routes registered successfully 🪄');
