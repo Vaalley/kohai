@@ -18,14 +18,11 @@ import { logger } from '@utils/logger.ts';
  * @returns A JSON response with the tags and their counts.
  */
 export async function getTags(context: Context) {
-	// get the slug and optional count from the request parameters
 	const slug = context.req.param('slug');
 	const countParam = context.req.query('count');
 	const parsed = countParam ? Number(countParam) : NaN;
 	const limit = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
 
-	// get the tags from the database
-	// of a specific game
 	const mediaTagsCollection = getCollection<MediaTag>('mediaTags');
 	const mediaTag = await mediaTagsCollection.findOne({ mediaSlug: slug, mediaType: MediaType.VIDEO_GAME });
 
@@ -64,9 +61,7 @@ export async function getTags(context: Context) {
  * message if the request fails.
  */
 export async function createTags(context: Context) {
-	// slug of the game to create tags for
 	const gameSlug = context.req.param('slug');
-	// tags to create
 	let payload: unknown;
 	try {
 		payload = await context.req.json();
@@ -77,7 +72,6 @@ export async function createTags(context: Context) {
 	if (!Array.isArray(tags)) {
 		return context.json({ success: false, message: 'No tags provided' }, 400);
 	}
-	// Normalize: keep strings only, trim, drop empties, dedupe while preserving order
 	const normalizedTags = Array.from(
 		new Set(
 			tags
@@ -87,7 +81,6 @@ export async function createTags(context: Context) {
 		),
 	);
 
-	// get the jwt payload (for the user id)
 	const jwtPayload = context.get('jwtPayload') as { sub: string; username: string; isadmin: boolean };
 
 	if (!jwtPayload || !jwtPayload.sub) {
@@ -115,7 +108,6 @@ export async function createTags(context: Context) {
 			userContributionsCollection,
 		);
 
-		// After processing individual user contributions, aggregate distinct tags for this game via aggregation
 		const distinctTags = await userContributionsCollection
 			.aggregate<{ tag: string }>([
 				{ $match: { mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME } },
@@ -125,16 +117,14 @@ export async function createTags(context: Context) {
 			.toArray();
 		const aggregatedTags = distinctTags.map((distinctTag) => distinctTag.tag);
 
-		// Update mediaTags collection with the aggregated set of tags
 		const now = new Date();
 		if (aggregatedTags.length > 0) {
 			await mediaTagsCollection.updateOne(
 				{ mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME },
-				{ $set: { tags: aggregatedTags, updated_at: now } }, // Replace all tags for this game
+				{ $set: { tags: aggregatedTags, updated_at: now } },
 				{ upsert: true },
 			);
 		} else {
-			// If no tags remain from any user, remove the mediaTag entry
 			await mediaTagsCollection.deleteOne({ mediaSlug: gameSlug, mediaType: MediaType.VIDEO_GAME });
 		}
 
@@ -167,7 +157,6 @@ async function processUserTags(
 ): Promise<void> {
 	const now = new Date();
 
-	// 1. Fetch existing contributions for this user and game
 	const existingContributions = await userContributionsCollection.find({
 		userId: userId,
 		mediaSlug: gameId,
@@ -183,18 +172,15 @@ async function processUserTags(
 	const tagsToInsert: UserContribution[] = [];
 	const tagsToUpdate: ObjectId[] = [];
 
-	// Process incoming tags
 	for (const tag of tags) {
 		if (existingTagsMap.has(tag)) {
-			// Tag exists, update its timestamp and mark for keeping
 			const existingUc = existingTagsMap.get(tag)!;
 			if (existingUc._id) {
 				tagsToUpdate.push(existingUc._id);
 			}
 			tagsToKeep.push(tag);
-			existingTagsMap.delete(tag); // Mark as processed
+			existingTagsMap.delete(tag);
 		} else {
-			// New tag, prepare for insertion
 			tagsToInsert.push({
 				_id: new ObjectId(),
 				userId: userId,
@@ -208,16 +194,13 @@ async function processUserTags(
 		}
 	}
 
-	// Apply the 3-contribution limit
-	// Combine all tags (kept, new, updated) and sort by updated_at/timestamp to get the most recent 3
 	const allRelevantContributions = [
 		...existingContributions.filter((userContribution: UserContribution) =>
 			tagsToKeep.includes(userContribution.tag)
-		), // Existing and kept
-		...tagsToInsert, // New ones
+		),
+		...tagsToInsert,
 	];
 
-	// Sort by updated_at (fallback to timestamp) descending and take top 3
 	allRelevantContributions.sort((contributionA, contributionB) => {
 		const timeA = (contributionA.updated_at ?? contributionA.timestamp).getTime();
 		const timeB = (contributionB.updated_at ?? contributionB.timestamp).getTime();
@@ -226,8 +209,6 @@ async function processUserTags(
 	const finalContributions = allRelevantContributions.slice(0, 3);
 	const finalTags = finalContributions.map((userContribution: UserContribution) => userContribution.tag);
 
-	// Perform database operations based on finalTags
-	// Delete contributions not in finalTags
 	const contributionsToDeleteIds = existingContributions
 		.filter((userContribution: UserContribution) =>
 			!finalTags.includes(userContribution.tag) && userContribution._id !== undefined
@@ -238,7 +219,6 @@ async function processUserTags(
 		await userContributionsCollection.deleteMany({ _id: { $in: contributionsToDeleteIds } });
 	}
 
-	// Update existing contributions that are in finalTags
 	const contributionsToUpdateIds = existingContributions
 		.filter((userContribution: UserContribution) =>
 			finalTags.includes(userContribution.tag) && userContribution._id !== undefined &&
@@ -253,7 +233,6 @@ async function processUserTags(
 		);
 	}
 
-	// Insert new contributions that are in finalTags
 	const contributionsToInsertFinal = tagsToInsert.filter((userContribution: UserContribution) =>
 		finalTags.includes(userContribution.tag)
 	);
