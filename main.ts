@@ -10,11 +10,9 @@ import { connectIgdb } from '@utils/igdb.ts';
 import { closeApp, setupSignalHandlers, startServer } from '@utils/server.ts';
 import { logger } from '@utils/logger.ts';
 
-// Main entry point
 async function main() {
 	const startTime = Date.now();
 
-	// Connect to MongoDB and IGDB simultaneously
 	try {
 		await Promise.all([
 			connectMongo().catch((error) => {
@@ -33,7 +31,6 @@ async function main() {
 			}),
 		]);
 
-		// Create database indexes and validate collections
 		await createIndexes();
 		await validateCollections();
 	} catch (error) {
@@ -44,33 +41,29 @@ async function main() {
 		closeApp(1);
 	}
 
-	// Create a new Hono app
 	const app = new Hono();
 
-	// Get port and hostname from environment
 	const PORT = getEnv('PORT', '2501');
 	const HOSTNAME = getEnv('HOSTNAME', '0.0.0.0');
 
-	// Apply global rate limiting
-	app.use('*', basicRateLimiter);
-
-	// CORS configuration
 	const corsOrigin = getEnv('CORS_ORIGIN') || (isProduction() ? '' : '*');
+	logger.info(`🌐 CORS origin set to: ${corsOrigin}`);
+	
 	app.use(cors({
-		origin: corsOrigin || '*',
+		origin: corsOrigin,
+		allowHeaders: ['Content-Type', 'x-api-key', 'Cache-Control', 'Pragma', 'Authorization'],
+		allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		credentials: true,
 	}));
 
-	// Enable secure headers
+	app.use('*', basicRateLimiter);
+
 	app.use(secureHeaders());
 
-	// Register routes
 	setupRoutes(app);
 
-	// Setup signal handlers for graceful shutdown
 	setupSignalHandlers();
 
-	// Start the server
 	try {
 		startServer(app, PORT, HOSTNAME, startTime);
 	} catch (error) {
