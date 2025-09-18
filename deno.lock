@@ -4,13 +4,16 @@
     "jsr:@bronti/argon2@^1.0.3": "1.0.3",
     "jsr:@std/assert@*": "0.221.0",
     "jsr:@std/assert@0.221": "0.221.0",
+    "jsr:@std/assert@^1.0.14": "1.0.14",
     "jsr:@std/async@*": "1.0.10",
     "jsr:@std/dotenv@*": "0.225.3",
+    "jsr:@std/dotenv@~0.225.5": "0.225.5",
     "jsr:@std/encoding@0.221": "0.221.0",
     "jsr:@std/fmt@0.221": "0.221.0",
     "jsr:@std/fmt@1": "1.0.8",
     "jsr:@std/fmt@^1.0.8": "1.0.8",
     "jsr:@std/fs@0.221": "0.221.0",
+    "jsr:@std/internal@^1.0.10": "1.0.10",
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@valibot/valibot@^1.1.0": "1.1.0",
     "jsr:@zilla/logger@^1.0.1": "1.0.1",
@@ -42,11 +45,20 @@
         "jsr:@std/fmt@0.221"
       ]
     },
+    "@std/assert@1.0.14": {
+      "integrity": "68d0d4a43b365abc927f45a9b85c639ea18a9fab96ad92281e493e4ed84abaa4",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
     "@std/async@1.0.10": {
       "integrity": "2ff1b1c7d33d1416159989b0f69e59ec7ee8cb58510df01e454def2108b3dbec"
     },
     "@std/dotenv@0.225.3": {
       "integrity": "a95e5b812c27b0854c52acbae215856d9cce9d4bbf774d938c51d212711e8d4a"
+    },
+    "@std/dotenv@0.225.5": {
+      "integrity": "9ce6f9d0ec3311f74a32535aa1b8c62ed88b1ab91b7f0815797d77a6f60c922f"
     },
     "@std/encoding@0.221.0": {
       "integrity": "d1dd76ef0dc5d14088411e6dc1dede53bf8308c95d1537df1214c97137208e45"
@@ -66,6 +78,9 @@
         "jsr:@std/assert@0.221",
         "jsr:@std/path"
       ]
+    },
+    "@std/internal@1.0.10": {
+      "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
     },
     "@std/path@0.221.0": {
       "integrity": "0a36f6b17314ef653a3a1649740cc8db51b25a133ecfe838f20b79a56ebe0095",
@@ -185,6 +200,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@bronti/argon2@^1.0.3",
+      "jsr:@std/assert@^1.0.14",
+      "jsr:@std/dotenv@~0.225.5",
       "jsr:@std/fmt@^1.0.8",
       "jsr:@valibot/valibot@^1.1.0",
       "jsr:@zilla/logger@^1.0.1",

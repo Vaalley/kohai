@@ -48,7 +48,7 @@ async function main() {
 
 	const corsOrigin = getEnv('CORS_ORIGIN') || (isProduction() ? '' : '*');
 	logger.info(`🌐 CORS origin set to: ${corsOrigin}`);
-	
+
 	app.use(cors({
 		origin: corsOrigin,
 		allowHeaders: ['Content-Type', 'x-api-key', 'Cache-Control', 'Pragma', 'Authorization'],
