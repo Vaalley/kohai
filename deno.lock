@@ -17,14 +17,13 @@
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@valibot/valibot@^1.1.0": "1.1.0",
     "jsr:@zilla/logger@^1.0.1": "1.0.1",
-    "npm:@hono/valibot-validator@~0.5.3": "0.5.3_hono@4.9.0_valibot@1.1.0",
+    "npm:@hono/valibot-validator@~0.5.3": "0.5.3_hono@4.9.8_valibot@1.1.0",
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
-    "npm:hono-rate-limiter@~0.2.3": "0.2.3_hono@4.9.0",
-    "npm:hono@^4.9.0": "4.9.0",
+    "npm:hono-rate-limiter@~0.2.3": "0.2.3_hono@4.9.8",
+    "npm:hono@^4.9.8": "4.9.8",
     "npm:is-what@5": "5.2.0",
-    "npm:mongodb@^6.17.0": "6.18.0",
-    "npm:mongodb@^6.18.0": "6.18.0"
+    "npm:mongodb@^6.19.0": "6.19.0"
   },
   "jsr": {
     "@bronti/argon2@1.0.3": {
@@ -101,7 +100,7 @@
     }
   },
   "npm": {
-    "@hono/valibot-validator@0.5.3_hono@4.9.0_valibot@1.1.0": {
+    "@hono/valibot-validator@0.5.3_hono@4.9.8_valibot@1.1.0": {
       "integrity": "sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ==",
       "dependencies": [
         "hono",
@@ -135,14 +134,14 @@
     "date-fns@4.1.0": {
       "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
-    "hono-rate-limiter@0.2.3_hono@4.9.0": {
+    "hono-rate-limiter@0.2.3_hono@4.9.8": {
       "integrity": "sha512-/pQIJWMd8saoySMoM3rhHNiC3XtZuZDkxBvtnPmRKrpNBZIG38k0cs+nVmBW5pc8HAmkS+I/14rbHfRObekWmw==",
       "dependencies": [
         "hono"
       ]
     },
-    "hono@4.9.0": {
-      "integrity": "sha512-JAUc4Sqi3lhby2imRL/67LMcJFKiCu7ZKghM7iwvltVZzxEC5bVJCsAa4NTnSfmWGb+N2eOVtFE586R+K3fejA=="
+    "hono@4.9.8": {
+      "integrity": "sha512-JW8Bb4RFWD9iOKxg5PbUarBYGM99IcxFl2FPBo2gSJO11jjUDqlP1Bmfyqt8Z/dGhIQ63PMA9LdcLefXyIasyg=="
     },
     "is-what@5.2.0": {
       "integrity": "sha512-IPOooAvDsC9AaL36TR6/pWlCTgQcCgZZR2IY6p8DCjJ84WVdH/f6SCZr8ngAY9wohbF5bvjOoqrVnBQGZiln/A=="
@@ -157,8 +156,8 @@
         "whatwg-url"
       ]
     },
-    "mongodb@6.18.0": {
-      "integrity": "sha512-fO5ttN9VC8P0F5fqtQmclAkgXZxbIkYRTUi1j8JO6IYwvamkhtYDilJr35jOPELR49zqCJgXZWwCtW7B+TM8vQ==",
+    "mongodb@6.19.0": {
+      "integrity": "sha512-H3GtYujOJdeKIMLKBT9PwlDhGrQfplABNF1G904w6r5ZXKWyv77aB0X9B+rhmaAwjtllHzaEkvi9mkGVZxs2Bw==",
       "dependencies": [
         "@mongodb-js/saslprep",
         "bson",
@@ -207,8 +206,8 @@
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/valibot-validator@~0.5.3",
       "npm:hono-rate-limiter@~0.2.3",
-      "npm:hono@^4.9.0",
-      "npm:mongodb@^6.17.0"
+      "npm:hono@^4.9.8",
+      "npm:mongodb@^6.19.0"
     ]
   }
 }
