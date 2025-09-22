@@ -30,27 +30,29 @@ description system.
   - Planning & Setup: January 2025
   - Core Development: February - July 2025
   - Testing & Refinement: August - September 2025
-- Budget allocation (Total: €120,000):
-  - Development (Frontend + Backend): €80,000 (66.7%)
-  - Project Management: €15,000 (12.5%)
-  - Quality Assurance: €10,000 (8.3%)
-  - DevOps: €15,000 (12.5%)
+- Budget allocation (Total: ~€85,000):
+  - Development (Frontend + Backend): ~€58,000
+  - Project Management: ~€10,000
+  - Quality Assurance: ~€7,500
+  - DevOps: ~€9,000
 
 ### E. Project Organization
+
+Based on: [grille des salaires et analyse de marche 2025](grille-des-salaires-et-analyse-de-marche-2025.pdf)
 
 - Team structure:
   - **Marc (Frontend Developer & Designer)**
     - _Role:_ UI/UX implementation, responsive design, client-side logic, asset preparation, accessibility.
-    - _Hourly Rate:_ €65-75 (Senior frontend developer in Nantes)
-    - _Allocated Budget (Dev + Design):_ €50,000
+    - _Hourly Rate:_ €47 (Senior frontend developer in Nantes)
+    - _Allocated Budget (Dev + Design):_ €32,900
     - _Estimated Hours:_ ~700 hours
     - _Tools:_ (SvelteKit)[https://kit.svelte.dev/], (Native CSS)[https://developer.mozilla.org/en-US/docs/Web/CSS],
       (Slack)[https://slack.com/], (Figma)[https://www.figma.com/]
 
   - **Léo (Backend Developer)**
     - _Role:_ API development, database management, server-side logic, external API integration.
-    - _Hourly Rate:_ €45-55 (Mid-level backend developer in Nantes)
-    - _Allocated Budget (Development):_ €35,000
+    - _Hourly Rate:_ €38 (Mid-level backend developer in Nantes)
+    - _Allocated Budget (Development):_ €24,700
     - _Estimated Hours:_ ~650 hours
     - _Tools:_ (Deno)[https://deno.com/], (Hono)[https://github.com/honojs/hono], (MongoDB)[https://www.mongodb.com/],
       (MongoDB Compass)[https://www.mongodb.com/products/tools/compass], (Slack)[https://slack.com/]
@@ -58,23 +60,23 @@ description system.
   - **Sophie (Project Manager)**
     - _Role:_ Requirements gathering, client communication, sprint planning, task management oversight, timeline
       adherence.
-    - _Hourly Rate:_ €45-55 (Mid-level PM in Nantes)
-    - _Allocated Budget (Management):_ €12,000
+    - _Hourly Rate:_ €41 (Mid-level PM in Nantes)
+    - _Allocated Budget (Management):_ €10,250
     - _Estimated Hours:_ ~250 hours (part-time, 15-20h/week)
     - _Tools:_ (Jira)[https://www.atlassian.com/fr/software/jira], (Slack)[https://slack.com/]
 
   - **Pierre (QA Specialist)**
     - _Role:_ Test plan creation, manual testing execution, bug reporting & tracking, quality assurance checks,
       accessibility testing.
-    - _Hourly Rate:_ €40-45 (Mid-level QA in Nantes)
-    - _Allocated Budget (Testing):_ €8,000
+    - _Hourly Rate:_ €41 (Mid-level QA in Nantes)
+    - _Allocated Budget (Testing):_ €7,380
     - _Estimated Hours:_ ~180 hours (part-time, 10h/week)
     - _Tools:_ (Responsive Web Test)[https://responsivewebtest.com/], (Slack)[https://slack.com/]
 
   - **Léa (DevOps / Sysadmin)**
     - _Role:_ Infrastructure management, deployment, monitoring, and maintenance.
-    - _Hourly Rate:_ €45-55 (Mid-level DevOps in Nantes)
-    - _Allocated Budget (DevOps):_ €12,000
+    - _Hourly Rate:_ €38 (Mid-level DevOps in Nantes)
+    - _Allocated Budget (DevOps):_ €9,120
     - _Estimated Hours:_ ~240 hours (part-time, 15h/week)
     - _Tools:_ (Docker)[https://www.docker.com/], (MongoDB)[https://www.mongodb.com/], (MongoDB
       Compass)[https://www.mongodb.com/products/tools/compass], (Slack)[https://slack.com/]
