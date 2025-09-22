@@ -44,9 +44,8 @@ description system.
     - _Hourly Rate:_ €65-75 (Senior frontend developer in Nantes)
     - _Allocated Budget (Dev + Design):_ €50,000
     - _Estimated Hours:_ ~700 hours
-    - _Tools:_ (SvelteKit)[https://kit.svelte.dev/], (Native
-      CSS)[https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables], (Slack)[https://slack.com/],
-      (Figma)[https://www.figma.com/]
+    - _Tools:_ (SvelteKit)[https://kit.svelte.dev/], (Native CSS)[https://developer.mozilla.org/en-US/docs/Web/CSS],
+      (Slack)[https://slack.com/], (Figma)[https://www.figma.com/]
 
   - **Léo (Backend Developer)**
     - _Role:_ API development, database management, server-side logic, external API integration.
