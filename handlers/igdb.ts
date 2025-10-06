@@ -5,6 +5,7 @@ import { logger } from '@utils/logger.ts';
 const BASE_URL = 'https://api.igdb.com/v4';
 const DEFAULT_FIELDS = 'fields name,summary,genres.name,platforms.name,first_release_date,slug';
 
+// LRU-style cache for search results and game details
 const searchCache = new Map<string, { data: unknown; time: number }>();
 const CACHE_TTL = 15 * 60 * 1000;
 const MAX_SEARCH_CACHE_SIZE = 50;
@@ -22,6 +23,7 @@ const MAX_GAME_CACHE_SIZE = 50;
  * @returns A JSON response with search results or error message.
  */
 export async function search(c: Context) {
+	// Get and process query
 	let bodyQuery = '';
 	try {
 		bodyQuery = await c.req.text();
@@ -29,17 +31,22 @@ export async function search(c: Context) {
 		logger.warn('Failed to read request body', error);
 	}
 
+	// Return early if no query
 	if (!bodyQuery.trim()) {
 		return c.json({ success: false, message: 'No query provided' }, 400);
 	}
 
+	// Add default fields if needed and create cache key
 	const igdbQuery = !bodyQuery.includes('fields') ? `${DEFAULT_FIELDS}; ${bodyQuery}` : bodyQuery;
 	const cacheKey = igdbQuery.trim();
 
+	// Check cache
 	const cached = searchCache.get(cacheKey);
 	if (cached && (Date.now() - cached.time < CACHE_TTL)) {
 		return c.json({ success: true, data: cached.data });
 	}
+
+	// Make request to IGDB API
 	try {
 		const response = await fetch(`${BASE_URL}/games`, {
 			method: 'POST',
@@ -51,14 +58,17 @@ export async function search(c: Context) {
 			body: igdbQuery,
 		});
 
+		// Handle API errors
 		if (!response.ok) {
 			const errorText = await response.text();
 			logger.error(`IGDB API error: ${response.status} ${errorText}`);
 			return c.json({ success: false, message: 'Failed to search', error: errorText }, 502);
 		}
 
+		// Process successful response
 		const data = await response.json();
 
+		// Manage cache (remove oldest entry if at capacity)
 		if (searchCache.size >= MAX_SEARCH_CACHE_SIZE) {
 			searchCache.delete([...searchCache.keys()][0]);
 		}
@@ -104,6 +114,7 @@ export async function getRandomTopGames(c: Context) {
 
 		const topGames = await response.json();
 
+		// Randomly select 8 games from the top 100
 		const shuffled = [...topGames].sort(() => 0.5 - Math.random());
 		const randomGames = shuffled.slice(0, 8);
 

@@ -17,11 +17,11 @@
     "jsr:@std/path@0.221": "0.221.0",
     "jsr:@valibot/valibot@^1.1.0": "1.1.0",
     "jsr:@zilla/logger@^1.0.1": "1.0.1",
-    "npm:@hono/valibot-validator@~0.5.3": "0.5.3_hono@4.9.9_valibot@1.1.0",
+    "npm:@hono/valibot-validator@~0.5.3": "0.5.3_hono@4.9.10_valibot@1.1.0",
     "npm:@types/node@*": "22.5.4",
     "npm:date-fns@4": "4.1.0",
-    "npm:hono-rate-limiter@~0.2.3": "0.2.3_hono@4.9.9",
-    "npm:hono@^4.9.9": "4.9.9",
+    "npm:hono-rate-limiter@~0.2.3": "0.2.3_hono@4.9.10",
+    "npm:hono@^4.9.10": "4.9.10",
     "npm:is-what@5": "5.2.0",
     "npm:mongodb@^6.20.0": "6.20.0"
   },
@@ -100,7 +100,7 @@
     }
   },
   "npm": {
-    "@hono/valibot-validator@0.5.3_hono@4.9.9_valibot@1.1.0": {
+    "@hono/valibot-validator@0.5.3_hono@4.9.10_valibot@1.1.0": {
       "integrity": "sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ==",
       "dependencies": [
         "hono",
@@ -134,14 +134,14 @@
     "date-fns@4.1.0": {
       "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
-    "hono-rate-limiter@0.2.3_hono@4.9.9": {
+    "hono-rate-limiter@0.2.3_hono@4.9.10": {
       "integrity": "sha512-/pQIJWMd8saoySMoM3rhHNiC3XtZuZDkxBvtnPmRKrpNBZIG38k0cs+nVmBW5pc8HAmkS+I/14rbHfRObekWmw==",
       "dependencies": [
         "hono"
       ]
     },
-    "hono@4.9.9": {
-      "integrity": "sha512-Hxw4wT6zjJGZJdkJzAx9PyBdf7ZpxaTSA0NfxqjLghwMrLBX8p33hJBzoETRakF3UJu6OdNQBZAlNSkGqKFukw=="
+    "hono@4.9.10": {
+      "integrity": "sha512-AlI15ijFyKTXR7eHo7QK7OR4RoKIedZvBuRjO8iy4zrxvlY5oFCdiRG/V/lFJHCNXJ0k72ATgnyzx8Yqa5arug=="
     },
     "is-what@5.2.0": {
       "integrity": "sha512-IPOooAvDsC9AaL36TR6/pWlCTgQcCgZZR2IY6p8DCjJ84WVdH/f6SCZr8ngAY9wohbF5bvjOoqrVnBQGZiln/A=="
@@ -206,7 +206,7 @@
       "jsr:@zilla/logger@^1.0.1",
       "npm:@hono/valibot-validator@~0.5.3",
       "npm:hono-rate-limiter@~0.2.3",
-      "npm:hono@^4.9.9",
+      "npm:hono@^4.9.10",
       "npm:mongodb@^6.20.0"
     ]
   }
