@@ -193,7 +193,6 @@ async function processUserTags(
 			}
 			tagsToKeep.push(tag);
 			existingTagsMap.delete(tag); // Mark as processed
-			existingTagsMap.delete(tag);
 		} else {
 			// New tag, prepare for insertion
 			tagsToInsert.push({
