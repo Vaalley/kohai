@@ -2,19 +2,13 @@ import { Context } from 'hono';
 import { getEnv } from '@config/config.ts';
 import { logger } from '@utils/logger.ts';
 
-//  ----------------
-// |  GAME HANDLERS |
-//  ----------------
-
 const BASE_URL = 'https://api.igdb.com/v4';
 const DEFAULT_FIELDS = 'fields name,summary,genres.name,platforms.name,first_release_date,slug';
 
-// LRU-style cache for search results
+// LRU-style cache for search results and game details
 const searchCache = new Map<string, { data: unknown; time: number }>();
-const CACHE_TTL = 15 * 60 * 1000; // 15 minutes cache lifetime
+const CACHE_TTL = 15 * 60 * 1000;
 const MAX_SEARCH_CACHE_SIZE = 50;
-
-// LRU-style cache for game info
 const gameCache = new Map<string, { data: unknown; time: number }>();
 const MAX_GAME_CACHE_SIZE = 50;
 
@@ -151,7 +145,6 @@ export async function getRandomTopGames(c: Context) {
 export async function getGame(c: Context) {
 	const id = Number(c.req.param('id'));
 
-	// Check cache
 	const cached = gameCache.get(String(id));
 	if (cached && (Date.now() - cached.time < CACHE_TTL)) {
 		return c.json({ success: true, data: cached.data });
@@ -176,7 +169,6 @@ export async function getGame(c: Context) {
 
 		const data = await response.json();
 
-		// Manage cache (remove oldest entry if at capacity)
 		if (gameCache.size >= MAX_GAME_CACHE_SIZE) {
 			gameCache.delete([...gameCache.keys()][0]);
 		}

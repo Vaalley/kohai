@@ -1,4 +1,4 @@
-import { assertEquals } from 'jsr:@std/assert';
+import { assertEquals } from '@std/assert';
 import { getEnv, isProduction, setEnv } from '@config/config.ts';
 
 // tests for getEnv
